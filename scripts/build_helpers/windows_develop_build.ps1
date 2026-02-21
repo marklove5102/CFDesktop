@@ -79,7 +79,7 @@ Write-Log "Changing to project directory" "INFO"
 Set-Location $ProjectRoot
 
 # Load configuration from INI file
-$ConfigFile = Join-Path $ScriptDir "build_config.ini"
+$ConfigFile = Join-Path $ScriptDir "build_develop_config.ini"
 Write-Log "Loading configuration from: $ConfigFile" "INFO"
 
 try {

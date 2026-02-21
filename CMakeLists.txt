@@ -50,4 +50,4 @@ add_subdirectory(test/boot_test)
 # Log boot_test module end
 log_module_end("boot_test")
 
-log_info("Configuration Ends! You can try to build now!")
+log_info("Final" "Configuration Ends! You can try to build now!")
