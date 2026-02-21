@@ -1,0 +1,4 @@
+# Reason Why?
+# Every man owns his configurations, please specified the
+# cmake prefix path
+*.cmake

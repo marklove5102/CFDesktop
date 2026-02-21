@@ -1,0 +1,11 @@
+{
+    "clangd.path": "@CLANGD_PATH_JSON@",
+    "clangd.arguments": [
+        "--compile-commands-dir=@CMAKE_BINARY_DIR_JSON@",
+        "--query-driver=@QUERY_DRIVER_GLOB_JSON@",
+        "--background-index",
+        "--clang-tidy",
+        "--header-insertion=iwyu",
+        "--log=error"
+    ]
+}

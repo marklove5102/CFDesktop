@@ -1,0 +1,53 @@
+cmake_minimum_required(VERSION 3.16)
+# Include build log helper
+message("Including Requested CMake Dependencies...")
+include(cmake/build_log_helper.cmake)
+message("Logger OK")
+message("Including Requested CMake Dependencies OK")
+
+# Toolchain configuration (must be before project() call)
+# Supports both:
+#   cmake -DCMAKE_TOOLCHAIN_FILE=/path/to/toolchain.cmake -S . -B out/build
+#   cmake -DUSE_TOOLCHAIN=windows/llvm -S . -B out/build
+include(cmake/check_toolchain.cmake)
+project(CFDesktop VERSION 0.0.1 LANGUAGES CXX)
+
+# ------ Build Settings ------
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+# ------ Build Settings ------
+
+log_info("BuildSettings" "CMAKE_CXX_STANDARD: ${CMAKE_CXX_STANDARD}")
+log_info("BuildSettings" "CMAKE_CXX_STANDARD_REQUIRED: ${CMAKE_CXX_STANDARD_REQUIRED}")
+log_info("BuildSettings" "CMAKE_AUTOMOC: ${CMAKE_AUTOMOC}")
+log_info("BuildSettings" "CMAKE_AUTORCC: ${CMAKE_AUTORCC}")
+log_info("BuildSettings" "CMAKE_AUTOUIC: ${CMAKE_AUTOUIC}")
+log_info("BuildSettings" "CMAKE_EXPORT_COMPILE_COMMANDS: ${CMAKE_EXPORT_COMPILE_COMMANDS}")
+
+# find Qt6, As Requested
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+log_info("Post Qt Setups" "Run Post Qt Dependencies check")
+include(cmake/custom_target_helper.cmake)
+log_info("Post Qt Setups" "Run Post Qt Dependencies OK")
+
+# Include development helpers generation
+include(cmake/generate_develop_helpers.cmake)
+
+log_info("DevHelpers" "Will Generate VSCode clangd configuration")
+generate_vscode_clangd()
+
+# Print build configuration
+log_config_summary()
+log_qt_dir()
+# Log boot_test module start
+log_module_start("boot_test")
+add_subdirectory(test/boot_test)
+# Log boot_test module end
+log_module_end("boot_test")
+
+log_info("Configuration Ends! You can try to build now!")

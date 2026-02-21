@@ -1,1 +1,11 @@
+# ignores
+.cache
+
+# privates
 BLUEPRINT.md
+
+# native builds
+out/
+
+# .vscode
+.vscode

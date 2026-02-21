@@ -1,0 +1,11 @@
+# Please, Specified the toolchains file here for
+# the toolchain files
+
+# for example, you can specified the CMAKE_PREFIX_PATH here
+# to indicate cmake find correct libraries
+# set(CMAKE_PREFIX_PATH "D:/QT/Qt6.6.0/6.8.3/llvm-mingw_64")
+# message(STATUS "Configured Qt6 prefix path: ${CMAKE_PREFIX_PATH}")
+
+# To Make -DUSE_TOOLCHAIN ACCESSIBLE
+# Please naming the scripts as -> your_name-toolchain.cmake!
+
