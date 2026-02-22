@@ -1,5 +1,5 @@
 PROJECT_NAME           = "Embedded Common Tools"
-INPUT                  = lib
+INPUT                  = base example
 RECURSIVE              = YES
 
 EXTRACT_ALL            = YES
