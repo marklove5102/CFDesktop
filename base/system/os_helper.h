@@ -1,10 +1,10 @@
 /**
- * @file os_helper.h
- * @author Charliechen114514 (chengh1922@mails.jlu.edu.cn)
- * @brief OS Helper will help provides common helps for the OS Informations
+ * @file    base/system/os_helper.h
+ * @brief   Provides common helper functions for OS information queries.
+ *
+ * @author  Charliechen114514
+ * @date    2026-02-21
  * @version 0.1
- * @date 2026-02-21
- *
- * @copyright Copyright (c) 2026
- *
+ * @since   0.1
+ * @ingroup system
  */

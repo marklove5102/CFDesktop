@@ -1,8 +1,9 @@
 # CFDesktop Phase 1 - 系统信息获取清单
 
 > 创建日期: 2026-02-21
+> 最后更新: 2026-02-22
 > 阶段: Phase 1 - 硬件探针与能力分级
-> 状态: 进行中
+> 状态: 进行中 (CPU 模块已完成)
 
 ---
 
@@ -18,63 +19,96 @@
 ## 一、CPU 信息 (Central Processing Unit)
 
 ### 1.1 基础信息
-- [ ] **CPU 型号名称** (Model Name)
+- [x] **CPU 型号名称** (Model Name)
   - Linux: `/proc/cpuinfo` 中的 `model name` / `Hardware` 字段
   - [x] Windows: WMIC `Win32_Processor.Name`
+  - 实现: [`cfcpu.h`](../base/include/system/cpu/cfcpu.h) - `getCPUInfo()`
   - 用途: 识别 SoC 型号 (IMX6ULL, RK3568, RK3588 等)
 
-- [ ] **CPU 制造商** (Vendor)
+- [x] **CPU 制造商** (Vendor)
   - Linux: `/proc/cpuinfo` 中的 `vendor_id` / `CPU implementer`
   - [x]  Windows: WMIC `Win32_Processor.Manufacturer`
+  - 实现: [`cfcpu.h`](../base/include/system/cpu/cfcpu.h) - `getCPUInfo()`
   - 用途: 区分 ARM/Intel/AMD 等架构
 
-- [ ] **CPU 架构** (Architecture)
+- [x] **CPU 架构** (Architecture)
   - Linux: `uname -m` (armv7l, aarch64, x86_64, riscv64)
   - [x]  Windows: PROCESSOR_ARCHITECTURE 环境变量
+  - 实现: [`cfcpu.h`](../base/include/system/cpu/cfcpu.h) - `getCPUInfo()`
   - 用途: 决定编译指令集优化
 
 ### 1.2 性能信息
-- [ ] **逻辑核心数** (Logical Cores)
+- [x] **逻辑核心数** (Logical Cores)
   - Linux: `/proc/cpuinfo` 处理器数量
   - [x] Windows: `Win32_Processor.NumberOfLogicalProcessors`
+  - 实现: [`cfcpu_profile.h`](../base/include/system/cpu/cfcpu_profile.h) - `getCPUProfileInfo()`
   - 用途: 任务调度与线程池配置
 
-- [ ] **物理核心数** (Physical Cores)
+- [x] **物理核心数** (Physical Cores)
   - Linux: `/proc/cpuinfo` 中的 `cpu cores`
   - [x] Windows: `Win32_Processor.NumberOfCores`
+  - 实现: [`cfcpu_profile.h`](../base/include/system/cpu/cfcpu_profile.h) - `getCPUProfileInfo()`
   - 用途: 性能评估
 
-- [ ] **CPU 主频** (Frequency)
+- [x] **CPU 主频** (Frequency)
   - Linux: `/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq` (当前频率)
   - Linux: `/proc/cpuinfo` 中的 `BogoMIPS` (估算)
   - [x] Windows: `Win32_Processor.MaxClockSpeed`
+  - 实现: [`cfcpu_profile.h`](../base/include/system/cpu/cfcpu_profile.h) - `getCPUProfileInfo()`
   - 用途: 性能评分
 
-- [ ] **CPU 使用率** (Current Usage)
+- [x] **CPU 使用率** (Current Usage)
   - Linux: `/proc/stat` 计算
   - [x] Windows: 性能计数器
+  - 实现: [`cfcpu_profile.h`](../base/include/system/cpu/cfcpu_profile.h) - `getCPUProfileInfo()`
   - 用途: 实时性能监控
 
 ### 1.3 特性与指令集
-- [ ] **CPU 特性标志** (Features)
+- [x] **CPU 特性标志** (Features)
   - Linux: `/proc/cpuinfo` 中的 `Features` / `flags`
   - 常见特性: neon, vfpv4, aes, sha2, sve, avx2, avx512
+  - 实现: [`cfcpu_bonus.h`](../base/include/system/cpu/cfcpu_bonus.h) - `getCPUBonusInfo()`
   - 用途: 启用特定硬件加速
 
-- [ ] **缓存信息** (Cache)
+- [x] **缓存信息** (Cache)
   - L1/L2/L3 缓存大小
   - Linux: `/sys/devices/system/cpu/cpu0/cache/`
+  - 实现: [`cfcpu_bonus.h`](../base/include/system/cpu/cfcpu_bonus.h) - `getCPUBonusInfo()`
   - 用途: 内存策略优化
 
 ### 1.4 温度与功耗
-- [ ] **CPU 温度** (Temperature)
+- [x] **CPU 温度** (Temperature)
   - Linux: `/sys/class/thermal/thermal_zone*/temp`
+  - 实现: [`cfcpu_bonus.h`](../base/include/system/cpu/cfcpu_bonus.h) - `getCPUBonusInfo()`
+  - 注意: 温度为 `std::optional<uint16_t>`，可能不可用
   - 用途: 温控策略
 
-- [ ] **能效信息** (Power/Efficiency)
+- [x] **能效信息** (Power/Efficiency)
   - ARM big.LITTLE / DynamIQ 架构检测
   - E-Core 与 P-Core 识别
+  - 实现: [`cfcpu_bonus.h`](../base/include/system/cpu/cfcpu_bonus.h) - `getCPUBonusInfo()`
   - 用途: 任务分配优化
+
+---
+
+## 一、CPU 信息 - 完成总结
+
+### 实现文件
+| 模块 | 头文件 | 实现文件 |
+|:---|:---|:---|
+| **基础信息** | [`base/include/system/cpu/cfcpu.h`](../base/include/system/cpu/cfcpu.h) | [`base/system/cpu/cfcpu.cpp`](../base/system/cpu/cfcpu.cpp) |
+| **性能信息** | [`base/include/system/cpu/cfcpu_profile.h`](../base/include/system/cpu/cfcpu_profile.h) | [`base/system/cpu/cfcpu_profile.cpp`](../base/system/cpu/cfcpu_profile.cpp) |
+| **扩展信息** | [`base/include/system/cpu/cfcpu_bonus.h`](../base/include/system/cpu/cfcpu_bonus.h) | [`base/system/cpu/cfcpu_bonus.cpp`](../base/system/cpu/cfcpu_bonus.cpp) |
+
+### 平台实现
+| 平台 | 目录 |
+|:---|:---|
+| **Windows** | [`base/system/cpu/private/win_impl/`](../base/system/cpu/private/win_impl/) |
+| **Linux** | [`base/system/cpu/private/linux_impl/`](../base/system/cpu/private/linux_impl/) |
+
+### 测试与示例
+- 示例: [`example/base/system/example_cpu_info.cpp`](../example/base/system/example_cpu_info.cpp)
+- 测试: [`test/system/test_cpu_info_query.cpp`](../test/system/test_cpu_info_query.cpp)
 
 ---
 
@@ -575,7 +609,7 @@
 ### P0 - 核心必需 (Phase 1 必须完成)
 这些信息直接影响硬件档位判定和核心功能：
 
-1. CPU 型号、核心数、主频
+1. ✅ CPU 型号、核心数、主频 - **已完成**
 2. GPU 硬件加速、OpenGL 版本
 3. 总内存、可用内存
 4. 屏幕分辨率、刷新率
@@ -667,9 +701,9 @@ struct InputDeviceInfo {
 ## 相关文件
 
 - 设计文档: [document/design_stage/01_phase1_hardware_probe.md](design_stage/01_phase1_hardware_probe.md)
-- 代码目录: [base/hardware/](../base/hardware/)
-- 测试目录: [test/hardware_test/](../test/hardware_test/)
+- CPU 模块: [base/system/cpu/](../base/system/cpu/)
+- 测试目录: [test/system/](../test/system/)
 
 ---
 
-*最后更新: 2026-02-21*
+*最后更新: 2026-02-22*
