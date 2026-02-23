@@ -60,7 +60,8 @@ class ScopeGuard {
      * @since      0.1
      * @ingroup    base_utilities
      */
-    explicit ScopeGuard(std::function<void()> f) : fn_(std::move(f)) {}
+    template <typename F>
+    explicit ScopeGuard(F&& f) : fn_(std::forward<F>(f)) {}
 
     /**
      * @brief  Destroys the scope guard and executes the cleanup function.
@@ -78,7 +79,7 @@ class ScopeGuard {
      * @since      0.1
      * @ingroup    base_utilities
      */
-    ~ScopeGuard() {
+    ~ScopeGuard() noexcept(false) {
         if (active_)
             fn_();
     }
@@ -98,6 +99,22 @@ class ScopeGuard {
      * @ingroup    base_utilities
      */
     ScopeGuard& operator=(const ScopeGuard&) = delete;
+
+    /**
+     * @brief  Move constructor is deleted.
+     *
+     * @since      0.1
+     * @ingroup    base_utilities
+     */
+    ScopeGuard(ScopeGuard&&) = delete;
+
+    /**
+     * @brief  Move assignment operator is deleted.
+     *
+     * @since      0.1
+     * @ingroup    base_utilities
+     */
+    ScopeGuard& operator=(ScopeGuard&&) = delete;
 
     /**
      * @brief  Dismisses the scope guard.

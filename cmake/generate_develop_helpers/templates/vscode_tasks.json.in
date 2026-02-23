@@ -1,0 +1,81 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake: Configure",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                "@PROJECT_ROOT_JSON@",
+                "-B",
+                "@CMAKE_BINARY_DIR_JSON@",
+                "-DCMAKE_BUILD_TYPE=Debug"
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "Configure CMake project"
+        },
+        {
+            "label": "CMake: Build",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "@CMAKE_BINARY_DIR_JSON@",
+                "--config",
+                "Debug"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Build the project with CMake"
+        },
+        {
+            "label": "CMake: Clean",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "@CMAKE_BINARY_DIR_JSON@",
+                "--config",
+                "Debug",
+                "--target",
+                "clean"
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "Clean build artifacts"
+        },
+        {
+            "label": "CMake: Rebuild",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "@CMAKE_BINARY_DIR_JSON@",
+                "--config",
+                "Debug",
+                "--clean-first"
+            ],
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+            "detail": "Clean and rebuild the project"
+        },
+        {
+            "label": "CTest: Run All Tests",
+            "type": "shell",
+            "command": "ctest",
+            "args": [
+                "--test-dir",
+                "@CMAKE_BINARY_DIR_JSON@",
+                "--output-on-failure"
+            ],
+            "group": "test",
+            "problemMatcher": [],
+            "detail": "Run all tests with CTest"
+        }
+    ]
+}

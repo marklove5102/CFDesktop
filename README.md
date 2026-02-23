@@ -44,19 +44,40 @@
      ✓ 自动生成 clangd 配置
      ✓ 保证与 QtCreator 几乎一致的丝滑开发体验
      ✓ 支持 C++23 语法高亮和代码补全
+     ✓ 自动生成 launch.json 和 tasks.json（支持 GDB/LLDB 调试）
 
 +3. 自动化构建脚本
      ✓ Windows PowerShell 构建脚本
      ✓ Linux Bash 构建脚本
      ✓ 支持多种工具链配置（LLVM/GCC）
      ✓ 部署（deploy）与开发（develop）双模式构建
-     ✓ 为后续开发打下坚实的基础
+     ✓ 新增测试运行脚本（windows_run_tests.ps1 / linux_run_tests.sh）
 
 +4. CMake 基础设施
      ✓ 模块化 CMake 架构
      ✓ 自定义日志输出系统
      ✓ 工具链检测与配置管理
      ✓ 编译命令生成（compile_commands.json）
+     ✓ 第三方依赖管理（third_party_helper.cmake）
+     ✓ 自动化输出目录配置（bin/lib 分离）
+
++5. 硬件探针模块（Phase 1）
+     ✓ CPU 信息检测（型号、核心数、频率）
+     ✓ CPU Profile 和 Features 检测
+     ✓ 内存信息检测（Windows 平台完成）
+
++6. Base 基础库（Phase 2）
+     ✓ 统一 cfbase.dll 动态库架构
+     ✓ expected 类型（std::expected 风格的错误处理）
+     ✓ scope_guard（RAII 风格的资源管理）
+
++7. UI 组件库（Phase 4 - 提前启动）
+     ✓ Material Design 规范文档（MaterialRules.md）
+     ✓ 基础数学工具（math_helper）
+     ✓ 颜色处理工具（color_helper, color）
+     ✓ 缓动曲线封装（easing）
+     ✓ 几何图形工具（geometry_helper）
+     ✓ 设备像素转换（device_pixel）
 ```
 
 ### 🚧 开发中
@@ -64,7 +85,8 @@
 | 模块 | 状态 | 阶段 |
 |:---|:---:|:---:|
 | 🔍 硬件探针模块 | ⏳ 进行中 | Phase 1 |
-| 📦 Base 基础库 | 📋 计划中 | Phase 2 |
+| 📦 Base 基础库 | ⏳ 进行中 | Phase 2 |
+| 🎨 UI 组件库 | ⏳ 进行中 | Phase 4 |
 | ⌨️ 输入抽象层 | 📋 计划中 | Phase 3 |
 
 ---
@@ -121,6 +143,9 @@
 # 完整构建（包含完整清理流程）
 .\scripts\build_helpers\windows_develop_build.ps1
 .\scripts\build_helpers\windows_deploy_build.ps1
+
+# 运行测试
+.\scripts\build_helpers\windows_run_tests.ps1
 ```
 
 ### 🐧 Linux 构建
@@ -132,6 +157,9 @@
 # 快速构建（推荐日常开发）
 ./scripts/build_helpers/linux_fast_develop_build.sh
 ./scripts/build_helpers/linux_fast_deploy_build.sh
+
+# 运行测试
+./scripts/build_helpers/linux_run_tests.sh
 ```
 
 ### ⚙️ 构建配置
@@ -157,12 +185,20 @@
 
 ### 🤝 VSCode + Clangd
 
-项目已配置自动生成 clangd 配置。首次运行 CMake 配置后，会在项目根目录生成 `.clangd` 配置文件，提供：
+项目已配置自动生成 VSCode 开发配置。首次运行 CMake 配置后：
 
+**在构建目录生成：**
+- `.vscode/launch.json` - 调试配置（自动检测 GDB/LLDB）
+- `.vscode/tasks.json` - 构建任务（CMake Configure/Build/Clean/CTest）
+- `.clangd` - Clangd 语言服务器配置
+
+**提供的功能：**
 - ✨ 精准的代码补全
 - ✔️ 实时语法检查
 - 🔍 跳转到定义
 - 🔧 重构支持
+- 🐛 一键调试（F5）
+- 📦 快速构建（Ctrl+Shift+B）
 
 ### 🎨 QtCreator
 
@@ -261,7 +297,7 @@ graph LR
 
   **Made with ❤️ for embedded devices**
 
-  *最后更新: 2026-02-21*
+  *最后更新: 2026-02-23*
 
   [⬆ 返回顶部](#-cfdesktop)
 

@@ -1248,13 +1248,34 @@ template <typename T, typename E> class expected {
         } else if (!has_val_ && !o.has_val_) {
             swap(storage_.err, o.storage_.err);
         } else {
-            expected* src = has_val_ ? this : &o;
-            expected* dst = has_val_ ? &o : this;
-            ::new (&dst->storage_.val) T(std::move(src->storage_.val));
-            src->storage_.val.~T();
-            ::new (&src->storage_.err) E(std::move(dst->storage_.err));
-            dst->storage_.err.~E();
-            swap(src->has_val_, dst->has_val_);
+            // Swap between value-holding and error-holding expected
+            if (has_val_) {
+                // this has value, o has error
+                T tmp_val(std::move(storage_.val));
+                storage_.val.~T();
+
+                ::new (&storage_.err) E(std::move(o.storage_.err));
+                o.storage_.err.~E();
+
+                ::new (&o.storage_.val) T(std::move(tmp_val));
+                // tmp_val is destroyed here
+
+                has_val_ = false;
+                o.has_val_ = true;
+            } else {
+                // this has error, o has value
+                E tmp_err(std::move(storage_.err));
+                storage_.err.~E();
+
+                ::new (&storage_.val) T(std::move(o.storage_.val));
+                o.storage_.val.~T();
+
+                ::new (&o.storage_.err) E(std::move(tmp_err));
+                // tmp_err is destroyed here
+
+                has_val_ = true;
+                o.has_val_ = false;
+            }
         }
     }
 

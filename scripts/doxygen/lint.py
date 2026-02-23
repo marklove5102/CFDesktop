@@ -31,7 +31,8 @@ EXCLUDED_DIRS: Tuple[str, ...] = (
     "example",
     "scripts",
     ".git",
-    "test"
+    "test",
+    "third_party"
 )
 
 # File extensions to scan

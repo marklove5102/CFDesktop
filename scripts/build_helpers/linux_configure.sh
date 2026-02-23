@@ -112,6 +112,19 @@ log "Configuration loaded successfully!" "SUCCESS"
 # Extract configuration values
 GENERATOR="$config_cmake_generator"
 TOOLCHAIN="$config_cmake_toolchain"
+BUILD_TYPE="$config_cmake_build_type"
+
+if [[ -z "$BUILD_TYPE" ]]; then
+    log "ERROR: build_type not specified in config file" "ERROR"
+    exit 1
+fi
+
+# Validate BuildType value
+if [[ "$BUILD_TYPE" != "Debug" && "$BUILD_TYPE" != "Release" && "$BUILD_TYPE" != "RelWithDebInfo" ]]; then
+    log "ERROR: Invalid build_type '$BUILD_TYPE'. Must be one of: Debug, Release, RelWithDebInfo" "ERROR"
+    exit 1
+fi
+
 SOURCE_DIR="$config_paths_source"
 BUILD_DIR="$config_paths_build_dir"
 
@@ -124,16 +137,17 @@ fi
 
 log "Generator: $GENERATOR" "INFO"
 log "Toolchain: $TOOLCHAIN" "INFO"
+log "Build Type: $BUILD_TYPE" "INFO"
 log "Source directory: $SOURCE_DIR (resolved: $RESOLVED_SOURCE_DIR)" "INFO"
 log "Build directory: $BUILD_DIR" "INFO"
 
 # Configure with CMake
 log "========================================" "INFO"
 log "Configuring with CMake (NO BUILD)" "INFO"
-log "Command: cmake -G $GENERATOR -DUSE_TOOLCHAIN=$TOOLCHAIN -S $RESOLVED_SOURCE_DIR -B $BUILD_DIR" "INFO"
+log "Command: cmake -G $GENERATOR -DUSE_TOOLCHAIN=$TOOLCHAIN -DCMAKE_BUILD_TYPE=$BUILD_TYPE -S $RESOLVED_SOURCE_DIR -B $BUILD_DIR" "INFO"
 log "========================================" "INFO"
 
-if cmake -G "$GENERATOR" -DUSE_TOOLCHAIN="$TOOLCHAIN" -S "$RESOLVED_SOURCE_DIR" -B "$BUILD_DIR"; then
+if cmake -G "$GENERATOR" -DUSE_TOOLCHAIN="$TOOLCHAIN" -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -S "$RESOLVED_SOURCE_DIR" -B "$BUILD_DIR"; then
     log "========================================" "INFO"
     log "CMake configuration completed successfully!" "SUCCESS"
     log "To build the project, run: cmake --build $BUILD_DIR" "INFO"

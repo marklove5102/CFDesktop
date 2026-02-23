@@ -175,3 +175,23 @@ fi
 log "========================================" "INFO"
 log "Build process completed successfully!" "SUCCESS"
 log "========================================" "INFO"
+
+# Step 3: Run tests
+log "========================================" "INFO"
+log "Step 3: Running tests" "INFO"
+log "========================================" "INFO"
+
+TEST_SCRIPT="$SCRIPT_DIR/linux_run_tests.sh"
+log "Executing: $TEST_SCRIPT deploy" "INFO"
+
+if bash "$TEST_SCRIPT" deploy; then
+    log "========================================" "INFO"
+    log "All tests passed successfully!" "SUCCESS"
+    log "========================================" "INFO"
+else
+    exit_code=$?
+    log "========================================" "INFO"
+    log "Some tests failed with exit code: $exit_code" "WARNING"
+    log "========================================" "INFO"
+    # Don't exit on test failure, just warn
+fi

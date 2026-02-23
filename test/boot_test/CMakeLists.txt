@@ -28,6 +28,11 @@ if(WIN32)
     )
 endif()
 
+# Set output directory for boot test executables
+set_target_properties(boot_test_core boot_test_gui PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test/bin"
+)
+
 # 安装目标
 install(TARGETS boot_test_core boot_test_gui
     RUNTIME DESTINATION bin

@@ -157,14 +157,11 @@ Write-Log "========================================" "INFO"
 Write-Log "Step 3: Running tests" "INFO"
 Write-Log "========================================" "INFO"
 
-# Get build directory from config
-$BuildDir = Join-Path $ProjectRoot $BuildDir
-
-Write-Log "Test directory: $BuildDir" "INFO"
-Write-Log "Command: ctest --test-dir $BuildDir --output-on-failure" "INFO"
+$TestScript = Join-Path $ScriptDir "windows_run_tests.ps1"
+Write-Log "Executing: $TestScript -Config develop" "INFO"
 
 try {
-    & ctest --test-dir $BuildDir --output-on-failure
+    & $TestScript -Config "develop"
     if ($LASTEXITCODE -eq 0) {
         Write-Log "========================================" "INFO"
         Write-Log "All tests passed successfully!" "SUCCESS"

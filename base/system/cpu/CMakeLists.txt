@@ -1,7 +1,7 @@
-# CPU Module Library
+# CPU Module - compiled as OBJECT library for merging into cfbase.dll
 cmake_minimum_required(VERSION 3.16)
 
-add_library(cfbase_cpu STATIC)
+add_library(cfbase_cpu OBJECT)
 target_include_directories(cfbase_cpu
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../../include
@@ -24,7 +24,6 @@ if(WIN32)
     target_include_directories(cfbase_cpu PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/private
     )
-    target_link_libraries(cfbase_cpu PUBLIC wbemuuid PowrProf pdh)
 elseif(UNIX)
     target_sources(cfbase_cpu PRIVATE
         private/linux_impl/cpu_profile.cpp
@@ -34,5 +33,3 @@ elseif(UNIX)
         ../../utils/linux/proc_parser.cpp
     )
 endif()
-
-add_library(CFDesktop::base_cpu ALIAS cfbase_cpu)

@@ -123,6 +123,112 @@ endfunction()
 
 
 #[[.synopsis
+    generate_vscode_debug_config
+
+    Generates VSCode tasks.json and launch.json for debugging.
+
+    This function creates .vscode/tasks.json and .vscode/launch.json
+    in the build directory, configured based on the current toolchain.
+
+    Toolchain Detection:
+    - LLVM-MinGW: uses lldb-vscode.exe
+    - MinGW-GCC:   uses gdb.exe
+
+    Usage:
+        generate_vscode_debug_config()
+#]]
+function(generate_vscode_debug_config)
+    get_filename_component(COMPILER_BIN_DIR "${CMAKE_CXX_COMPILER}" DIRECTORY)
+    get_filename_component(TOOLCHAIN_ROOT   "${COMPILER_BIN_DIR}"   DIRECTORY)
+    get_filename_component(TOOLS_DIR        "${TOOLCHAIN_ROOT}"     DIRECTORY)
+
+    string(TOLOWER "${TOOLCHAIN_ROOT}" TOOLCHAIN_ROOT_LOWER)
+
+    set(DEBUGGER_TYPE "")
+    set(DEBUGGER_PATH "")
+
+    # ------------------------------------------------------------------ #
+    #  Windows Qt toolchain                                                #
+    # ------------------------------------------------------------------ #
+    if("${TOOLCHAIN_ROOT_LOWER}" MATCHES "llvm-mingw")
+        set(DEBUGGER_TYPE "lldb")
+        set(DEBUGGER_PATH "${COMPILER_BIN_DIR}/lldb-vscode.exe")
+
+    elseif("${TOOLCHAIN_ROOT_LOWER}" MATCHES "mingw")
+        set(DEBUGGER_TYPE "gdb")
+        set(DEBUGGER_PATH "${COMPILER_BIN_DIR}/gdb.exe")
+
+    # ------------------------------------------------------------------ #
+    #  Linux / macOS system toolchain                                      #
+    # ------------------------------------------------------------------ #
+    elseif("${TOOLCHAIN_ROOT_LOWER}" MATCHES "^/usr" OR
+           "${TOOLCHAIN_ROOT_LOWER}" MATCHES "^/opt" OR
+           "${TOOLCHAIN_ROOT_LOWER}" MATCHES "^/home")
+
+        # Detect compiler type and choose appropriate debugger
+        if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+            set(DEBUGGER_TYPE "lldb")
+            find_program(DEBUGGER_PATH lldb-vscode)
+            if(NOT DEBUGGER_PATH)
+                find_program(DEBUGGER_PATH lldb)
+            endif()
+        else()
+            set(DEBUGGER_TYPE "gdb")
+            find_program(DEBUGGER_PATH gdb)
+        endif()
+
+        if(NOT DEBUGGER_PATH)
+            message(WARNING
+                "generate_vscode_debug_config: debugger not found in PATH — "
+                "install gdb or lldb")
+            return()
+        endif()
+    else()
+        message(WARNING
+            "generate_vscode_debug_config: unrecognised toolchain root '${TOOLCHAIN_ROOT}' "
+            "— skipping VSCode debug config generation.")
+        return()
+    endif()
+
+    # Verify debugger exists (for Windows toolchain)
+    if(NOT EXISTS "${DEBUGGER_PATH}")
+        message(WARNING
+            "generate_vscode_debug_config: debugger not found at '${DEBUGGER_PATH}' "
+            "— skipping VSCode debug config generation.")
+        return()
+    endif()
+
+    # --- Normalise paths -----------------------------------------------
+    cmake_path(CONVERT "${DEBUGGER_PATH}"       TO_CMAKE_PATH_LIST DEBUGGER_PATH_JSON       NORMALIZE)
+    cmake_path(CONVERT "${CMAKE_BINARY_DIR}"    TO_CMAKE_PATH_LIST CMAKE_BINARY_DIR_JSON    NORMALIZE)
+    cmake_path(CONVERT "${CMAKE_CURRENT_SOURCE_DIR}" TO_CMAKE_PATH_LIST PROJECT_ROOT_JSON NORMALIZE)
+
+    # --- Write tasks.json and launch.json --------------------------------
+    set(VSCODE_DIR "${CMAKE_BINARY_DIR}/.vscode")
+    set(TASKS_JSON "${VSCODE_DIR}/tasks.json")
+    set(LAUNCH_JSON "${VSCODE_DIR}/launch.json")
+    file(MAKE_DIRECTORY "${VSCODE_DIR}")
+
+    configure_file(
+        "${CMAKE_CURRENT_LIST_DIR}/cmake/generate_develop_helpers/templates/vscode_tasks.json.in"
+        "${TASKS_JSON}"
+        @ONLY
+    )
+
+    message(STATUS "Generated VSCode tasks.json: ${TASKS_JSON}")
+
+    configure_file(
+        "${CMAKE_CURRENT_LIST_DIR}/cmake/generate_develop_helpers/templates/vscode_launch.json.in"
+        "${LAUNCH_JSON}"
+        @ONLY
+    )
+
+    message(STATUS "Generated VSCode launch.json: ${LAUNCH_JSON}")
+    message(STATUS "  Debugger: ${DEBUGGER_TYPE} (${DEBUGGER_PATH_JSON})")
+endfunction()
+
+
+#[[.synopsis
     add_generate_develop_helpers_target
 
     Adds a CMake target that generates all development helper configurations.
@@ -165,4 +271,5 @@ if(NOT DEFINED CMAKE_PROJECT_NAME AND NOT DEFINED PROJECT_NAME)
     endforeach()
 
     generate_vscode_clangd()
+    generate_vscode_debug_config()
 endif()

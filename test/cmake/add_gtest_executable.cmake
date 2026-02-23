@@ -22,7 +22,7 @@
 #   add_gtest_executable(
 #       TEST_NAME      test_cpu_info_query
 #       SOURCE_FILE    test_cpu_info_query.cpp
-#       LINK_LIBRARIES cfbase_cpu;GTest::gtest;GTest::gtest_main
+#       LINK_LIBRARIES cfbase;GTest::gtest;GTest::gtest_main
 #       LABELS         "base;system"
 #       LOG_MODULE     base_system
 #   )
@@ -60,6 +60,11 @@ function(add_gtest_executable)
         ${ARG_SOURCE_FILE}
     )
 
+    # Set output directory for test executables
+    set_target_properties(${ARG_TEST_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test/bin"
+    )
+
     # Link libraries
     target_link_libraries(${ARG_TEST_NAME}
         PRIVATE ${ARG_LINK_LIBRARIES}
@@ -71,6 +76,8 @@ function(add_gtest_executable)
     # Set test properties
     set_tests_properties(${ARG_TEST_NAME} PROPERTIES
         LABELS "${ARG_LABELS}"
+        # Set working directory to build output dir so DLLs can be found
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     )
 
     # Log configuration

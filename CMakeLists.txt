@@ -12,7 +12,44 @@ message("Including Requested CMake Dependencies OK")
 include(cmake/check_toolchain.cmake)
 project(CFDesktop VERSION 0.0.1 LANGUAGES CXX)
 
+# ------ Build Type Configuration ------
+# Validate and set build type
+if(NOT CMAKE_BUILD_TYPE)
+    message(FATAL_ERROR "CMAKE_BUILD_TYPE is not set. Please specify build_type in build_*.config.ini")
+endif()
+
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
+
+# Set compiler flags for each build type (use CACHE FORCE to override CMake defaults)
+# Debug: No optimization (-O0), full debug info (-g)
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g" CACHE STRING "Flags used by the C++ compiler during Debug builds" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS_DEBUG "" CACHE STRING "Linker flags used during Debug builds" FORCE)
+
+# Release: Maximum optimization (-O3), no debug info
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" CACHE STRING "Flags used by the C++ compiler during Release builds" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-s" CACHE STRING "Linker flags used during Release builds" FORCE)
+
+# RelWithDebInfo: Optimization (-O2) + full debug info
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g -DNDEBUG" CACHE STRING "Flags used by the C++ compiler during RelWithDebInfo builds" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "" CACHE STRING "Linker flags used during RelWithDebInfo builds" FORCE)
+
+string(TOUPPER "${CMAKE_BUILD_TYPE}" _build_type_upper)
+
+# Log build type and compiler flags (use variable indirection for nested expansion)
+set(_cxx_flags_var   "CMAKE_CXX_FLAGS_${_build_type_upper}")
+set(_link_flags_var  "CMAKE_EXE_LINKER_FLAGS_${_build_type_upper}")
+
+log_info("BuildSettings" "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+log_info("BuildSettings" "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+log_info("BuildSettings" "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}: ${${_cxx_flags_var}}")
+log_info("BuildSettings" "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+log_info("BuildSettings" "CMAKE_EXE_LINKER_FLAGS_${CMAKE_BUILD_TYPE}: ${${_link_flags_var}}")
+
 # ------ Build Settings ------
+# Set output directories for all targets to ensure DLLs and executables are together
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Disable response files in compile_commands.json for better clangd compatibility
 set(CMAKE_CXX_RESPONSE_FILE_FLAG "@")
@@ -48,14 +85,24 @@ include(cmake/generate_develop_helpers.cmake)
 log_info("DevHelpers" "Will Generate VSCode clangd configuration")
 generate_vscode_clangd()
 
+log_info("DevHelpers" "Will Generate VSCode debug configuration")
+generate_vscode_debug_config()
+
 # Print build configuration
 log_config_summary()
 log_qt_dir()
+
 # Log base module start
 log_module_start("base")
 add_subdirectory(base)
 # Log base module end
 log_module_end("base")
+
+# Log base module start
+log_module_start("ui")
+add_subdirectory(ui)
+# Log base module end
+log_module_end("ui")
 
 
 log_module_start("example")

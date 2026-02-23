@@ -107,6 +107,19 @@ catch {
 # Extract configuration values
 $Generator = $ConfigData["cmake"]["generator"]
 $Toolchain = $ConfigData["cmake"]["toolchain"]
+$BuildType = $ConfigData["cmake"]["build_type"]
+if (-not $BuildType) {
+    Write-Log "ERROR: build_type not specified in config file" "ERROR"
+    exit 1
+}
+
+# Validate BuildType value
+$ValidBuildTypes = @("Debug", "Release", "RelWithDebInfo")
+if ($BuildType -notin $ValidBuildTypes) {
+    Write-Log "ERROR: Invalid build_type '$BuildType'. Must be one of: $($ValidBuildTypes -join ', ')" "ERROR"
+    exit 1
+}
+
 $SourceDir = $ConfigData["paths"]["source"]
 $BuildDir = $ConfigData["paths"]["build_dir"]
 
@@ -124,18 +137,20 @@ else {
 
 Write-Log "Generator: $Generator" "INFO"
 Write-Log "Toolchain: $Toolchain" "INFO"
+Write-Log "Build Type: $BuildType" "INFO"
 Write-Log "Source directory: $SourceDir (resolved: $ResolvedSourceDir)" "INFO"
 Write-Log "Build directory: $BuildDir" "INFO"
 
 # Configure with CMake
 Write-Log "========================================" "INFO"
 Write-Log "Configuring with CMake (NO BUILD)" "INFO"
-Write-Log "Command: cmake -G $Generator -DUSE_TOOLCHAIN=$Toolchain -S $ResolvedSourceDir -B $BuildDir" "INFO"
+Write-Log "Command: cmake -G $Generator -DUSE_TOOLCHAIN=$Toolchain -DCMAKE_BUILD_TYPE=$BuildType -S $ResolvedSourceDir -B $BuildDir" "INFO"
 Write-Log "========================================" "INFO"
 
 $cmakeConfigArgs = @(
     "-G", $Generator,
     "-DUSE_TOOLCHAIN=$Toolchain",
+    "-DCMAKE_BUILD_TYPE=$BuildType",
     "-S", $ResolvedSourceDir,
     "-B", $BuildDir
 )

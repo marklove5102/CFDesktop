@@ -52,6 +52,14 @@ function(log_config_summary)
     message("Version: ${PROJECT_VERSION}")
     message("CMake Version: ${CMAKE_VERSION}")
     message("Build Type: ${CMAKE_BUILD_TYPE}")
+    message("C++ Flags: ${CMAKE_CXX_FLAGS}")
+
+    # Use variable indirection for nested expansion
+    set(_cxx_flags_var "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}")
+    set(_link_flags_var "CMAKE_EXE_LINKER_FLAGS_${CMAKE_BUILD_TYPE}")
+    message("C++ Flags (${CMAKE_BUILD_TYPE}): ${${_cxx_flags_var}}")
+    message("Linker Flags: ${CMAKE_EXE_LINKER_FLAGS}")
+    message("Linker Flags (${CMAKE_BUILD_TYPE}): ${${_link_flags_var}}")
 
     if(CMAKE_CXX_COMPILER)
         message("CXX Compiler: ${CMAKE_CXX_COMPILER}")

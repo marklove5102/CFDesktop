@@ -1,38 +1,35 @@
 # Include custom CMake helper functions
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-# GoogleTest for unit testing
-include(FetchContent)
+# Include third party helper from root cmake directory
+include(${CMAKE_SOURCE_DIR}/cmake/third_party_helper.cmake)
 
-message(STATUS "Fetching GoogleTest...")
-FetchContent_Declare(
-    googletest
+# =============================================================================
+# GoogleTest for unit testing
+# =============================================================================
+# Setup GoogleTest from third_party or download if not available
+setup_third_party(
+    NAME           googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG v1.14.0
-    GIT_SHALLOW TRUE
+    GIT_TAG        v1.14.0
 )
 
 # For Windows: Prevent overriding parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
 
-message(STATUS "GoogleTest ${gtest_VERSION} configured")
+message(STATUS "GoogleTest configured")
 
 # Enable CTest integration
 enable_testing()
-
-# Include GoogleTest in our tests
-# We need to link against the gtest and gtest_main libraries
-# and use the GTest::gtest and GTest::gtest_main targets
-
-# Add boot_test subdirectory (legacy tests)
-# add_subdirectory(boot_test)  # Moved below to avoid order issues
 
 # Add base unit tests subdirectory
 add_subdirectory(base)
 
 # Add System Test
 add_subdirectory(system)
+
+# Add ui tests
+add_subdirectory(ui)
 
 # Add boot_test subdirectory (legacy tests)
 add_subdirectory(boot_test)
