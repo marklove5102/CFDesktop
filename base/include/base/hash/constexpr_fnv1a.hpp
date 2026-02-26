@@ -96,6 +96,14 @@ constexpr uint64_t fnv1a64(const char* str, uint64_t seed = fnv1a64_offset_basis
  *
  * @return    64-bit hash value.
  *
+ * @throws    None.
+ *
+ * @note      This function can be evaluated at compile time if the
+ *            input is a constant expression.
+ *
+ * @warning   Different inputs may produce the same hash (collision).
+ *            Use string comparison as fallback when hashes match.
+ *
  * @since     0.1
  * @ingroup   base_hash
  */
@@ -115,6 +123,13 @@ constexpr uint64_t fnv1a64(std::string_view sv, uint64_t seed = fnv1a64_offset_b
  *
  * @return     32-bit hash value.
  *
+ * @throws     None.
+ *
+ * @note       The hash is computed at compile time for string literals.
+ *
+ * @warning    Different inputs may produce the same hash (collision).
+ *            Use string comparison as fallback when hashes match.
+ *
  * @since      0.1
  * @ingroup    base_hash
  */
@@ -132,6 +147,14 @@ constexpr uint32_t fnv1a32(const char* str, uint32_t seed = fnv1a32_offset_basis
  *
  * @return    32-bit hash value.
  *
+ * @throws    None.
+ *
+ * @note      This function can be evaluated at compile time if the
+ *            input is a constant expression.
+ *
+ * @warning   Different inputs may produce the same hash (collision).
+ *            Use string comparison as fallback when hashes match.
+ *
  * @since     0.1
  * @ingroup   base_hash
  */
@@ -148,8 +171,19 @@ constexpr uint32_t fnv1a32(std::string_view sv, uint32_t seed = fnv1a32_offset_b
  *
  * Enables syntax: `"TokenName"_hash` for compile-time hash computation.
  *
- * @since 0.1
- * @ingroup base_hash
+ * @param[in]  str Null-terminated string to hash.
+ * @param[in]  len Length of the string (unused, required by UDL syntax).
+ *
+ * @return     64-bit hash value.
+ *
+ * @throws     None.
+ *
+ * @note       This function is constexpr and evaluated at compile time.
+ *
+ * @warning    None.
+ *
+ * @since      0.1
+ * @ingroup    base_hash
  *
  * @code
  * constexpr uint64_t h = "MyToken"_hash;  // Compile-time hash

@@ -46,12 +46,12 @@ using CornerExtraExtraLargeToken = StaticToken<float, cf::hash::fnv1a64(CORNER_E
 // =============================================================================
 
 /**
- * @brief Material Design 3 Radius Scale with EmbeddedTokenRegistry
+ * @brief  Material Design 3 Radius Scale with EmbeddedTokenRegistry.
  *
- * 实现完整的 Material Design 3 Corner Radius 系统，包含 7 档圆角尺寸。
- * 半径存储在嵌入式注册表中，支持独立的 RadiusScale 实例。
+ * @details Implements the complete Material Design 3 Corner Radius system with 7 scales.
+ * Radii are stored in an embedded registry for independent radius scale instances.
  *
- * ### Radius Scale 规格
+ * ### Radius Scale Specifications
  *
  * | Token | Name | Value (dp) | Usage |
  * |-------|------|------------|-------|
@@ -63,8 +63,16 @@ using CornerExtraExtraLargeToken = StaticToken<float, cf::hash::fnv1a64(CORNER_E
  * | CORNER_EXTRA_LARGE | cornerExtraLarge | 28dp | FAB, modals |
  * | CORNER_EXTRA_EXTRA_LARGE | cornerExtraExtraLarge | 32dp | Drawers |
  *
- * @since 0.1
- * @ingroup ui_core
+ * @note           None
+ * @warning        None
+ * @throws         None
+ * @since          0.1
+ * @ingroup        ui_core
+ *
+ * @code
+ * MaterialRadiusScale radiusScale;
+ * float radius = radiusScale.queryRadiusScale("cornerSmall");
+ * @endcode
  */
 class CF_UI_EXPORT MaterialRadiusScale : public IRadiusScale {
   public:
@@ -78,23 +86,48 @@ class CF_UI_EXPORT MaterialRadiusScale : public IRadiusScale {
     MaterialRadiusScale& operator=(MaterialRadiusScale&&) noexcept = default;
 
     /**
-     * @brief 实现接口：通过名称查询圆角半径（dp）
+     * @brief  Implement interface: query corner radius by name.
      *
-     * @param name 圆角样式名称（如 "md.shape.cornerSmall"）
-     * @return float 圆角半径值（dp），未找到返回 0
+     * @param[in] name Radius style name (e.g., "md.shape.cornerSmall").
+     * @return         Radius value in dp, returns 0 if not found.
      *
-     * @since 0.1
+     * @throws         None
+     * @note           None
+     * @warning        None
+     * @since          0.1
+     * @ingroup        ui_core
      */
     float queryRadiusScale(const char* name) override;
 
     /**
-     * @brief 访问嵌入式注册表
+     * @brief  Access the embedded token registry.
      *
-     * @return Reference to the EmbeddedTokenRegistry.
+     * Provides direct access to the internal token registry for
+     * custom token manipulation.
      *
-     * @since 0.1
+     * @return         Reference to the EmbeddedTokenRegistry.
+     *
+     * @throws         None
+     * @note           None
+     * @warning        None
+     * @since          0.1
+     * @ingroup        ui_core
      */
     EmbeddedTokenRegistry& registry() { return registry_; }
+
+    /**
+     * @brief  Access the embedded token registry (const overload).
+     *
+     * Provides direct read-only access to the internal token registry.
+     *
+     * @return         Const reference to the EmbeddedTokenRegistry.
+     *
+     * @throws         None
+     * @note           None
+     * @warning        None
+     * @since          0.1
+     * @ingroup        ui_core
+     */
     const EmbeddedTokenRegistry& registry() const { return registry_; }
 
   private:

@@ -172,12 +172,12 @@ struct LabelFonts {
 // =============================================================================
 
 /**
- * @brief Material Design 3 Typography with EmbeddedTokenRegistry
+ * @brief  Material Design 3 Typography with EmbeddedTokenRegistry.
  *
- * 实现完整的 Material Design 3 Type Scale 系统，包含 15 档字体样式。
- * 字体存储在嵌入式注册表中，支持独立的 Typography 实例。
+ * @details Implements the complete Material Design 3 Type Scale system with 15 styles.
+ * Fonts are stored in an embedded registry for independent typography instances.
  *
- * ### Type Scale 规格
+ * ### Type Scale Specifications
  *
  * | Category | Name | Size | Weight | Line Height |
  * |----------|------|------|--------|-------------|
@@ -197,8 +197,17 @@ struct LabelFonts {
  * | Label | labelMedium | 12sp | 500 | 16sp |
  * | Label | labelSmall | 11sp | 500 | 16sp |
  *
- * @since 0.1
- * @ingroup ui_core
+ * @note           Font selection: Windows uses Segoe UI, macOS uses .SF NS Text,
+ *                 Linux uses Ubuntu. Chinese fallbacks are platform-dependent.
+ * @warning        None
+ * @throws         None
+ * @since          0.1
+ * @ingroup        ui_core
+ *
+ * @code
+ * MaterialTypography typography;
+ * QFont font = typography.queryTargetFont("bodyLarge");
+ * @endcode
  */
 class CF_UI_EXPORT MaterialTypography : public IFontType {
   public:
@@ -212,33 +221,62 @@ class CF_UI_EXPORT MaterialTypography : public IFontType {
     MaterialTypography& operator=(MaterialTypography&&) noexcept = default;
 
     /**
-     * @brief 实现接口：通过名称查询字体
+     * @brief  Implement interface: query font by name.
      *
-     * @param name 字体样式名称（如 "md.typography.displayLarge"）
-     * @return QFont 对象（副本）
+     * @param[in] name Font style name (e.g., "md.typography.displayLarge").
+     * @return         QFont object (copy).
      *
-     * @since 0.1
+     * @throws         None
+     * @note           None
+     * @warning        None
+     * @since          0.1
+     * @ingroup        ui_core
      */
     QFont queryTargetFont(const char* name) override;
 
     /**
-     * @brief 获取指定样式的行高（sp）
+     * @brief  Get line height for a specific font style.
      *
-     * @param styleName 字体样式名称
-     * @return float 行高值（sp），未找到返回 0
+     * @param[in] styleName Font style name.
+     * @return              Line height value in sp, returns 0 if not found.
      *
-     * @since 0.1
+     * @throws              None
+     * @note                None
+     * @warning             None
+     * @since               0.1
+     * @ingroup             ui_core
      */
     float getLineHeight(const char* styleName) const;
 
     /**
-     * @brief 访问嵌入式注册表
+     * @brief  Access the embedded token registry.
      *
-     * @return Reference to the EmbeddedTokenRegistry.
+     * Provides direct access to the internal token registry for
+     * custom token manipulation.
      *
-     * @since 0.1
+     * @return         Reference to the EmbeddedTokenRegistry.
+     *
+     * @throws         None
+     * @note           None
+     * @warning        None
+     * @since          0.1
+     * @ingroup        ui_core
      */
     EmbeddedTokenRegistry& registry() { return registry_; }
+
+    /**
+     * @brief  Access the embedded token registry (const overload).
+     *
+     * Provides direct read-only access to the internal token registry.
+     *
+     * @return         Const reference to the EmbeddedTokenRegistry.
+     *
+     * @throws         None
+     * @note           None
+     * @warning        None
+     * @since          0.1
+     * @ingroup        ui_core
+     */
     const EmbeddedTokenRegistry& registry() const { return registry_; }
 
     // Font group accessors - 返回包含 Token 类型的结构体

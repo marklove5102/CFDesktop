@@ -13,3 +13,5 @@ out/
 # third_party dependencies (downloaded during configuration)
 third_party/*/
 !third_party/.gitkeep
+
+__pycache__/

@@ -19,7 +19,16 @@ namespace win_impl {
 /**
  * @brief Query DIMM (memory module) information using GetSystemFirmwareTable (SMBIOS).
  *
- * @param dimms Output vector to be populated with DIMM information
+ * @param[out] dimms Output vector to be populated with DIMM information.
+ *
+ * @throws     None.
+ *
+ * @note       None.
+ *
+ * @warning    None.
+ *
+ * @since      0.1
+ * @ingroup    system_memory
  */
 void queryDimmInfo(std::vector<DimmInfo>& dimms);
 

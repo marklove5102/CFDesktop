@@ -185,15 +185,18 @@ struct UtilityColors {
 // =============================================================================
 
 /**
- * @brief Material Design 3 Color Scheme with EmbeddedTokenRegistry.
+ * @brief  Material Design 3 Color Scheme with EmbeddedTokenRegistry.
  *
- * Implements the complete Material Design 3 color system with 26 color tokens.
+ * @details Implements the complete Material Design 3 color system with 26 color tokens.
  * Colors are stored in an embedded registry for independent scheme instances.
  *
  * Factory functions are available in the cf::ui::core::material namespace.
  *
- * @since 0.1
- * @ingroup ui_core
+ * @note           None.
+ * @warning        None.
+ * @throws         None.
+ * @since          0.1
+ * @ingroup        ui_core
  *
  * @code
  * #include "material_factory.hpp"
@@ -220,9 +223,18 @@ class CF_UI_EXPORT MaterialColorScheme : public ICFColorScheme {
      * @brief Query a color by name.
      *
      * @param[in] name Color token name (e.g., "md.primary").
+     *
      * @return Reference to the QColor.
      *
-     * @since 0.1
+     * @throws    None.
+     *
+     * @note      Returns a cached reference that is valid for the lifetime
+     *            of the color scheme.
+     *
+     * @warning   None.
+     *
+     * @since     0.1
+     * @ingroup   ui_core
      */
     QColor& queryExpectedColor(const char* name) override;
 
@@ -230,9 +242,17 @@ class CF_UI_EXPORT MaterialColorScheme : public ICFColorScheme {
      * @brief Query a color by name (const overload).
      *
      * @param[in] name Color token name.
+     *
      * @return Copy of the QColor.
      *
-     * @since 0.1
+     * @throws    None.
+     *
+     * @note      Returns a cached copy or default color if not found.
+     *
+     * @warning   None.
+     *
+     * @since     0.1
+     * @ingroup   ui_core
      */
     QColor queryColor(const char* name) const;
 
@@ -241,9 +261,31 @@ class CF_UI_EXPORT MaterialColorScheme : public ICFColorScheme {
      *
      * @return Reference to the EmbeddedTokenRegistry.
      *
-     * @since 0.1
+     * @throws    None.
+     *
+     * @note      Provides direct access to internal token storage.
+     *
+     * @warning   Modifying tokens directly may affect color scheme behavior.
+     *
+     * @since     0.1
+     * @ingroup   ui_core
      */
     EmbeddedTokenRegistry& registry() { return registry_; }
+
+    /**
+     * @brief Access the embedded token registry (const overload).
+     *
+     * @return Const reference to the EmbeddedTokenRegistry.
+     *
+     * @throws    None.
+     *
+     * @note      Read-only access to internal token storage.
+     *
+     * @warning   None.
+     *
+     * @since     0.1
+     * @ingroup   ui_core
+     */
     const EmbeddedTokenRegistry& registry() const { return registry_; }
 
     // Color group accessors - return structs with token types

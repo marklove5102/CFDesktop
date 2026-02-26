@@ -223,7 +223,12 @@ template <typename E> class unexpected {
      *
      * @throws     None if E is nothrow swappable.
      *
-     * @ingroup base_utilities
+     * @note       None.
+     *
+     * @warning    None.
+     *
+     * @since      0.1
+     * @ingroup    base_utilities
      */
     void swap(unexpected& other) noexcept(std::is_nothrow_swappable_v<E>) {
         using std::swap;
@@ -292,11 +297,44 @@ template <typename T, typename E> class expected {
                   "T must not be a reference (use T* or std::reference_wrapper)");
     static_assert(!std::is_reference_v<E>, "E must not be a reference");
 
-    /// Internal storage union.
+    /**
+     * @brief  Internal storage union for value or error.
+     *
+     * Discriminated union that holds either the value or the error.
+     * Only one member is active at any time.
+     *
+     * @note       Trivial (no explicit initialization).
+     *
+     * @warning    Direct access to members is unsafe; use has_val_ to
+     *             determine which member is active.
+     *
+     * @since      0.1
+     * @ingroup    base_utilities
+     * @internal
+     */
     union Storage {
         T val;  ///< Value storage.
+
         E err;  ///< Error storage.
+
+        /**
+         * @brief  Default constructor.
+         *
+         * @throws     None.
+         *
+         * @since      0.1
+         * @ingroup    base_utilities
+         */
         Storage() {}
+
+        /**
+         * @brief  Destructor.
+         *
+         * @throws     None.
+         *
+         * @since      0.1
+         * @ingroup    base_utilities
+         */
         ~Storage() {}
     };
 
@@ -1236,7 +1274,12 @@ template <typename T, typename E> class expected {
      *
      * @throws     None if types are nothrow move constructible and swappable.
      *
-     * @ingroup base_utilities
+     * @note       None.
+     *
+     * @warning    None.
+     *
+     * @since      0.1
+     * @ingroup    base_utilities
      */
     void swap(expected& o) noexcept(std::is_nothrow_move_constructible_v<T> &&
                                     std::is_nothrow_swappable_v<T> &&
@@ -1287,7 +1330,12 @@ template <typename T, typename E> class expected {
      *
      * @throws     None if types are nothrow move constructible and swappable.
      *
-     * @ingroup base_utilities
+     * @note       None.
+     *
+     * @warning    None.
+     *
+     * @since      0.1
+     * @ingroup    base_utilities
      */
     friend void swap(expected& a, expected& b) noexcept(noexcept(a.swap(b))) { a.swap(b); }
 };

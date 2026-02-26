@@ -18,7 +18,16 @@ namespace win_impl {
 /**
  * @brief Query physical memory information using GlobalMemoryStatusEx.
  *
- * @param physical Output parameter for physical memory statistics
+ * @param[out] physical Output parameter for physical memory statistics.
+ *
+ * @throws     None.
+ *
+ * @note       None.
+ *
+ * @warning    None.
+ *
+ * @since      0.1
+ * @ingroup    system_memory
  */
 void queryPhysicalMemory(PhysicalMemory& physical);
 

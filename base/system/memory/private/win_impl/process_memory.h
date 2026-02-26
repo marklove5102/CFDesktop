@@ -18,7 +18,16 @@ namespace win_impl {
 /**
  * @brief Query current process memory usage using GetProcessMemoryInfo.
  *
- * @param process Output parameter for process memory statistics
+ * @param[out] process Output parameter for process memory statistics.
+ *
+ * @throws     None.
+ *
+ * @note       None.
+ *
+ * @warning    None.
+ *
+ * @since      0.1
+ * @ingroup    system_memory
  */
 void queryProcessMemory(ProcessMemory& process);
 

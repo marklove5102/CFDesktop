@@ -18,7 +18,16 @@ namespace win_impl {
 /**
  * @brief Query swap space information using GlobalMemoryStatusEx.
  *
- * @param swap Output parameter for swap space statistics
+ * @param[out] swap Output parameter for swap space statistics.
+ *
+ * @throws     None.
+ *
+ * @note       None.
+ *
+ * @warning    None.
+ *
+ * @since      0.1
+ * @ingroup    system_memory
  */
 void querySwapMemory(SwapMemory& swap);
 

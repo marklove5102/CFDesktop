@@ -37,11 +37,17 @@ struct CanvasUnitHelper {
      * @brief Constructs a CanvasUnitHelper with the specified device pixel ratio.
      *
      * @param[in] devicePixelRatio The device pixel ratio (e.g., 1.0, 2.0, 3.0).
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 0.1
-     * @ingroup ui
+     *
+     * @return     None (constructor).
+     *
+     * @throws     None.
+     *
+     * @note       None.
+     *
+     * @warning    None.
+     *
+     * @since      0.1
+     * @ingroup    ui
      */
     CanvasUnitHelper(const qreal devicePixelRatio);
 

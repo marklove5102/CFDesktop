@@ -371,9 +371,15 @@ class TokenRegistry {
     /**
      * @brief  Checks if a token exists by hash.
      *
-     * @param  hash Token hash.
+     * @param[in] hash Token hash.
      *
      * @return    true if token exists.
+     *
+     * @throws    None.
+     *
+     * @note      Thread-safe for read operations.
+     *
+     * @warning   None.
      *
      * @since     0.1
      */
@@ -382,9 +388,15 @@ class TokenRegistry {
     /**
      * @brief  Checks if a dynamic token exists.
      *
-     * @param  name Token name.
+     * @param[in] name Token name.
      *
      * @return    true if token exists.
+     *
+     * @throws    None.
+     *
+     * @note      Thread-safe for read operations.
+     *
+     * @warning   None.
      *
      * @since     0.1
      */
@@ -393,9 +405,15 @@ class TokenRegistry {
     /**
      * @brief  Removes a token from the registry.
      *
-     * @param  hash Token hash.
+     * @param[in] hash Token hash.
      *
      * @return    true if removed, false if not found.
+     *
+     * @throws    None.
+     *
+     * @note      Thread-safe. Acquires exclusive lock.
+     *
+     * @warning   None.
      *
      * @since     0.1
      */
@@ -404,9 +422,15 @@ class TokenRegistry {
     /**
      * @brief  Removes a dynamic token from the registry.
      *
-     * @param  name Token name.
+     * @param[in] name Token name.
      *
      * @return    true if removed, false if not found.
+     *
+     * @throws    None.
+     *
+     * @note      Thread-safe. Acquires exclusive lock.
+     *
+     * @warning   None.
      *
      * @since     0.1
      */
@@ -428,9 +452,15 @@ class TokenRegistry {
     /**
      * @brief  Finds a slot by hash with read lock.
      *
-     * @param  hash Token hash to find.
+     * @param[in] hash Token hash to find.
      *
      * @return    Pointer to slot, or nullptr if not found.
+     *
+     * @throws    None.
+     *
+     * @note      Thread-safe. Acquires shared lock.
+     *
+     * @warning   None.
      *
      * @since     0.1
      * @internal
@@ -440,9 +470,15 @@ class TokenRegistry {
     /**
      * @brief  Finds a slot by hash with read lock (const version).
      *
-     * @param  hash Token hash to find.
+     * @param[in] hash Token hash to find.
      *
      * @return    Pointer to slot, or nullptr if not found.
+     *
+     * @throws    None.
+     *
+     * @note      Thread-safe. Acquires shared lock.
+     *
+     * @warning   None.
      *
      * @since     0.1
      * @internal
@@ -909,9 +945,15 @@ class EmbeddedTokenRegistry {
     /**
      * @brief  Checks if a token exists by hash.
      *
-     * @param  hash Token hash.
+     * @param[in] hash Token hash.
      *
      * @return    true if token exists.
+     *
+     * @throws    None.
+     *
+     * @note      Thread-safe for read operations.
+     *
+     * @warning   None.
      *
      * @since     0.1
      */
@@ -920,9 +962,15 @@ class EmbeddedTokenRegistry {
     /**
      * @brief  Checks if a dynamic token exists.
      *
-     * @param  name Token name.
+     * @param[in] name Token name.
      *
      * @return    true if token exists.
+     *
+     * @throws    None.
+     *
+     * @note      Thread-safe for read operations.
+     *
+     * @warning   None.
      *
      * @since     0.1
      */
@@ -931,9 +979,15 @@ class EmbeddedTokenRegistry {
     /**
      * @brief  Removes a token from the registry.
      *
-     * @param  hash Token hash.
+     * @param[in] hash Token hash.
      *
      * @return    true if removed, false if not found.
+     *
+     * @throws    None.
+     *
+     * @note      Thread-safe. Acquires exclusive lock.
+     *
+     * @warning   None.
      *
      * @since     0.1
      */
@@ -942,9 +996,15 @@ class EmbeddedTokenRegistry {
     /**
      * @brief  Removes a dynamic token from the registry.
      *
-     * @param  name Token name.
+     * @param[in] name Token name.
      *
      * @return    true if removed, false if not found.
+     *
+     * @throws    None.
+     *
+     * @note      Thread-safe. Acquires exclusive lock.
+     *
+     * @warning   None.
      *
      * @since     0.1
      */
@@ -963,9 +1023,15 @@ class EmbeddedTokenRegistry {
     /**
      * @brief  Finds a slot by hash with read lock.
      *
-     * @param  hash Token hash to find.
+     * @param[in] hash Token hash to find.
      *
      * @return    Pointer to slot, or nullptr if not found.
+     *
+     * @throws    None.
+     *
+     * @note      Thread-safe. Acquires shared lock.
+     *
+     * @warning   None.
      *
      * @since     0.1
      * @internal
@@ -975,9 +1041,15 @@ class EmbeddedTokenRegistry {
     /**
      * @brief  Finds a slot by hash with read lock (const version).
      *
-     * @param  hash Token hash to find.
+     * @param[in] hash Token hash to find.
      *
      * @return    Pointer to slot, or nullptr if not found.
+     *
+     * @throws    None.
+     *
+     * @note      Thread-safe. Acquires shared lock.
+     *
+     * @warning   None.
      *
      * @since     0.1
      * @internal
