@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script configures and builds the project using configuration from build_config.ini
+# This script cleans the build directory then calls the fast version to build
 set -e
 
 # Function to read INI configuration file
@@ -71,8 +71,7 @@ log() {
 }
 
 log "========================================" "INFO"
-log "Starting Linux Build Process" "INFO"
-log "You shell specified all build settings in build_config.ini before action builds..." "INFO"
+log "Starting Linux Build Process (Full Clean + Build)" "INFO"
 log "========================================" "INFO"
 
 # Get the script directory and project root
@@ -94,11 +93,8 @@ eval "$(get_ini_config "$CONFIG_FILE")"
 log "Configuration loaded successfully!" "SUCCESS"
 
 # Extract configuration values
-GENERATOR="$config_cmake_generator"
-TOOLCHAIN="$config_cmake_toolchain"
 SOURCE_DIR="$config_paths_source"
 BUILD_DIR="$config_paths_build_dir"
-JOBS="${config_options_jobs:-}"
 
 # Resolve source directory: if relative, make it relative to project root
 if [[ "$SOURCE_DIR" = /* ]]; then
@@ -109,21 +105,17 @@ else
     RESOLVED_SOURCE_DIR="$(cd "$PROJECT_ROOT/$SOURCE_DIR" 2>/dev/null && pwd)" || "$PROJECT_ROOT/$SOURCE_DIR"
 fi
 
-log "Generator: $GENERATOR" "INFO"
-log "Toolchain: $TOOLCHAIN" "INFO"
 log "Source directory: $SOURCE_DIR (resolved: $RESOLVED_SOURCE_DIR)" "INFO"
 log "Build directory: $BUILD_DIR" "INFO"
-log "Parallel jobs: ${JOBS:-auto}" "INFO"
 
-# Step 0: Clean build directory
+# Step 1: Clean build directory
 log "========================================" "INFO"
-log "Step 0: Cleaning build directory" "INFO"
-log "Build directory path: $BUILD_DIR" "INFO"
+log "Step 1: Cleaning build directory" "INFO"
 log "========================================" "INFO"
 
 FULL_BUILD_PATH="$PROJECT_ROOT/$BUILD_DIR"
 
-# Step 0: Clear the Build Directory
+# Step 1: Clear the Build Directory
 if [[ -d "$FULL_BUILD_PATH" ]]; then
     log "Removing existing build directory: $FULL_BUILD_PATH" "INFO"
     if rm -rf "$FULL_BUILD_PATH"; then
@@ -136,45 +128,23 @@ else
     log "Build directory does not exist, skipping clean step" "INFO"
 fi
 
-# Step 1: Configure with CMake
+# Step 2: Call the fast build script
 log "========================================" "INFO"
-log "Step 1: Configuring with CMake" "INFO"
-log "Command: cmake -G $GENERATOR -DUSE_TOOLCHAIN=$TOOLCHAIN -S $RESOLVED_SOURCE_DIR -B $BUILD_DIR" "INFO"
+log "Step 2: Calling fast build script" "INFO"
 log "========================================" "INFO"
 
-if cmake -G "$GENERATOR" -DUSE_TOOLCHAIN="$TOOLCHAIN" -S "$RESOLVED_SOURCE_DIR" -B "$BUILD_DIR"; then
-    log "CMake configuration completed successfully!" "SUCCESS"
+FAST_BUILD_SCRIPT="$SCRIPT_DIR/linux_fast_develop_build.sh"
+log "Executing: $FAST_BUILD_SCRIPT" "INFO"
+
+if bash "$FAST_BUILD_SCRIPT"; then
+    log "========================================" "INFO"
+    log "Build process completed successfully!" "SUCCESS"
+    log "========================================" "INFO"
 else
     exit_code=$?
-    log "CMake configuration failed with exit code: $exit_code" "ERROR"
+    log "Fast build script failed with exit code: $exit_code" "ERROR"
     exit $exit_code
 fi
-
-# Step 2: Build with CMake
-log "========================================" "INFO"
-log "Step 2: Building project" "INFO"
-
-# Prepare build command with parallel jobs if specified
-BUILD_CMD="cmake --build \"$BUILD_DIR\""
-if [[ -n "$JOBS" ]]; then
-    BUILD_CMD="$BUILD_CMD --parallel \"$JOBS\""
-    log "Command: cmake --build $BUILD_DIR --parallel $JOBS" "INFO"
-else
-    log "Command: cmake --build $BUILD_DIR" "INFO"
-fi
-log "========================================" "INFO"
-
-if eval "$BUILD_CMD"; then
-    log "Build completed successfully!" "SUCCESS"
-else
-    exit_code=$?
-    log "Build failed with exit code: $exit_code" "ERROR"
-    exit $exit_code
-fi
-
-log "========================================" "INFO"
-log "Build process completed successfully!" "SUCCESS"
-log "========================================" "INFO"
 
 # Step 3: Run tests
 log "========================================" "INFO"
