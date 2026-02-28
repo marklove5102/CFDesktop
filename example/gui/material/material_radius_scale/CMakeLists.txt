@@ -19,6 +19,6 @@ if(WIN32)
     set_target_properties(material_radius_scale_gallery PROPERTIES
         WIN32_EXECUTABLE TRUE
     )
-    # 自动部署 Qt DLL
-    qt_add_windows_deploy(material_radius_scale_gallery AUTO_DEPLOY)
+    # 注册到统一部署列表
+    cf_register_qt_deployment(material_radius_scale_gallery)
 endif()

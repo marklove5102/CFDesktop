@@ -67,7 +67,7 @@ void ThemeManager::remove_widget(QWidget* w) {
     installed_widget.erase(w);
 }
 
-void ThemeManager::setThemeTo(const std::string& name) {
+void ThemeManager::setThemeTo(const std::string& name, bool doBroadcast) {
     auto it = factories_.find(name);
     if (it == factories_.end()) {
         return; // Theme not found
@@ -85,6 +85,12 @@ void ThemeManager::setThemeTo(const std::string& name) {
 
     current_theme_name_ = name;
     // Emit signal
-    emit themeChanged(*cache_it->second);
+    if (doBroadcast) {
+        emit themeChanged(*cache_it->second);
+    }
+}
+
+const std::string& ThemeManager::currentThemeName() const {
+    return current_theme_name_;
 }
 } // namespace cf::ui::core

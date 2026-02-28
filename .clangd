@@ -10,3 +10,14 @@ Diagnostics:
     - incompatible-library-redeclaration
     - builtin-declaration-mismatch
     - builtin_definition
+
+Complete:
+  Include:
+    InsertIncludes: Keep
+    MaxPathLength: 30
+    PathWhitelist:
+      - Qt.*
+
+InlayHints:
+  Enabled: No
+  ParameterNames: No

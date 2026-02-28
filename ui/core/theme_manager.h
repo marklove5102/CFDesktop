@@ -135,7 +135,19 @@ class CF_UI_EXPORT ThemeManager : public QObject {
      * @since         N/A
      * @ingroup       none
      */
-    void setThemeTo(const std::string& name);
+    void setThemeTo(const std::string& name, bool doBroadcast = true);
+
+    /**
+     * @brief  Get the current active theme name.
+     *
+     * @return        Reference to the current theme name.
+     * @throws        None
+     * @note          Returns empty string if no theme has been set.
+     * @warning       None
+     * @since         N/A
+     * @ingroup       none
+     */
+    const std::string& currentThemeName() const;
 
   signals:
     /**

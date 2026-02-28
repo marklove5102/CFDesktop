@@ -323,6 +323,50 @@ template <typename T> class WeakPtr {
      */
     bool operator!=(std::nullptr_t) const noexcept { return IsValid(); }
 
+    // ------------------------------------------------------------
+    // Dynamic Cast (Base -> Derived conversion)
+    // ------------------------------------------------------------
+
+    /**
+     * @brief  Dynamically converts WeakPtr<Base> to WeakPtr<Derived>.
+     *
+     * @details Performs a dynamic_cast on the underlying pointer.
+     *          Returns a valid WeakPtr<Derived> if the cast succeeds,
+     *          otherwise returns an invalid WeakPtr.
+     *
+     * @tparam  Source Source type (base class).
+     * @param  other  WeakPtr to the source object.
+     *
+     * @return        WeakPtr<Derived> pointing to the same object if
+     *                the object is of type Derived, otherwise invalid.
+     *
+     * @throws        None
+     * @note          The returned WeakPtr shares the same weak reference
+     *                flag as the source.
+     * @warning       Always check the returned WeakPtr's validity before use.
+     * @since         N/A
+     * @ingroup       none
+     *
+     * @code
+     * WeakPtr<BaseClass> basePtr = ...;
+     * auto derivedPtr = WeakPtr<DerivedClass>::DynamicCast(basePtr);
+     * if (derivedPtr) {
+     *     derivedPtr->DerivedMethod();
+     * }
+     * @endcode
+     */
+    template <typename Source>
+    static WeakPtr DynamicCast(const WeakPtr<Source>& other) noexcept {
+        if (!other.flag_ || !other.flag_->IsAlive()) {
+            return WeakPtr();
+        }
+        T* casted = dynamic_cast<T*>(other.ptr_);
+        if (casted) {
+            return WeakPtr(casted, other.flag_);
+        }
+        return WeakPtr();
+    }
+
   private:
     // Only WeakPtrFactory can construct valid WeakPtr instances
 

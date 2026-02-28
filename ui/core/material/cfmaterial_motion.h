@@ -17,12 +17,12 @@
 #include <string>
 #include <unordered_map>
 
-#include "../../export.h"
+#include "../token.hpp"
+#include "../motion_spec.h"
 #include "base/easing.h"
 #include "base/hash/constexpr_fnv1a.hpp"
-#include "motion_spec.h"
-#include "token.hpp"
-#include "token/motion/cfmaterial_motion_token_literals.h"
+#include "export.h"
+#include "../token/motion/cfmaterial_motion_token_literals.h"
 
 namespace cf::ui::core {
 
@@ -427,15 +427,15 @@ class CF_UI_EXPORT MaterialMotionScheme : public IMotionSpec {
      * @since 0.1
      */
     struct MotionPresetsGroup {
-        MotionSpec shortEnter;      ///< Short enter motion preset.
-        MotionSpec shortExit;       ///< Short exit motion preset.
-        MotionSpec mediumEnter;     ///< Medium enter motion preset.
-        MotionSpec mediumExit;      ///< Medium exit motion preset.
-        MotionSpec longEnter;       ///< Long enter motion preset.
-        MotionSpec longExit;        ///< Long exit motion preset.
-        MotionSpec stateChange;     ///< State change motion preset.
-        MotionSpec rippleExpand;    ///< Ripple expand motion preset.
-        MotionSpec rippleFade;      ///< Ripple fade motion preset.
+        MotionSpec shortEnter;   ///< Short enter motion preset.
+        MotionSpec shortExit;    ///< Short exit motion preset.
+        MotionSpec mediumEnter;  ///< Medium enter motion preset.
+        MotionSpec mediumExit;   ///< Medium exit motion preset.
+        MotionSpec longEnter;    ///< Long enter motion preset.
+        MotionSpec longExit;     ///< Long exit motion preset.
+        MotionSpec stateChange;  ///< State change motion preset.
+        MotionSpec rippleExpand; ///< Ripple expand motion preset.
+        MotionSpec rippleFade;   ///< Ripple fade motion preset.
     };
 
     /**

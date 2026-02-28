@@ -6,6 +6,9 @@ add_subdirectory(base)
 # Core Provides the UI Components Supports
 add_subdirectory(core)
 
+# Components Provides animation and UI component implementations
+add_subdirectory(components)
+
 # Widget Supports the Middle Level Widgets Abstractions
 add_subdirectory(widget)
 
@@ -28,6 +31,8 @@ add_library(cfui SHARED)
 target_link_libraries(cfui PUBLIC
     cf_ui_core
     cf_ui_base
+    cf_ui_components
+    cf_ui_widget
 )
 
 # Set include directories
