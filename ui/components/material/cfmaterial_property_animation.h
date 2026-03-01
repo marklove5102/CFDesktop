@@ -86,7 +86,8 @@ class CF_UI_EXPORT CFMaterialPropertyAnimation : public ICFAbstractAnimation {
      * @ingroup       ui_components_material
      */
     CFMaterialPropertyAnimation(float* value, float from, float to, int durationMs,
-                                base::Easing::Type easing = base::Easing::Type::EmphasizedDecelerate,
+                                base::Easing::Type easing =
+                                    base::Easing::Type::EmphasizedDecelerate,
                                 QObject* parent = nullptr);
 
     /**
@@ -106,10 +107,45 @@ class CF_UI_EXPORT CFMaterialPropertyAnimation : public ICFAbstractAnimation {
     // ICFAbstractAnimation Interface
     // =========================================================================
 
+    /**
+     * @brief  Start the animation.
+     *
+     * @param[in] dir Direction to play the animation.
+     *
+     * @since 0.1
+     */
     void start(Direction dir = Direction::Forward) override;
+
+    /**
+     * @brief  Pause the animation.
+     *
+     * @since 0.1
+     */
     void pause() override;
+
+    /**
+     * @brief  Stop the animation and reset to initial state.
+     *
+     * @since 0.1
+     */
     void stop() override;
+
+    /**
+     * @brief  Reverse the animation direction.
+     *
+     * @since 0.1
+     */
     void reverse() override;
+
+    /**
+     * @brief  Update animation state by delta time.
+     *
+     * @param[in] dt Delta time in milliseconds.
+     *
+     * @return     true if animation is still running, false if finished.
+     *
+     * @since      0.1
+     */
     bool tick(int dt) override;
     cf::WeakPtr<ICFAbstractAnimation> GetWeakPtr() override {
         return weak_factory_.GetWeakPtr();
@@ -122,7 +158,7 @@ class CF_UI_EXPORT CFMaterialPropertyAnimation : public ICFAbstractAnimation {
     /**
      * @brief  Set the target widget for repaint notifications.
      *
-     * @details The widget will receive update() calls during animation
+     * @details The widget receives update() calls during animation
      *          to trigger repaints.
      *
      * @param[in]     widget Target widget (may be nullptr).

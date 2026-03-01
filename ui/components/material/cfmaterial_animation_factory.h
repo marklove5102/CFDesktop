@@ -268,13 +268,13 @@ class CF_UI_EXPORT CFMaterialAnimationFactory : public ICFAnimationManagerFactor
      *          Unlike createAnimation(), this method always creates a new
      *          animation instance and does not use token-based lookup.
      *
-     * @param  value Pointer to the float property to animate.
-     *               Must remain valid for the lifetime of the animation.
-     * @param  from Start value of the animation.
-     * @param  to End value of the animation.
-     * @param  durationMs Duration of the animation in milliseconds.
-     * @param  easing Easing type for the animation.
-     * @param  targetWidget Optional target widget for repaint notifications.
+     * @param[in]     value Pointer to the float property to animate.
+     *                    Must remain valid for the lifetime of the animation.
+     * @param[in]     from Start value of the animation.
+     * @param[in]     to End value of the animation.
+     * @param[in]     durationMs Duration of the animation in milliseconds.
+     * @param[in]     easing Easing type for the animation.
+     * @param[in]     targetWidget Optional target widget for repaint notifications.
      *
      * @return WeakPtr to the created animation, or invalid WeakPtr if:
      *         - Global enabled is false

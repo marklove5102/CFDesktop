@@ -312,7 +312,7 @@ class CF_UI_EXPORT TextArea : public QTextEdit {
      * @return        Maximum number of lines, or 0 for unlimited.
      *
      * @throws        None
-     * @note          0 means no maximum (scrollbar will appear).
+     * @note          0 means no maximum (scrollbar appears).
      * @warning       None
      * @since         0.1
      * @ingroup      ui_widget_material_widget
@@ -325,7 +325,7 @@ class CF_UI_EXPORT TextArea : public QTextEdit {
      * @param[in]     lines Maximum number of visible lines, or 0 for unlimited.
      *
      * @throws        None
-     * @note          When set, the text area will grow up to this many lines.
+     * @note          When set, the text area grows up to this many lines.
      * @warning       None
      * @since         0.1
      * @ingroup       ui_widget_material_widget
