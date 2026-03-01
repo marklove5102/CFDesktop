@@ -19,7 +19,6 @@
 #include "base/color.h"
 #include "base/include/base/weak_ptr/weak_ptr.h"
 #include "cfmaterial_animation_factory.h"
-#include "components/animation_factory_manager.h"
 #include "export.h"
 #include <QIcon>
 #include <QPushButton>

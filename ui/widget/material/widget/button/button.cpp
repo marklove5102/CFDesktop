@@ -156,10 +156,6 @@ void Button::changeEvent(QEvent* event) {
     }
 }
 
-void Button::keyPressEvent(QKeyEvent* event) {
-    QPushButton::keyPressEvent(event);
-}
-
 // ============================================================================
 // Property Getters/Setters
 // ============================================================================
@@ -509,7 +505,7 @@ QMarginsF Button::shadowMargin() const {
     // Level 2: blur=4dp, offset=2dp, 最大偏移约 3dp
     // 预留边距 = offset + blur/2，更精确的阴影空间
     int level = m_elevation->elevation();
-    float margin = helper.dpToPx(2.0f + level * 1.5f);  // level 2: 约 5dp
+    float margin = helper.dpToPx(2.0f + level * 1.5f); // level 2: 约 5dp
     return QMarginsF(margin, margin, margin, margin);
 }
 
