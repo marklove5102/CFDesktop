@@ -78,6 +78,44 @@
      ✓ 缓动曲线封装（easing）
      ✓ 几何图形工具（geometry_helper）
      ✓ 设备像素转换（device_pixel）
+
++8. P0 Widgets 核心组件
+     ✓ Button - 按钮组件
+     ✓ Label - 标签组件
+     ✓ TextField - 文本输入框
+     ✓ TextArea - 多行文本区域
+     ✓ CheckBox - 复选框
+     ✓ RadioButton - 单选按钮
+     ✓ GroupBox - 分组框
+
++9. Material Design 应用程序框架
+     ✓ 应用程序抽象层
+     ✓ 焦点环（Focus Ring）
+     ✓ 波纹效果（Ripple）
+     ✓ 高度控制器（Elevation Controller）
+     ✓ 状态机（State Machine）
+
++10. 动画系统
+     ✓ Spring 动画
+     ✓ 时间动画
+     ✓ 淡入淡出动画
+     ✓ 缩放动画
+     ✓ 滑动动画
+     ✓ 动画工厂和管理器
+
++11. 主题引擎
+     ✓ 主题抽象层
+     ✓ 令牌系统（Token System）
+     ✓ 颜色方案管理
+     ✓ 运动规格管理
+     ✓ 半径缩放管理
+     ✓ 字体类型管理
+
++12. Doxygen 文档系统
+     ✓ Doxyfile 配置
+     ✓ 文件扫描器
+     ✓ 代码注释规范
+     ✓ lint.py 检查工具
 ```
 
 ### 🚧 开发中
@@ -86,7 +124,7 @@
 |:---|:---:|:---:|
 | 🔍 硬件探针模块 | ⏳ 进行中 | Phase 1 |
 | 📦 Base 基础库 | ⏳ 进行中 | Phase 2 |
-| 🎨 UI 组件库 | ⏳ 进行中 | Phase 4 |
+| 🎨 UI 组件库 | ✅ 核心完成 | Phase 4 |
 | ⌨️ 输入抽象层 | 📋 计划中 | Phase 3 |
 
 ---
@@ -102,9 +140,11 @@
 - 智能资源管理
 
 #### 🎨 现代化 UI
-- 流畅的动画效果
+- Material Design 3 完整实现
+- 流畅的动画效果（Spring、淡入淡出、缩放、滑动）
 - 响应式布局
-- 主题定制支持
+- 主题定制支持（颜色、运动、半径、字体）
+- P0 核心组件（Button、Label、TextField 等）
 
 #### 🧩 模块化架构
 - 插件式扩展
@@ -113,8 +153,9 @@
 
 #### 🛠️ 开发工具链
 - 完整的 SDK
-- 模拟器支持
-- 调试工具
+- Doxygen 文档系统
+- VSCode + Clangd 集成
+- 示例程序（Material Gallery、主题定制）
 
 </details>
 
@@ -206,6 +247,24 @@
 
 ---
 
+## 📺 示例程序
+
+项目包含多个示例程序，展示 CFDesktop 的各项功能：
+
+| 示例 | 描述 |
+|:---|:---|
+| **Material Gallery** | Material Design 组件展示 |
+| **主题定制** | 颜色、运动、半径、字体定制示例 |
+| **Widget 组件** | P0 核心控件演示 |
+
+运行示例：
+```powershell
+# Windows
+.\out\build_deploy\bin\material_gallery.exe
+```
+
+---
+
 ## 📚 开发文档
 
 详细的设计文档请查看 [document/design_stage/](document/design_stage/)：
@@ -268,7 +327,7 @@ graph LR
     style B fill:#2196F3
     style C fill:#9E9E9E
     style D fill:#9E9E9E
-    style E fill:#9E9E9E
+    style E fill:#2196F3
     style F fill:#9E9E9E
     style G fill:#9E9E9E
     style H fill:#9E9E9E
@@ -297,7 +356,7 @@ graph LR
 
   **Made with ❤️ for embedded devices**
 
-  *最后更新: 2026-02-23*
+  *最后更新: 2026-03-01*
 
   [⬆ 返回顶部](#-cfdesktop)
 
