@@ -1,69 +1,64 @@
-# Windows 平台 CPU 信息查询实现
+# Windows 平台实现细节
 
-## 简介
+Windows 下的 CPU 信息主要通过 WMI（Windows Management Instrumentation）和 CPUID 指令获取。WMI 能拿到大部分基础信息，但查询开销较大且需要小心处理 COM 生命周期。CPU 指令则用于特性检测，这是跨平台的一致方案。
 
-本文档描述了 CFDesktop CPU 模块在 Windows 平台上的实现细节。Windows 实现主要通过 WMI (Windows Management Instrumentation) 和 CPUID 指令来获取 CPU 信息。
+## COM 初始化
 
-## 实现文件
-
-```
-base/system/cpu/private/win_impl/
-├── cpu_info.h/cpp      # 基础信息实现
-├── cpu_profile.h/cpp   # 性能信息实现
-├── cpu_bonus.h/cpp     # 扩展信息实现
-└── cpu_features.h/cpp  # 特性检测实现
-```
-
-## 基础信息实现 (cpu_info.cpp)
-
-### 数据来源
-
-| 信息 | WMI 类 | 属性 |
-|------|--------|------|
-| 型号 | Win32_Processor | Name |
-| 制造商 | Win32_Processor | Manufacturer |
-| 架构 | Win32_Processor | Architecture |
-
-### 实现要点
+WMI 查询必须在 COM 环境中进行，我们用 `COMHelper` 封装了初始化和清理逻辑。选择 MTA（多线程公寓）而不是 STA，是因为 CPU 查询可能在不同线程执行。
 
 ```cpp
 cf::expected<void, CPUInfoErrorType> query_cpu_basic_info(cf::CPUInfoHost& hostInfo) {
     return cf::COMHelper<void, CPUInfoErrorType>::RunComInterfacesMTA(
         [&hostInfo]() -> cf::expected<void, CPUInfoErrorType> {
-            // 1. 创建 WMI 定位器
-            IWbemLocator* pLoc = nullptr;
-            CoCreateInstance(CLSID_WbemLocator, nullptr, CLSCTX_INPROC_SERVER,
-                            IID_IWbemLocator, (LPVOID*)&pLoc);
-
-            // 2. 连接到 WMI 服务
-            IWbemServices* pSvc = nullptr;
-            pLoc->ConnectServer(_bstr_t(L"ROOT\\CIMV2"), ...);
-
-            // 3. 设置代理安全级别
-            CoSetProxyBlanket(pSvc, ...);
-
-            // 4. 查询 CPU 信息
-            auto modelName = queryWMIProperty(pSvc, L"Win32_Processor", L"Name");
-            if (modelName) {
-                hostInfo.model = *modelName;
-            }
-
-            auto manufacturer = queryWMIProperty(pSvc, L"Win32_Processor",
-                                                L"Manufacturer");
-            if (manufacturer) {
-                hostInfo.manufest = *manufacturer;
-            }
-
-            auto archValue = queryWMIProperty(pSvc, L"Win32_Processor",
-                                             L"Architecture");
-            hostInfo.arch = architectureToString(std::stoi(*archValue));
-
-            return {};
+            // WMI 查询代码
         });
 }
 ```
 
-### 架构值转换
+这个封装确保 COM 正确初始化，线程退出时自动调用 `CoUninitialize()`，而且异常安全。
+
+## 基础信息
+
+CPU 型号、厂商、架构这些信息从 `Win32_Processor` 类查询。WQL 查询语法类似 SQL，但只能用于查询系统信息。
+
+```cpp
+cf::expected<void, CPUInfoErrorType> query_cpu_basic_info(cf::CPUInfoHost& hostInfo) {
+    IWbemLocator* pLoc = nullptr;
+    IWbemServices* pSvc = nullptr;
+
+    // 1. 创建 WMI 定位器
+    CoCreateInstance(CLSID_WbemLocator, nullptr, CLSCTX_INPROC_SERVER,
+                    IID_IWbemLocator, (LPVOID*)&pLoc);
+
+    // 2. 连接到 WMI 服务
+    pLoc->ConnectServer(_bstr_t(L"ROOT\\CIMV2"), nullptr, nullptr,
+                       nullptr, 0, nullptr, nullptr, &pSvc);
+
+    // 3. 设置代理安全级别（必须，否则会访问被拒）
+    CoSetProxyBlanket(pSvc, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE,
+                     nullptr, RPC_C_AUTHN_LEVEL_CALL,
+                     RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE);
+
+    // 4. 查询 CPU 信息
+    auto modelName = queryWMIProperty(pSvc, L"Win32_Processor", L"Name");
+    if (modelName) hostInfo.model = *modelName;
+
+    auto manufacturer = queryWMIProperty(pSvc, L"Win32_Processor", L"Manufacturer");
+    if (manufacturer) hostInfo.manufest = *manufacturer;
+
+    // 清理
+    pSvc->Release();
+    pLoc->Release();
+
+    return {};
+}
+```
+
+⚠️ `CoSetProxyBlanket()` 调用是必须的，否则查询会返回 `E_ACCESSDENIED`。这个坑踩过一次。
+
+## 架构值转换
+
+WMI 返回的 `Architecture` 是个数字，需要映射到字符串。Windows 的架构值定义有点奇怪——9 是 x64，12 是 ARM64——但这些都是标准值，照着映射就行。
 
 ```cpp
 std::string architectureToString(UINT16 archValue) {
@@ -81,99 +76,38 @@ std::string architectureToString(UINT16 archValue) {
 }
 ```
 
-## WMI 辅助函数
+## 性能信息
 
-### queryWMIProperty
-
-```cpp
-cf::expected<std::string, CPUInfoErrorType>
-queryWMIProperty(IWbemServices* pSvc,
-                 const std::wstring& className,
-                 const std::wstring& property) {
-    // 构建 WQL 查询
-    std::wstringstream query;
-    query << L"SELECT " << property << L" FROM " << className;
-
-    // 执行查询
-    IEnumWbemClassObject* pEnumerator = nullptr;
-    pSvc->ExecQuery(_bstr_t(L"WQL"), _bstr_t(query.str().c_str()),
-                   WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
-                   nullptr, &pEnumerator);
-
-    // 获取结果
-    IWbemClassObject* pclsObj = nullptr;
-    pEnumerator->Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
-
-    // 获取属性值
-    VARIANT vtProp;
-    pclsObj->Get(property.c_str(), 0, &vtProp, 0, 0);
-
-    // 转换 BSTR 到 std::string
-    if (vtProp.vt == VT_BSTR) {
-        int len = WideCharToMultiByte(CP_UTF8, 0, vtProp.bstrVal, -1,
-                                     nullptr, 0, nullptr, nullptr);
-        std::string result(len - 1, '\0');
-        WideCharToMultiByte(CP_UTF8, 0, vtProp.bstrVal, -1,
-                           &result[0], len, nullptr, nullptr);
-        return result;
-    }
-
-    VariantClear(&vtProp);
-    return cf::unexpected(CPUInfoErrorType::CPU_QUERY_GENERAL_FAILED);
-}
-```
-
-## 性能信息实现 (cpu_profile.cpp)
-
-### 数据来源
-
-| 信息 | WMI 类 / 其他 | 属性 / 方法 |
-|------|--------------|-------------|
-| 逻辑核心 | Win32_Processor | NumberOfLogicalProcessors |
-| 物理核心 | Win32_Processor | NumberOfCores |
-| 最大频率 | Win32_Processor | MaxClockSpeed |
-| 当前频率 | Win32_Processor | CurrentClockSpeed |
-| 使用率 | 性能计数器 | \Processor(_Total)\% Processor Time |
-
-### CPU 使用率实现
+核心数和最大频率可以从 `Win32_Processor` 直接拿到，但当前频率和 CPU 使用率需要其他方式。当前频率 WMI 也提供，但不太可靠；使用率则用 PDH（Performance Data Helper）API。
 
 ```cpp
 float get_cpu_usage() {
-    // 使用 PDH (Performance Data Helper) API
     PDH_HQUERY query;
     PDH_HCOUNTER counter;
 
-    // 打开查询
     PdhOpenQuery(nullptr, 0, &query);
+    PdhAddCounter(query, L"\\Processor(_Total)\\% Processor Time", 0, &counter);
 
-    // 添加计数器
-    PdhAddCounter(query,
-                 L"\\Processor(_Total)\\% Processor Time",
-                 0, &counter);
-
-    // 收集数据
+    // 第一次调用初始化计数器
+    PdhCollectQueryData(query);
+    Sleep(1000);  // 必须等待，否则数据无效
     PdhCollectQueryData(query);
 
-    // 等待一秒后再次收集
-    Sleep(1000);
-    PdhCollectQueryData(query);
-
-    // 获取格式化值
     PDH_FMT_COUNTERVALUE value;
     PdhGetFormattedCounterValue(counter, PDH_FMT_DOUBLE, nullptr, &value);
 
     PdhCloseQuery(query);
-
     return static_cast<float>(value.doubleValue);
 }
 ```
 
-## 特性检测实现 (cpu_features.cpp)
+⚠️ 两次 `PdhCollectQueryData()` 之间必须有延迟，否则返回的数据是 0 或无效值。这是因为性能计数器是基于时间差计算的。
 
-### CPUID 指令
+## 特性检测
+
+CPU 特性通过 CPUID 指令检测，这是 x86 平台的标准方式。MSVC 用 `__cpuid()` intrinsic，GCC/Clang 用内联汇编。
 
 ```cpp
-// 使用内联汇编或intrinsics执行 CPUID 指令
 void cpuid(int info[4], int function_id) {
     #ifdef _MSC_VER
         __cpuid(info, function_id);
@@ -188,7 +122,7 @@ void cpuid(int info[4], int function_id) {
 
 bool detect_feature(const char* feature_name) {
     int info[4];
-    cpuid(info, 1);  // 基本处理器信息
+    cpuid(info, 1);  // EAX=1 返回基本特性
 
     if (strcmp(feature_name, "SSE") == 0)
         return (info[3] & (1 << 25)) != 0;
@@ -197,85 +131,48 @@ bool detect_feature(const char* feature_name) {
     if (strcmp(feature_name, "AVX") == 0)
         return (info[2] & (1 << 28)) != 0;
     if (strcmp(feature_name, "AVX2") == 0) {
-        cpuid(info, 7);
+        cpuid(info, 7);  // EAX=7 返回扩展特性
         return (info[1] & (1 << 5)) != 0;
     }
-
     return false;
 }
 ```
 
-### 扩展特性检测
+EAX=1 返回的是基本特性，EAX=7 返回的是扩展特性。不同特性位分布在不同的寄存器里，需要查 Intel 的手册确认。
 
-```cpp
-std::vector<std::string> get_cpu_features() {
-    std::vector<std::string> features;
-    int info[4];
+## 温度信息
 
-    // 基本特性 (EAX=1)
-    cpuid(info, 1);
-    if (info[3] & (1 << 25)) features.push_back("SSE");
-    if (info[3] & (1 << 26)) features.push_back("SSE2");
-    if (info[2] & (1 << 0))  features.push_back("SSE3");
-    if (info[2] & (1 << 9))  features.push_back("SSSE3");
-    if (info[2] & (1 << 19)) features.push_back("SSE4.1");
-    if (info[2] & (1 << 20)) features.push_back("SSE4.2");
-    if (info[2] & (1 << 25)) features.push_back("AES");
-    if (info[2] & (1 << 28)) features.push_back("AVX");
-
-    // 扩展特性 (EAX=7)
-    cpuid(info, 7);
-    if (info[1] & (1 << 5))  features.push_back("AVX2");
-    if (info[1] & (1 << 14)) features.push_back("BMI1");
-    if (info[1] & (1 << 16)) features.push_back("AVX512F");
-
-    return features;
-}
-```
-
-## 温度查询实现
+Windows 上温度信息比较麻烦。`MSAcpi_ThermalZoneTemperature` WMI 类理论上可以查，但大部分 PC 不支持。注册表 `HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\ThermalInfo` 也经常是空的。
 
 ```cpp
 std::optional<uint16_t> get_cpu_temperature() {
-    // Windows 上温度信息来源较少
-    // 可以尝试以下方法：
-
-    // 方法1: MSAcpi_ThermalZoneTemperature
-    auto temp = queryWMIProperty(L"MSAcpi_ThermalZoneTemperature",
-                                L"CurrentTemperature");
+    auto temp = queryWMIProperty(L"MSAcpi_ThermalZoneTemperature", L"CurrentTemperature");
     if (temp) {
-        // 温度值需要转换：返回值 = 摄氏度 * 10 - 273.15
+        // 返回值是摄氏度 * 10 - 273.15（开尔文转摄氏度）
         return (std::stoull(*temp) / 10.0) - 273.15;
     }
-
-    // 方法2: 注册表
-    // HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\ ThermalInfo
-
-    return std::nullopt;  // 大多数情况下不可用
+    return std::nullopt;  // 大多数情况不可用
 }
 ```
 
-## COM 资源管理
+所以我们的实现里，温度信息在 Windows 上基本总是 `std::nullopt`。这不是 bug，是 Windows 硬件生态的限制。
 
-### COMHelper 类
+## 资源管理
+
+WMI 和 COM 的资源管理很繁琐，每个接口都要手动 `Release()`。用 `ScopeGuard` 可以确保即使中途出错也不会泄漏。
 
 ```cpp
-// 使用 ScopeGuard 管理 COM 资源
-cf::ScopeGuard locGuard([&pLoc]() {
-    if (pLoc) pLoc->Release();
-});
+IWbemLocator* pLoc = nullptr;
+IWbemServices* pSvc = nullptr;
+IWbemClassObject* pclsObj = nullptr;
+VARIANT vtProp;
 
-cf::ScopeGuard svcGuard([&pSvc]() {
-    if (pSvc) pSvc->Release();
-});
+cf::ScopeGuard locGuard([&pLoc]() { if (pLoc) pLoc->Release(); });
+cf::ScopeGuard svcGuard([&pSvc]() { if (pSvc) pSvc->Release(); });
+cf::ScopeGuard objGuard([&pclsObj]() { if (pclsObj) pclsObj->Release(); });
+cf::ScopeGuard varGuard([&vtProp]() { VariantClear(&vtProp); });
 
-cf::ScopeGuard classObjGuard([&pclsObj]() {
-    if (pclsObj) pclsObj->Release();
-});
-
-cf::ScopeGuard variantGuard([&vtProp]() {
-    VariantClear(&vtProp);
-});
+// ... 复杂的查询逻辑，无论哪里返回，资源都会被释放
 ```
 
 ## 相关文档
