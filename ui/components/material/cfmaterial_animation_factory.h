@@ -30,6 +30,7 @@
 
 #include "../animation.h"
 #include "animation_factory_manager.h"
+#include "base/easing.h"
 #include "base/weak_ptr/weak_ptr.h"
 #include "base/weak_ptr/weak_ptr_factory.h"
 #include "cfmaterial_animation_strategy.h"
@@ -258,6 +259,50 @@ class CF_UI_EXPORT CFMaterialAnimationFactory : public ICFAnimationManagerFactor
                                                       QWidget* targetWidget = nullptr);
 
     /**
+     * @brief  Create a property animation for a float value.
+     *
+     * @details Creates a property animation that directly animates a float
+     *          value from a start value to an end value. This is useful for
+     *          simple property animations like floating labels, scale, etc.
+     *
+     *          Unlike createAnimation(), this method always creates a new
+     *          animation instance and does not use token-based lookup.
+     *
+     * @param  value Pointer to the float property to animate.
+     *               Must remain valid for the lifetime of the animation.
+     * @param  from Start value of the animation.
+     * @param  to End value of the animation.
+     * @param  durationMs Duration of the animation in milliseconds.
+     * @param  easing Easing type for the animation.
+     * @param  targetWidget Optional target widget for repaint notifications.
+     *
+     * @return WeakPtr to the created animation, or invalid WeakPtr if:
+     *         - Global enabled is false
+     *         - Strategy disables animation
+     *
+     * @throws     None
+     * @note       The factory takes ownership of the created animation.
+     * @warning    The value pointer must remain valid during animation.
+     * @since      0.1
+     * @ingroup    ui_components_material
+     *
+     * @code
+     * float scale = 0.0f;
+     * auto anim = factory->createPropertyAnimation(&scale, 0.0f, 1.0f, 200,
+     *                                             Easing::Type::EmphasizedDecelerate,
+     *                                             this);
+     * if (anim) anim->start();
+     * @endcode
+     */
+    cf::WeakPtr<ICFAbstractAnimation> createPropertyAnimation(
+        float* value,
+        float from,
+        float to,
+        int durationMs,
+        cf::ui::base::Easing::Type easing = cf::ui::base::Easing::Type::EmphasizedDecelerate,
+        QWidget* targetWidget = nullptr);
+
+    /**
      * @brief  Set the animation strategy for this factory.
      *
      * @details The strategy is applied to all animations created after
@@ -331,6 +376,28 @@ class CF_UI_EXPORT CFMaterialAnimationFactory : public ICFAnimationManagerFactor
     bool isAllEnabled() override { return globalEnabled_; }
 
     /**
+     * @brief  Set the target FPS for animations.
+     *
+     * @details Sets the desired frame rate for animation updates.
+     *          This affects the tick interval for all animations created
+     *          by this factory, including existing animations.
+     *
+     * @param[in] fps Target frames per second (e.g., 60.0f).
+     *
+     * @throws     None
+     * @note       Default is 60.0f. Changes take effect immediately.
+     * @warning    None
+     * @since      0.1
+     * @ingroup    ui_components_material
+     *
+     * @code
+     * factory->setTargetFps(30.0f);   // 30 FPS (lower CPU usage)
+     * factory->setTargetFps(120.0f);  // 120 FPS (smoother animation)
+     * @endcode
+     */
+    void setTargetFps(const float fps);
+
+    /**
      * @brief  Get the associated theme.
      *
      * @return Reference to the theme.
@@ -348,6 +415,26 @@ class CF_UI_EXPORT CFMaterialAnimationFactory : public ICFAnimationManagerFactor
      * @since 0.1
      */
     size_t animationCount() const { return animations_.size(); }
+
+    /**
+     * @brief  Get the target FPS for animations.
+     *
+     * @details Returns the current target frame rate for animation updates.
+     *          This value is used by all animations created by this factory.
+     *
+     * @return Target frames per second (default: 60.0f).
+     *
+     * @throws     None
+     * @note       Use setTargetFps() to change this value.
+     * @warning    None
+     * @since      0.1
+     * @ingroup    ui_components_material
+     *
+     * @code
+     * float fps = factory->getTargetFps();  // Returns 60.0f by default
+     * @endcode
+     */
+    float getTargetFps() const { return targetFps_; }
 
   signals:
     /**
@@ -379,6 +466,9 @@ class CF_UI_EXPORT CFMaterialAnimationFactory : public ICFAnimationManagerFactor
 
     /// Global enabled state
     bool globalEnabled_ = true;
+
+    /// Target FPS for animations (default 60.0f)
+    float targetFps_ = 60.0f;
 
     /// Owned animations (unique ownership)
     /// Key: token name, Value: owned animation instance

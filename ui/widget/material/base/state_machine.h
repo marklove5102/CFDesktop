@@ -168,6 +168,19 @@ class CF_UI_EXPORT StateMachine : public QObject {
     void onCheckedChanged(bool checked);
 
     /**
+     * @brief  Destructor.
+     *
+     * @details Cancels any running animation before destruction.
+     *
+     * @throws        None
+     * @note          None
+     * @warning       None
+     * @since         N/A
+     * @ingroup       ui_widget_material_base
+     */
+    ~StateMachine();
+
+    /**
      * @brief  Gets the current states.
      *
      * @return        Current widget states.
@@ -235,18 +248,42 @@ class CF_UI_EXPORT StateMachine : public QObject {
      * @brief  Animates the state layer opacity to a target value.
      *
      * @details Creates and starts an opacity animation from the current
-     *          or specified value to the target value.
+     *          opacity value to the target value. Cancels any running
+     *          animation before starting a new one.
      *
-     * @param[in] from Starting opacity value (0.0 to 1.0).
      * @param[in] to   Target opacity value (0.0 to 1.0).
      *
      * @throws        None
      * @note          Uses the animation factory to create a fade animation.
-     * @warning       The animation is not stored; it is fire-and-forget.
+     * @warning       The animation reference is stored and can be cancelled.
      * @since         N/A
      * @ingroup       ui_widget_material_base
      */
-    void animateOpacityTo(float from, float to);
+    void animateOpacityTo(float to);
+
+    /**
+     * @brief  Cancels the currently running opacity animation.
+     *
+     * @throws        None
+     * @note          Disconnects all signals and stops the animation.
+     * @warning       None
+     * @since         N/A
+     * @ingroup       ui_widget_material_base
+     */
+    void cancelCurrentAnimation();
+
+    /**
+     * @brief  Slot called when the current animation finishes.
+     *
+     * @details Clears the animation reference to allow new animations.
+     *
+     * @throws        None
+     * @note          None
+     * @warning       None
+     * @since         N/A
+     * @ingroup       ui_widget_material_base
+     */
+    void onAnimationFinished();
 
     /**
      * @brief  Calculates the target opacity for a given widget state.
@@ -266,5 +303,8 @@ class CF_UI_EXPORT StateMachine : public QObject {
     States m_state = State::StateNormal;
     float m_opacity = 0.0f;
     cf::WeakPtr<components::material::CFMaterialAnimationFactory> m_animator;
+
+    /// Reference to the currently running opacity animation
+    cf::WeakPtr<components::ICFAbstractAnimation> m_currentAnimation;
 };
 } // namespace cf::ui::widget::material::base

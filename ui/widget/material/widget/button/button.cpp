@@ -68,6 +68,8 @@ Button::Button(ButtonVariant variant, QWidget* parent) : QPushButton(parent), va
     connect(m_ripple, &RippleHelper::repaintNeeded, this, QOverload<>::of(&Button::update));
     connect(m_stateMachine, &StateMachine::stateLayerOpacityChanged, this,
             QOverload<>::of(&Button::update));
+    connect(m_elevation, &MdElevationController::pressOffsetChanged, this,
+            QOverload<>::of(&Button::update));
 
     // Set default font
     setFont(labelFont());
@@ -553,6 +555,8 @@ void Button::drawStateLayer(QPainter& p, const QPainterPath& shape) {
 
 void Button::drawRipple(QPainter& p, const QPainterPath& shape) {
     if (m_ripple) {
+        // Set ripple color based on label color (content color)
+        m_ripple->setColor(labelColor());
         m_ripple->paint(&p, shape);
     }
 }

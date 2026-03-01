@@ -73,17 +73,28 @@ void CFMaterialSlideAnimation::start(Direction dir) {
 
     // Apply initial offset
     applyOffset(currentOffset_);
+
+    // Start the internal timer to drive animation
+    if (driven_internal_timer) {
+        driven_internal_timer->start(calculateInterval());
+    }
 }
 
 void CFMaterialSlideAnimation::pause() {
     if (m_state == State::Running) {
         m_state = State::Paused;
+        if (driven_internal_timer) {
+            driven_internal_timer->stop();
+        }
         emit paused();
     }
 }
 
 void CFMaterialSlideAnimation::stop() {
     m_state = State::Idle;
+    if (driven_internal_timer) {
+        driven_internal_timer->stop();
+    }
     elapsedTime_ = 0;
 
     // Reset to original position

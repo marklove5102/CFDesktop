@@ -99,6 +99,7 @@ struct AnimationTokenMapping {
  *          - Slide animations (4 entries)
  *          - Scale animations (2 entries)
  *          - Rotate animations (2 entries)
+ *          - Ripple animations (2 entries)
  *
  * @since  0.1
  * @ingroup ui_components_material
@@ -198,6 +199,26 @@ inline constexpr AnimationTokenMapping TOKEN_MAPPINGS[] = {
         "rotation",             // Property to animate
         0.0f,                   // Start value (normal rotation)
         45.0f                   // End value (rotated clockwise)
+    },
+
+    // =========================================================================
+    // Ripple Animations
+    // =========================================================================
+    {
+        ANIMATION_RIPPLE_EXPAND, // "md.animation.rippleExpand"
+        "fade",                  // Animation type (uses progress for radius)
+        "rippleExpand",          // Motion spec (400ms, Standard)
+        "progress",              // Property to animate (used as radius multiplier)
+        0.0f,                    // Start value (no ripple)
+        1.0f                     // End value (full radius)
+    },
+    {
+        ANIMATION_RIPPLE_FADE,  // "md.animation.rippleFade"
+        "fade",                 // Animation type
+        "rippleFade",           // Motion spec (150ms, Linear)
+        "opacity",              // Property to animate
+        1.0f,                   // Start value (fully visible)
+        0.0f                    // End value (invisible)
     },
 };
 

@@ -82,6 +82,10 @@ void RippleHelper::onPress(const QPoint& pos, const QRectF& widgetRect) {
         return; // Skip ripples if animations disabled
     }
 
+    // Cancel any existing ripples before starting a new one
+    // This prevents visual artifacts from rapid clicks
+    onCancel();
+
     // Create new ripple
     MdRipple ripple;
     ripple.center = QPointF(pos);
@@ -186,6 +190,11 @@ void RippleHelper::onCancel() {
 // Painting
 // ============================================================================
 
+namespace {
+// Material Design 3 ripple fixed opacity (12% as per MD3 specs)
+constexpr float RIPPLE_FIXED_OPACITY = 0.12f;
+}
+
 void RippleHelper::paint(QPainter* painter, const QPainterPath& clipPath) {
     if (m_ripples.isEmpty() || !painter) {
         return;
@@ -208,7 +217,10 @@ void RippleHelper::paint(QPainter* painter, const QPainterPath& clipPath) {
         QRadialGradient gradient(ripple.center, ripple.radius);
 
         QColor color = m_color.native_color();
-        color.setAlphaF(color.alphaF() * ripple.opacity);
+        // Apply fixed ripple opacity (Material Design 3 spec)
+        // The ripple.opacity controls the fade-out animation, while RIPPLE_FIXED_OPACITY
+        // ensures the ripple always has the correct visual strength
+        color.setAlphaF(RIPPLE_FIXED_OPACITY * ripple.opacity);
 
         // Center is solid, edge fades slightly
         gradient.setColorAt(0.0f, color);

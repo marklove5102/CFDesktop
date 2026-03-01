@@ -13,8 +13,6 @@
  */
 
 #include "cfmaterial_fade_animation.h"
-#include "base/easing.h"
-#include <QDebug>
 #include <QEasingCurve>
 
 namespace cf::ui::components::material {
@@ -65,17 +63,28 @@ void CFMaterialFadeAnimation::start(Direction dir) {
 
     // Apply initial opacity
     applyOpacity(currentOpacity_);
+
+    // Start the internal timer to drive animation
+    if (driven_internal_timer) {
+        driven_internal_timer->start(calculateInterval());
+    }
 }
 
 void CFMaterialFadeAnimation::pause() {
     if (m_state == State::Running) {
         m_state = State::Paused;
+        if (driven_internal_timer) {
+            driven_internal_timer->stop();
+        }
         emit paused();
     }
 }
 
 void CFMaterialFadeAnimation::stop() {
     m_state = State::Idle;
+    if (driven_internal_timer) {
+        driven_internal_timer->stop();
+    }
     elapsedTime_ = 0;
 
     // Reset to initial value

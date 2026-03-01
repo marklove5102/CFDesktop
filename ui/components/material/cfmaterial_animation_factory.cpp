@@ -18,6 +18,7 @@
 #include "cfmaterial_fade_animation.h"
 #include "cfmaterial_scale_animation.h"
 #include "cfmaterial_slide_animation.h"
+#include "cfmaterial_property_animation.h"
 #include "token/animation_token_mapping.h"
 #include <cstring>
 
@@ -165,6 +166,18 @@ void CFMaterialAnimationFactory::setEnabledAll(bool enabled) {
     }
 }
 
+void CFMaterialAnimationFactory::setTargetFps(const float fps) {
+    if (fps > 0.0f) {
+        targetFps_ = fps;
+        // Update interval for all existing animations
+        for (auto& [name, animation] : animations_) {
+            if (animation) {
+                animation->setTargetFps(fps);
+            }
+        }
+    }
+}
+
 ICFAnimationManagerFactory::RegisteredResult
 CFMaterialAnimationFactory::registerOneAnimation(const QString& name, const QString& type) {
     // Material Design factory uses predefined token mappings
@@ -214,6 +227,7 @@ CFMaterialAnimationFactory::createFadeAnimation(const AnimationDescriptor& desc,
     // Create fade animation with raw pointer (lifetime guaranteed by theme_)
     auto anim = std::make_unique<CFMaterialFadeAnimation>(&motionSpec, nullptr);
     anim->setRange(desc.fromValue, desc.toValue);
+    anim->setTargetFps(targetFps_);
     if (widget) {
         anim->setTargetWidget(widget);
     }
@@ -239,6 +253,7 @@ CFMaterialAnimationFactory::createSlideAnimation(const AnimationDescriptor& desc
     // Create slide animation with raw pointer (lifetime guaranteed by theme_)
     auto anim = std::make_unique<CFMaterialSlideAnimation>(&motionSpec, direction, nullptr);
     anim->setRange(desc.fromValue, desc.toValue);
+    anim->setTargetFps(targetFps_);
     if (widget) {
         anim->setTargetWidget(widget);
     }
@@ -258,6 +273,7 @@ CFMaterialAnimationFactory::createScaleAnimation(const AnimationDescriptor& desc
     // Create scale animation with raw pointer (lifetime guaranteed by theme_)
     auto anim = std::make_unique<CFMaterialScaleAnimation>(&motionSpec, nullptr);
     anim->setRange(desc.fromValue, desc.toValue);
+    anim->setTargetFps(targetFps_);
     if (widget) {
         anim->setTargetWidget(widget);
     }
@@ -278,6 +294,45 @@ bool CFMaterialAnimationFactory::shouldEnableAnimation(QWidget* widget) const {
         return strategy_->shouldEnable(widget);
     }
     return globalEnabled_;
+}
+
+cf::WeakPtr<ICFAbstractAnimation> CFMaterialAnimationFactory::createPropertyAnimation(
+    float* value, float from, float to, int durationMs, cf::ui::base::Easing::Type easing,
+    QWidget* targetWidget) {
+
+    // Check global enabled state
+    if (!globalEnabled_) {
+        return cf::WeakPtr<ICFAbstractAnimation>();
+    }
+
+    // Check if animation should be enabled
+    if (!shouldEnableAnimation(targetWidget)) {
+        return cf::WeakPtr<ICFAbstractAnimation>();
+    }
+
+    // Create property animation
+    auto anim = std::make_unique<CFMaterialPropertyAnimation>(value, from, to, durationMs, easing,
+                                                                nullptr);
+    anim->setTargetFps(targetFps_);
+    if (targetWidget) {
+        anim->setTargetWidget(targetWidget);
+    }
+
+    // Generate a unique key for this animation
+    std::string key = "property_";
+    key += std::to_string(reinterpret_cast<uintptr_t>(value));
+    key += "_";
+    key += std::to_string(reinterpret_cast<uintptr_t>(targetWidget));
+
+    // Store and return WeakPtr
+    if (anim) {
+        ICFAbstractAnimation* rawPtr = anim.get();
+        animations_[key] = std::move(anim);
+        emit animationCreated(QString::fromUtf8(key.c_str()));
+        return rawPtr->GetWeakPtr();
+    }
+
+    return cf::WeakPtr<ICFAbstractAnimation>();
 }
 
 } // namespace cf::ui::components::material

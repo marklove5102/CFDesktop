@@ -152,6 +152,42 @@ class CF_UI_EXPORT ICFAbstractAnimation : public QObject {
      */
     bool getEnabled() const { return enabled; }
 
+    /**
+     * @brief  Set the target FPS for this animation.
+     *
+     * @details Sets the desired frame rate for this animation's timer updates.
+     *          This affects the tick interval for this animation instance.
+     *
+     * @param[in] fps Target frames per second (e.g., 60.0f).
+     *
+     * @throws     None
+     * @note       Default is 60.0f. Takes effect on the next animation start.
+     * @warning    None
+     * @since      0.1
+     * @ingroup    ui_components
+     *
+     * @code
+     * animation->setTargetFps(30.0f);  // 30 FPS (lower CPU usage)
+     * @endcode
+     */
+    void setTargetFps(float fps);
+
+    /**
+     * @brief  Calculate the timer interval based on target FPS.
+     *
+     * @details Returns the interval in milliseconds for the timer
+     *          based on the current target FPS setting.
+     *
+     * @return Timer interval in milliseconds.
+     *
+     * @throws     None
+     * @note       None
+     * @warning    None
+     * @since      0.1
+     * @ingroup    ui_components
+     */
+    int calculateInterval() const;
+
   signals:
     /**
      * @brief  Signal emitted when animation starts.
@@ -207,6 +243,9 @@ class CF_UI_EXPORT ICFAbstractAnimation : public QObject {
     QTimer* driven_internal_timer{nullptr};
     float m_progress = 0.0f;
     State m_state = State::Idle;
+
+    /// Target FPS for this animation (default 60.0f)
+    float targetFps_ = 60.0f;
 
     /**
      * @brief  Sets the enabled state of the animation.

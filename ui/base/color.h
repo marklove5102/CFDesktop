@@ -215,6 +215,29 @@ class CFColor {
      */
     QColor native_color() const { return internal_color; }
 
+    /**
+     * @brief  Copy constructor.
+     *
+     * @param[in] other Source color.
+     * @throws       None
+     * @note         None
+     * @warning      None
+     * @since        0.1
+     */
+    CFColor(const CFColor& other) = default;
+
+    /**
+     * @brief  Copy assignment operator.
+     *
+     * @param[in] other Source color.
+     * @return        Reference to this color.
+     * @throws       None
+     * @note         None
+     * @warning      None
+     * @since        0.1
+     */
+    CFColor& operator=(const CFColor& other) = default;
+
   private:
     QColor internal_color; ///< Native QColor representation.
 

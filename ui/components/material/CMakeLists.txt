@@ -5,6 +5,7 @@ add_library(cf_ui_components_material STATIC
     cfmaterial_fade_animation.cpp
     cfmaterial_slide_animation.cpp
     cfmaterial_scale_animation.cpp
+    cfmaterial_property_animation.cpp
     cfmaterial_animation_factory.cpp
     cfmaterial_animation_strategy.cpp
 )

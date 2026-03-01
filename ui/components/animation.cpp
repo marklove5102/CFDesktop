@@ -10,8 +10,32 @@
 
 namespace cf::ui::components {
 
+// =============================================================================
+// Protected Methods
+// =============================================================================
+
+void ICFAbstractAnimation::setTargetFps(float fps) {
+    if (fps > 0.0f) {
+        targetFps_ = fps;
+    }
+}
+
+int ICFAbstractAnimation::calculateInterval() const {
+    return static_cast<int>(1000.0f / targetFps_);
+}
+
+// =============================================================================
+// Constructor / Destructor
+// =============================================================================
+
 ICFAbstractAnimation::ICFAbstractAnimation(QObject* parent) : QObject(parent) {
     driven_internal_timer = new QTimer(this);
+    // Connect timer timeout to tick slot for driving animation updates
+    connect(driven_internal_timer, &QTimer::timeout, this, [this]() {
+        if (m_state == State::Running) {
+            tick(calculateInterval());
+        }
+    });
 }
 
 } // namespace cf::ui::components

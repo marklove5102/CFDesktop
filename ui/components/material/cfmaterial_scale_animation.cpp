@@ -71,17 +71,28 @@ void CFMaterialScaleAnimation::start(Direction dir) {
 
     // Apply initial scale
     applyScale(currentScale_);
+
+    // Start the internal timer to drive animation
+    if (driven_internal_timer) {
+        driven_internal_timer->start(calculateInterval());
+    }
 }
 
 void CFMaterialScaleAnimation::pause() {
     if (m_state == State::Running) {
         m_state = State::Paused;
+        if (driven_internal_timer) {
+            driven_internal_timer->stop();
+        }
         emit paused();
     }
 }
 
 void CFMaterialScaleAnimation::stop() {
     m_state = State::Idle;
+    if (driven_internal_timer) {
+        driven_internal_timer->stop();
+    }
     elapsedTime_ = 0;
 
     // Reset to original geometry

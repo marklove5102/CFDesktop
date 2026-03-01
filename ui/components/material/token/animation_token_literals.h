@@ -140,6 +140,30 @@ inline constexpr const char ANIMATION_ROTATE_IN[] = "md.animation.rotateIn";
 inline constexpr const char ANIMATION_ROTATE_OUT[] = "md.animation.rotateOut";
 
 // =============================================================================
+// Animation Token Literals - Ripple Animations
+// =============================================================================
+
+/**
+ * @brief  Ripple expand animation token.
+ *
+ * @details Ripple effect radius expansion from 0 to maxRadius. Uses rippleExpand timing.
+ *
+ * @since  0.1
+ * @ingroup ui_components_material
+ */
+inline constexpr const char ANIMATION_RIPPLE_EXPAND[] = "md.animation.rippleExpand";
+
+/**
+ * @brief  Ripple fade animation token.
+ *
+ * @details Ripple effect opacity fade-out from 1 to 0. Uses rippleFade timing.
+ *
+ * @since  0.1
+ * @ingroup ui_components_material
+ */
+inline constexpr const char ANIMATION_RIPPLE_FADE[] = "md.animation.rippleFade";
+
+// =============================================================================
 // All Animation Tokens Array (for iteration)
 // =============================================================================
 
@@ -159,7 +183,9 @@ inline constexpr const char* const ALL_ANIMATION_TOKENS[] = {
     // Scale
     ANIMATION_SCALE_UP, ANIMATION_SCALE_DOWN,
     // Rotate
-    ANIMATION_ROTATE_IN, ANIMATION_ROTATE_OUT};
+    ANIMATION_ROTATE_IN, ANIMATION_ROTATE_OUT,
+    // Ripple
+    ANIMATION_RIPPLE_EXPAND, ANIMATION_RIPPLE_FADE};
 
 /**
  * @brief  Total count of Material Design 3 animation tokens.
@@ -167,6 +193,6 @@ inline constexpr const char* const ALL_ANIMATION_TOKENS[] = {
  * @since  0.1
  * @ingroup ui_components_material
  */
-inline constexpr size_t ANIMATION_TOKEN_COUNT = 10;
+inline constexpr size_t ANIMATION_TOKEN_COUNT = 12;
 
 } // namespace cf::ui::components::material::token_literals

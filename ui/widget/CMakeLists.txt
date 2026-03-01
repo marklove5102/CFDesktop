@@ -32,6 +32,12 @@ add_library(cf_ui_widget_material STATIC
     material/base/focus_ring.cpp
     material/base/painter_layer.cpp
     material/widget/button/button.cpp
+    material/widget/checkbox/checkbox.cpp
+    material/widget/groupbox/groupbox.cpp
+    material/widget/label/label.cpp
+    material/widget/radiobutton/radiobutton.cpp
+    material/widget/textarea/textarea.cpp
+    material/widget/textfield/textfield.cpp
 )
 
 # Define CFUI_EXPORTS so symbols are marked as dllexport when compiling for the DLL

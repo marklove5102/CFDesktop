@@ -165,6 +165,19 @@ class CF_UI_EXPORT MdElevationController : public QObject {
     void setPressed(bool pressed);
 
     /**
+     * @brief  Animates the press offset to a target value.
+     *
+     * @param[in]     to Target press offset value.
+     *
+     * @throws        None
+     * @note          Uses the animation factory for smooth transition.
+     * @warning       None
+     * @since         N/A
+     * @ingroup       ui_widget_material_base
+     */
+    void animatePressOffsetTo(float to);
+
+    /**
      * @brief  Gets the pressed state.
      *
      * @return        true if pressed, false otherwise.
@@ -183,19 +196,73 @@ class CF_UI_EXPORT MdElevationController : public QObject {
      * @return        Press offset in pixels.
      *
      * @throws        None
-     * @note          Based on the current elevation level.
+     * @note          Returns the animated press offset value.
      * @warning       None
      * @since         N/A
      * @ingroup       ui_widget_material_base
      */
     float pressOffset() const;
 
+    /**
+     * @brief  Destructor.
+     *
+     * @details Cancels any running animation before destruction.
+     *
+     * @throws        None
+     * @note          None
+     * @warning       None
+     * @since         N/A
+     * @ingroup       ui_widget_material_base
+     */
+    ~MdElevationController();
+
+  signals:
+    /**
+     * @brief  Emitted when the press offset changes during animation.
+     *
+     * @throws        None
+     * @note          Connect to this signal to trigger repaint when
+     *                press offset animates.
+     * @warning       None
+     * @since         N/A
+     * @ingroup       ui_widget_material_base
+     */
+    void pressOffsetChanged();
+
   private:
     float m_currentLevel = 0.0f;
     int m_targetLevel = 0;
     float m_lightSourceAngle = 15.0f;
     bool m_isPressed = false;
+    float m_currentPressOffset = 0.0f;  ///< Animated press offset value
     cf::WeakPtr<components::material::CFMaterialAnimationFactory> m_animator;
+
+    /// Reference to the currently running press offset animation
+    cf::WeakPtr<components::ICFAbstractAnimation> m_pressOffsetAnimation;
+
+    /**
+     * @brief  Cancels the currently running press offset animation.
+     *
+     * @throws        None
+     * @note          Disconnects all signals and stops the animation.
+     * @warning       None
+     * @since         N/A
+     * @ingroup       ui_widget_material_base
+     */
+    void cancelCurrentAnimation();
+
+    /**
+     * @brief  Slot called when the press offset animation finishes.
+     *
+     * @details Clears the animation reference.
+     *
+     * @throws        None
+     * @note          None
+     * @warning       None
+     * @since         N/A
+     * @ingroup       ui_widget_material_base
+     */
+    void onAnimationFinished();
 
     struct ShadowParams {
         float blurRadius;

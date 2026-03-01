@@ -9,11 +9,14 @@
  *
  */
 #include "process_memory.h"
+
+// clang-format off
 #ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN
 #endif
-#include <Psapi.h>
 #include <Windows.h>
+#include <Psapi.h>
+// clang-format on
 
 #pragma comment(lib, "psapi.lib")
 

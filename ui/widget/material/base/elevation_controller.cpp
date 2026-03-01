@@ -24,7 +24,10 @@
 #include "base/color_helper.h"
 #include "base/device_pixel.h"
 #include "base/math_helper.h"
+#include "components/animation.h"
 #include "components/material/cfmaterial_animation_factory.h"
+#include "components/material/cfmaterial_animation_strategy.h"
+#include "components/timing_animation.h"
 
 #include <QApplication>
 #include <QPainter>
@@ -48,6 +51,13 @@ MdElevationController::MdElevationController(
     cf::WeakPtr<components::material::CFMaterialAnimationFactory> factory, QObject* parent)
     : QObject(parent), m_currentLevel(0.0f), m_targetLevel(0), m_animator(factory) {}
 
+/**
+ * @brief Destructor - cancels any running animation.
+ */
+MdElevationController::~MdElevationController() {
+    cancelCurrentAnimation();
+}
+
 // ============================================================================
 // Configuration
 // ============================================================================
@@ -67,22 +77,122 @@ int MdElevationController::elevation() const {
 }
 
 void MdElevationController::setPressed(bool pressed) {
-    if (m_isPressed != pressed) {
-        m_isPressed = pressed;
-        // 触发重绘以应用按压效果
-        if (parent() && parent()->isWidgetType()) {
-            static_cast<QWidget*>(parent())->update();
-        }
+    if (m_isPressed == pressed) {
+        return;
     }
+
+    m_isPressed = pressed;
+
+    // Calculate target press offset
+    device::CanvasUnitHelper helper(qApp ? qApp->devicePixelRatio() : 1.0);
+    float targetOffset = 0.0f;
+    if (pressed) {
+        targetOffset = helper.dpToPx(static_cast<float>(m_targetLevel) * 2.0f);
+    }
+
+    // Animate to the new offset
+    animatePressOffsetTo(targetOffset);
 }
 
 float MdElevationController::pressOffset() const {
-    // 按压偏移 = 当前 elevation × 2dp
-    if (!m_isPressed)
-        return 0.0f;
+    // Return the animated press offset value
+    return m_currentPressOffset;
+}
 
-    device::CanvasUnitHelper helper(qApp ? qApp->devicePixelRatio() : 1.0);
-    return helper.dpToPx(static_cast<float>(m_targetLevel) * 2.0f);
+/**
+ * @brief Cancels the currently running press offset animation.
+ *
+ * Disconnects all signals and stops the animation to prevent multiple
+ * animations from competing to update m_currentPressOffset.
+ */
+void MdElevationController::cancelCurrentAnimation() {
+    if (m_pressOffsetAnimation) {
+        auto* anim = m_pressOffsetAnimation.Get();
+        if (anim) {
+            // Disconnect all signals from this animation to this object
+            disconnect(anim, &components::ICFAbstractAnimation::progressChanged, this, nullptr);
+            disconnect(anim, &components::ICFAbstractAnimation::finished, this, nullptr);
+            // Stop the animation
+            anim->stop();
+        }
+        m_pressOffsetAnimation = nullptr;
+    }
+}
+
+/**
+ * @brief Slot called when the press offset animation finishes.
+ *
+ * Clears the animation reference to allow new animations to start.
+ */
+void MdElevationController::onAnimationFinished() {
+    m_pressOffsetAnimation = nullptr;
+}
+
+void MdElevationController::animatePressOffsetTo(float to) {
+    auto* factory = m_animator.Get();
+    if (!factory || !factory->isAllEnabled()) {
+        // Direct set if animations disabled
+        m_currentPressOffset = to;
+        emit pressOffsetChanged();
+        return;
+    }
+
+    // CRITICAL FIX: Cancel any currently running animation before starting a new one.
+    // This prevents multiple animations from competing to update m_currentPressOffset,
+    // which causes visual glitches during rapid press/release events.
+    cancelCurrentAnimation();
+
+    // Start animation from current press offset value
+    float from = m_currentPressOffset;
+
+    // Create custom animation descriptor with longer duration for smoother press effect
+    // Using "md.motion.longEnter" for slower, more noticeable animation
+    AnimationDescriptor desc(
+        "fade",                    // Animation type
+        "md.motion.longEnter",     // Motion spec (longer duration for smooth press)
+        "opacity",                 // Property (we'll override with setRange)
+        from,                      // Start value
+        to                         // End value
+    );
+
+    // Create animation from descriptor
+    auto anim = factory->createAnimation(desc, nullptr);
+    if (!anim) {
+        // Fallback: direct set if animation creation fails
+        m_currentPressOffset = to;
+        emit pressOffsetChanged();
+        return;
+    }
+
+    // Save animation reference for cancellation
+    m_pressOffsetAnimation = anim;
+
+    // Get raw pointer and set range if it's a timing animation
+    auto* rawAnim = anim.Get();
+    auto* timingAnim = static_cast<components::ICFTimingAnimation*>(rawAnim);
+    if (timingAnim) {
+        timingAnim->setRange(from, to);
+    }
+
+    // Connect progress signal
+    // Note: Qt::UniqueConnection cannot be used with lambdas, but cancelCurrentAnimation()
+    // disconnects all signals before starting a new animation, preventing duplicates
+    //
+    // CRITICAL: progressChanged emits 0-1 normalized progress, NOT actual offset values.
+    // We must interpolate between from and to to get the actual offset.
+    connect(rawAnim, &components::ICFAbstractAnimation::progressChanged, this,
+            [this, from, to](float progress) {
+                // progress is 0-1, interpolate to get actual offset value
+                m_currentPressOffset = from + (to - from) * progress;
+                emit pressOffsetChanged();
+            });
+
+    // Connect finished signal to clear the animation reference
+    connect(rawAnim, &components::ICFAbstractAnimation::finished, this,
+            &MdElevationController::onAnimationFinished, Qt::UniqueConnection);
+
+    // Start animation
+    rawAnim->start(components::ICFAbstractAnimation::Direction::Forward);
 }
 
 void MdElevationController::animateTo(int level, const core::MotionSpec& spec) {
