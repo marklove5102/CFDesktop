@@ -280,6 +280,18 @@
 
 ---
 
+## 📋 TODO
+
+项目开发任务清单请查看 [document/todo/](document/todo/)：
+
+| 资源 | 描述 |
+|:---|:---|
+| [TODO 看板](document/todo/index.md) | 各模块任务清单与进度跟踪 |
+| [项目状态报告](document/todo/done/PROJECT_STATUS_REPORT.md) | 整体完成度与优先级建议 |
+| [参考文档](document/todo/done/) | 各模块实现参考文档 |
+
+---
+
 ## 🔧 技术栈
 
 <div align="center">
