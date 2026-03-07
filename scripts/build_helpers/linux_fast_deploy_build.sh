@@ -1,7 +1,31 @@
 #!/bin/bash
 # This script configures and builds the project (FAST version - no cleaning)
 # It calls the configure script first, then builds
+# Usage: ./linux_fast_deploy_build.sh [-c|--config <config_file>]
 set -e
+
+# Default values
+CONFIG_MODE="deploy"
+CONFIG_FILE=""
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -c|--config)
+            CONFIG_FILE="$2"
+            shift 2
+            ;;
+        develop|deploy|ci)
+            CONFIG_MODE="$1"
+            shift
+            ;;
+        *)
+            echo "ERROR: Unknown argument '$1'" >&2
+            echo "Usage: $0 [develop|deploy|ci] [-c|--config <config_file>]" >&2
+            exit 1
+            ;;
+    esac
+done
 
 # Function to read INI configuration file
 get_ini_config() {
@@ -88,9 +112,13 @@ log "Step 1: Configuring with CMake" "INFO"
 log "========================================" "INFO"
 
 CONFIGURE_SCRIPT="$SCRIPT_DIR/linux_configure.sh"
-log "Executing: $CONFIGURE_SCRIPT deploy" "INFO"
+CONFIGURE_ARGS=("$CONFIG_MODE")
+if [[ -n "$CONFIG_FILE" ]]; then
+    CONFIGURE_ARGS+=("-c" "$CONFIG_FILE")
+fi
+log "Executing: $CONFIGURE_SCRIPT ${CONFIGURE_ARGS[*]}" "INFO"
 
-if bash "$CONFIGURE_SCRIPT" deploy; then
+if bash "$CONFIGURE_SCRIPT" "${CONFIGURE_ARGS[@]}"; then
     log "Configuration completed successfully!" "SUCCESS"
 else
     exit_code=$?
@@ -99,7 +127,22 @@ else
 fi
 
 # Step 2: Load config for build
-CONFIG_FILE="$SCRIPT_DIR/build_deploy_config.ini"
+# Determine config file if not specified
+if [[ -z "$CONFIG_FILE" ]]; then
+    if [[ "$CONFIG_MODE" == "deploy" ]]; then
+        CONFIG_FILE="$SCRIPT_DIR/build_deploy_config.ini"
+    elif [[ "$CONFIG_MODE" == "ci" ]]; then
+        CONFIG_FILE="$SCRIPT_DIR/build_ci_config.ini"
+    else
+        CONFIG_FILE="$SCRIPT_DIR/build_develop_config.ini"
+    fi
+fi
+
+# Resolve relative path
+if [[ "$CONFIG_FILE" != /* ]] && [[ "$CONFIG_FILE" != ~* ]]; then
+    CONFIG_FILE="$SCRIPT_DIR/$CONFIG_FILE"
+fi
+
 eval "$(get_ini_config "$CONFIG_FILE")"
 BUILD_DIR="$config_paths_build_dir"
 JOBS="${config_options_jobs:-}"
@@ -108,21 +151,14 @@ JOBS="${config_options_jobs:-}"
 log "========================================" "INFO"
 log "Step 2: Building project" "INFO"
 
-BUILD_CMD="cmake --build \"$BUILD_DIR\""
+BUILD_CMD=(cmake --build "$BUILD_DIR")
 if [[ -n "$JOBS" ]]; then
-    BUILD_CMD="$BUILD_CMD --parallel \"$JOBS\""
+    BUILD_CMD+=(--parallel "$JOBS")
     log "Command: cmake --build $BUILD_DIR --parallel $JOBS" "INFO"
 else
     log "Command: cmake --build $BUILD_DIR" "INFO"
 fi
 log "========================================" "INFO"
 
-if eval "$BUILD_CMD"; then
-    log "========================================" "INFO"
-    log "Build completed successfully!" "SUCCESS"
-    log "========================================" "INFO"
-else
-    exit_code=$?
-    log "Build failed with exit code: $exit_code" "ERROR"
-    exit $exit_code
-fi
+# Run build and stream output in real-time
+"${BUILD_CMD[@]}"

@@ -1,17 +1,42 @@
 #!/bin/bash
 # This script ONLY configures the project using CMake
 # It does NOT build the project
-# Usage: ./linux_configure.sh [develop|deploy]
+# Usage: ./linux_configure.sh [develop|deploy] [-c|--config <config_file>]
 
 set -e
 
-# Default to develop if no argument provided
-CONFIG="${1:-develop}"
+# Default values
+CONFIG="develop"
+CONFIG_FILE=""
 
-# Validate config argument
-if [[ "$CONFIG" != "develop" && "$CONFIG" != "deploy" ]]; then
-    echo "ERROR: Invalid configuration '$CONFIG'. Use 'develop' or 'deploy'." >&2
-    exit 1
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -c|--config)
+            CONFIG_FILE="$2"
+            shift 2
+            ;;
+        develop|deploy|ci)
+            CONFIG="$1"
+            shift
+            ;;
+        *)
+            echo "ERROR: Unknown argument '$1'" >&2
+            echo "Usage: $0 [develop|deploy|ci] [-c|--config <config_file>]" >&2
+            exit 1
+            ;;
+    esac
+done
+
+# Determine which config file to use (if not specified via -c)
+if [[ -z "$CONFIG_FILE" ]]; then
+    if [[ "$CONFIG" == "deploy" ]]; then
+        CONFIG_FILE="$SCRIPT_DIR/build_deploy_config.ini"
+    elif [[ "$CONFIG" == "ci" ]]; then
+        CONFIG_FILE="$SCRIPT_DIR/build_ci_config.ini"
+    else
+        CONFIG_FILE="$SCRIPT_DIR/build_develop_config.ini"
+    fi
 fi
 
 # Function to read INI configuration file
@@ -96,11 +121,9 @@ log "Changing to project directory" "INFO"
 
 cd "$PROJECT_ROOT"
 
-# Determine which config file to use
-if [[ "$CONFIG" == "deploy" ]]; then
-    CONFIG_FILE="$SCRIPT_DIR/build_deploy_config.ini"
-else
-    CONFIG_FILE="$SCRIPT_DIR/build_develop_config.ini"
+# Resolve CONFIG_FILE if it's a relative path
+if [[ "$CONFIG_FILE" != /* ]] && [[ "$CONFIG_FILE" != ~* ]]; then
+    CONFIG_FILE="$SCRIPT_DIR/$CONFIG_FILE"
 fi
 
 log "Loading configuration from: $CONFIG_FILE" "INFO"
@@ -146,6 +169,15 @@ log "========================================" "INFO"
 log "Configuring with CMake (NO BUILD)" "INFO"
 log "Command: cmake -G $GENERATOR -DUSE_TOOLCHAIN=$TOOLCHAIN -DCMAKE_BUILD_TYPE=$BUILD_TYPE -S $RESOLVED_SOURCE_DIR -B $BUILD_DIR" "INFO"
 log "========================================" "INFO"
+
+# Performance diagnostic: Print system info
+log "=== Performance Diagnostics ===" "INFO"
+log "CMake Version: $(cmake --version | head -1)" "INFO"
+log "Generator: $GENERATOR" "INFO"
+
+# Run CMake
+log "" "INFO"
+log "Running CMake configuration..." "INFO"
 
 if cmake -G "$GENERATOR" -DUSE_TOOLCHAIN="$TOOLCHAIN" -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -S "$RESOLVED_SOURCE_DIR" -B "$BUILD_DIR"; then
     log "========================================" "INFO"

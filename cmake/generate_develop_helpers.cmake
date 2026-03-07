@@ -59,21 +59,13 @@ function(generate_vscode_clangd)
            "${TOOLCHAIN_ROOT_LOWER}" MATCHES "^/opt" OR
            "${TOOLCHAIN_ROOT_LOWER}" MATCHES "^/home")
 
-        # Use `which` to locate clangd — avoids find_program cache pitfalls.
-        # Try versioned binaries first (clangd-17, clangd-16 …) then bare clangd.
-        set(CLANGD_PATH "")
-        foreach(_candidate clangd-17 clangd-16 clangd-15 clangd-14 clangd)
-            execute_process(
-                COMMAND which ${_candidate}
-                OUTPUT_VARIABLE _WHICH_OUT
-                ERROR_QUIET
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
-            if(_WHICH_OUT)
-                set(CLANGD_PATH "${_WHICH_OUT}")
-                break()
-            endif()
-        endforeach()
+        # Use find_program with CACHE to avoid repeated lookups
+        # Try versioned binaries first, then bare clangd
+        find_program(CLANGD_PATH
+            NAMES clangd-17 clangd-16 clangd-15 clangd-14 clangd
+            DOC "Path to clangd for VSCode integration"
+            CACHE FORCE
+        )
 
         if(NOT CLANGD_PATH)
             message(WARNING

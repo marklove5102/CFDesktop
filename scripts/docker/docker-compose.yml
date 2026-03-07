@@ -1,0 +1,53 @@
+# =============================================================================
+# CFDesktop Docker Compose Configuration
+# =============================================================================
+# Provides convenient services for local Docker build testing
+#
+# Usage (from project root):
+#   docker-compose -f scripts/docker/docker-compose.yml build
+#   docker-compose -f scripts/docker/docker-compose.yml run build-amd64
+#   docker-compose -f scripts/docker/docker-compose.yml run build-arm64
+#   docker-compose -f scripts/docker/docker-compose.yml run verify
+# =============================================================================
+
+version: '3.8'
+
+services:
+  # AMD64 build environment
+  build-amd64:
+    build:
+      context: ..  # Project root (parent of scripts/docker/)
+      dockerfile: scripts/docker/Dockerfile.build
+    image: cfdesktop-build:amd64
+    platform: linux/amd64
+    volumes:
+      - ../:/project  # Mount project root
+    working_dir: /project
+    command: /bin/bash
+
+  # ARM64 build environment (requires ARM-enabled Docker)
+  build-arm64:
+    build:
+      context: ..
+      dockerfile: scripts/docker/Dockerfile.build
+    image: cfdesktop-build:arm64
+    platform: linux/arm64
+    volumes:
+      - ../:/project
+    working_dir: /project
+    command: /bin/bash
+
+  # Quick verification service (default AMD64)
+  # Note: This requires ci_build_entry.sh from Phase 3
+  verify:
+    build:
+      context: ..
+      dockerfile: scripts/docker/Dockerfile.build
+    image: cfdesktop-build:latest
+    platform: linux/amd64
+    volumes:
+      - ../:/project
+    working_dir: /project
+    command: /bin/bash
+    # Uncomment after Phase 3 is complete:
+    # command: bash scripts/build_helpers/ci_build_entry.sh ci

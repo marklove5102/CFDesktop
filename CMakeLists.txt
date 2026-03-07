@@ -107,11 +107,16 @@ endif()
 # Include development helpers generation
 include(cmake/generate_develop_helpers.cmake)
 
-log_info("DevHelpers" "Will Generate VSCode clangd configuration")
-generate_vscode_clangd()
+# Skip VSCode config generation in CI environment (docker builds)
+if(NOT USE_TOOLCHAIN STREQUAL "linux/ci")
+    log_info("DevHelpers" "Will Generate VSCode clangd configuration")
+    generate_vscode_clangd()
 
-log_info("DevHelpers" "Will Generate VSCode debug configuration")
-generate_vscode_debug_config()
+    log_info("DevHelpers" "Will Generate VSCode debug configuration")
+    generate_vscode_debug_config()
+else()
+    log_info("DevHelpers" "Skipping VSCode config generation in CI mode")
+endif()
 
 # Print build configuration
 log_config_summary()

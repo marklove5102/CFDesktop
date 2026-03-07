@@ -1,6 +1,30 @@
 #!/bin/bash
 # This script cleans the build directory then calls the fast version to build
+# Usage: ./linux_deploy_build.sh [-c|--config <config_file>]
 set -e
+
+# Default values
+CONFIG_MODE="deploy"
+CONFIG_FILE=""
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -c|--config)
+            CONFIG_FILE="$2"
+            shift 2
+            ;;
+        develop|deploy|ci)
+            CONFIG_MODE="$1"
+            shift
+            ;;
+        *)
+            echo "ERROR: Unknown argument '$1'" >&2
+            echo "Usage: $0 [develop|deploy|ci] [-c|--config <config_file>]" >&2
+            exit 1
+            ;;
+    esac
+done
 
 # Function to read INI configuration file
 get_ini_config() {
@@ -84,8 +108,22 @@ log "Changing to project directory" "INFO"
 
 cd "$PROJECT_ROOT"
 
-# Load configuration from INI file
-CONFIG_FILE="$SCRIPT_DIR/build_deploy_config.ini"
+# Determine config file if not specified
+if [[ -z "$CONFIG_FILE" ]]; then
+    if [[ "$CONFIG_MODE" == "deploy" ]]; then
+        CONFIG_FILE="$SCRIPT_DIR/build_deploy_config.ini"
+    elif [[ "$CONFIG_MODE" == "ci" ]]; then
+        CONFIG_FILE="$SCRIPT_DIR/build_ci_config.ini"
+    else
+        CONFIG_FILE="$SCRIPT_DIR/build_develop_config.ini"
+    fi
+fi
+
+# Resolve relative path
+if [[ "$CONFIG_FILE" != /* ]] && [[ "$CONFIG_FILE" != ~* ]]; then
+    CONFIG_FILE="$SCRIPT_DIR/$CONFIG_FILE"
+fi
+
 log "Loading configuration from: $CONFIG_FILE" "INFO"
 
 # Parse and evaluate configuration
@@ -116,9 +154,13 @@ log "========================================" "INFO"
 FULL_BUILD_PATH="$PROJECT_ROOT/$BUILD_DIR"
 
 # Step 1: Clear the Build Directory
+# Use find for more reliable deletion on Docker mounted volumes
 if [[ -d "$FULL_BUILD_PATH" ]]; then
     log "Removing existing build directory: $FULL_BUILD_PATH" "INFO"
-    if rm -rf "$FULL_BUILD_PATH"; then
+    # Try find first (more reliable on Docker volumes)
+    if find "$FULL_BUILD_PATH" -mindepth 1 -delete 2>/dev/null || \
+       find "$FULL_BUILD_PATH" -mindepth 1 -exec rm -rf {} + 2>/dev/null || \
+       rm -rf "$FULL_BUILD_PATH" 2>/dev/null; then
         log "Build directory cleaned successfully!" "SUCCESS"
     else
         log "Failed to clean build directory" "ERROR"
@@ -134,9 +176,15 @@ log "Step 2: Calling fast build script" "INFO"
 log "========================================" "INFO"
 
 FAST_BUILD_SCRIPT="$SCRIPT_DIR/linux_fast_deploy_build.sh"
-log "Executing: $FAST_BUILD_SCRIPT" "INFO"
+FAST_BUILD_ARGS=("$CONFIG_MODE")
+if [[ -n "$CONFIG_FILE" ]]; then
+    # Resolve to relative path for passing to subprocess
+    REL_CONFIG_FILE="${CONFIG_FILE#$SCRIPT_DIR/}"
+    FAST_BUILD_ARGS+=("-c" "$REL_CONFIG_FILE")
+fi
+log "Executing: $FAST_BUILD_SCRIPT ${FAST_BUILD_ARGS[*]}" "INFO"
 
-if bash "$FAST_BUILD_SCRIPT"; then
+if bash "$FAST_BUILD_SCRIPT" "${FAST_BUILD_ARGS[@]}"; then
     log "========================================" "INFO"
     log "Build process completed successfully!" "SUCCESS"
     log "========================================" "INFO"
@@ -152,9 +200,14 @@ log "Step 3: Running tests" "INFO"
 log "========================================" "INFO"
 
 TEST_SCRIPT="$SCRIPT_DIR/linux_run_tests.sh"
-log "Executing: $TEST_SCRIPT deploy" "INFO"
+TEST_ARGS=("$CONFIG_MODE")
+if [[ -n "$CONFIG_FILE" ]]; then
+    REL_CONFIG_FILE="${CONFIG_FILE#$SCRIPT_DIR/}"
+    TEST_ARGS+=("-c" "$REL_CONFIG_FILE")
+fi
+log "Executing: $TEST_SCRIPT ${TEST_ARGS[*]}" "INFO"
 
-if bash "$TEST_SCRIPT" deploy; then
+if bash "$TEST_SCRIPT" "${TEST_ARGS[@]}"; then
     log "========================================" "INFO"
     log "All tests passed successfully!" "SUCCESS"
     log "========================================" "INFO"

@@ -1,0 +1,50 @@
+# =============================================================================
+# Docker Build Context Ignore Rules
+# =============================================================================
+# Excludes unnecessary files from Docker build context to speed up builds
+# Note: Docker context is project root (.), even though Dockerfile is in scripts/docker/
+# =============================================================================
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Build artifacts
+out/
+build/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# IDE
+.vscode/
+.vs/
+.idea/
+*.user
+*.suo
+
+# Temporary files
+*.tmp
+*.log
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation (keep README.md)
+docs/
+document/ci/
+*.md
+!README.md
+
+# CI/CD
+.github/
+
+# Node modules (if any frontend tools)
+node_modules/

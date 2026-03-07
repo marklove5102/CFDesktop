@@ -1,8 +1,32 @@
 #!/bin/bash
 # This script runs CMake tests using CTest
 # It reads the build directory from the specified config file
+# Usage: ./linux_run_tests.sh [develop|deploy|ci] [-c|--config <config_file>]
 
 set -e
+
+# Default values
+CONFIG_MODE="develop"
+CONFIG_FILE=""
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -c|--config)
+            CONFIG_FILE="$2"
+            shift 2
+            ;;
+        develop|deploy|ci)
+            CONFIG_MODE="$1"
+            shift
+            ;;
+        *)
+            echo "ERROR: Unknown argument '$1'" >&2
+            echo "Usage: $0 [develop|deploy|ci] [-c|--config <config_file>]" >&2
+            exit 1
+            ;;
+    esac
+done
 
 # Function to read INI configuration file
 get_ini_config() {
@@ -72,11 +96,8 @@ log() {
     echo -e "${color}[$timestamp] [$level] $message\033[0m"
 }
 
-# Default config
-CONFIG="${1:-develop}"
-
 log "========================================" "INFO"
-log "Running Tests (Config: $CONFIG)" "INFO"
+log "Running Tests (Config: $CONFIG_MODE)" "INFO"
 log "========================================" "INFO"
 
 # Get the script directory and project root
@@ -88,20 +109,29 @@ log "Project root: $PROJECT_ROOT" "INFO"
 cd "$PROJECT_ROOT"
 
 # Determine which config file to use
-case "$CONFIG" in
-    develop)
-        CONFIG_FILE="build_develop_config.ini"
-        ;;
-    deploy)
-        CONFIG_FILE="build_deploy_config.ini"
-        ;;
-    *)
-        log "Unknown config: $CONFIG. Valid options are: develop, deploy" "ERROR"
-        exit 1
-        ;;
-esac
+if [[ -z "$CONFIG_FILE" ]]; then
+    case "$CONFIG_MODE" in
+        develop)
+            CONFIG_FILE="build_develop_config.ini"
+            ;;
+        deploy)
+            CONFIG_FILE="build_deploy_config.ini"
+            ;;
+        ci)
+            CONFIG_FILE="build_ci_config.ini"
+            ;;
+        *)
+            log "Unknown config: $CONFIG_MODE. Valid options are: develop, deploy, ci" "ERROR"
+            exit 1
+            ;;
+    esac
+fi
 
-CONFIG_FILE="$SCRIPT_DIR/$CONFIG_FILE"
+# Resolve relative path
+if [[ "$CONFIG_FILE" != /* ]] && [[ "$CONFIG_FILE" != ~* ]]; then
+    CONFIG_FILE="$SCRIPT_DIR/$CONFIG_FILE"
+fi
+
 log "Loading configuration from: $CONFIG_FILE" "INFO"
 
 # Parse and evaluate configuration

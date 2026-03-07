@@ -1,0 +1,131 @@
+#!/bin/bash
+# =============================================================================
+# Git Pre-Commit Hook - 本地代码质量检查
+# =============================================================================
+#
+# 安装方法: bash scripts/release/hooks/install_hooks.sh
+#
+# 检查内容:
+#   1. 空白字符问题（Git内置）
+#   2. C++代码格式（需要clang-format）
+#
+# 绕过方法: git commit --no-verify -m "message"
+# =============================================================================
+
+set -e
+
+# =============================================================================
+# 颜色定义
+# =============================================================================
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# =============================================================================
+# 日志函数
+# =============================================================================
+log_info() {
+    echo -e "${BLUE}>>>${NC} $1"
+}
+
+log_success() {
+    echo -e "${GREEN}✓${NC} $1"
+}
+
+log_warning() {
+    echo -e "${YELLOW}⚠${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}✗${NC} $1"
+}
+
+# =============================================================================
+# 获取项目根目录
+# =============================================================================
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# =============================================================================
+# 1. 空白字符检查
+# =============================================================================
+echo ""
+log_info "Pre-Commit Hook: 代码质量检查"
+echo ""
+
+# 检查暂存区是否有尾随空格
+cd "$PROJECT_ROOT"
+
+# Detect platform and use appropriate script
+if [[ "$(uname -s)" == MINGW* ]] || [[ "$(uname -s)" == MSYS* ]] || [[ "$(uname -s)" == Git* ]]; then
+    # Windows (Git Bash) - use PowerShell script
+    PS_SCRIPT="$PROJECT_ROOT/scripts/develop/remove_trailing_space.ps1"
+    if [[ -f "$PS_SCRIPT" ]]; then
+        if ! pwsh "$PS_SCRIPT" -StagedCheck; then
+            log_error "空白字符检查失败"
+            echo ""
+            echo "修复方法:"
+            echo "  pwsh scripts/develop/remove_trailing_space.ps1 -Staged"
+            echo ""
+            echo -e "${YELLOW}提示: 使用 --no-verify 可跳过此检查（不推荐）${NC}"
+            exit 1
+        fi
+    else
+        log_warning "空白字符检查脚本不存在: $PS_SCRIPT"
+    fi
+else
+    # Linux/macOS - use bash script
+    BASH_SCRIPT="$PROJECT_ROOT/scripts/develop/remove_trailing_space.sh"
+    if [[ -f "$BASH_SCRIPT" ]]; then
+        if ! bash "$BASH_SCRIPT" --staged-check; then
+            log_error "空白字符检查失败"
+            echo ""
+            echo "修复方法:"
+            if [[ "$(uname -s)" == Darwin* ]]; then
+                echo "  bash scripts/develop/remove_trailing_space.sh --staged"
+            else
+                echo "  bash scripts/develop/remove_trailing_space.sh --staged"
+            fi
+            echo ""
+            echo -e "${YELLOW}提示: 使用 --no-verify 可跳过此检查（不推荐）${NC}"
+            exit 1
+        fi
+    else
+        log_warning "空白字符检查脚本不存在: $BASH_SCRIPT"
+    fi
+fi
+log_success "空白字符检查通过"
+
+# =============================================================================
+# 2. C++ 格式检查（如果 clang-format 可用）
+# =============================================================================
+if command -v clang-format >/dev/null 2>&1; then
+    # 检查格式脚本是否存在
+    FORMAT_SCRIPT="$PROJECT_ROOT/scripts/develop/format_cpp.sh"
+    if [[ -f "$FORMAT_SCRIPT" ]]; then
+        cd "$PROJECT_ROOT"
+        log_info "检查 C++ 代码格式..."
+
+        # 自动格式化暂存的文件
+        if bash "$FORMAT_SCRIPT" --staged 2>/dev/null; then
+            # 重新添加格式化后的文件到暂存区
+            git diff --cached --name-only --diff-filter=ACM | while IFS= read -r file; do
+                [ -z "$file" ] && continue
+                if [[ "$file" == *.cpp ]] || [[ "$file" == *.h ]] || [[ "$file" == *.hpp ]] || [[ "$file" == *.cc ]] || [[ "$file" == *.cxx ]]; then
+                    git add "$file" 2>/dev/null || true
+                fi
+            done
+            log_success "C++ 代码已自动格式化"
+        fi
+    fi
+fi
+
+# =============================================================================
+# 完成
+# =============================================================================
+echo ""
+log_success "Pre-Commit 检查全部通过"
+echo ""
+exit 0

@@ -1,6 +1,9 @@
 # ignores
 .cache
 .claude
+
+# aqtinstall log
+aqtinstall.log
 # privates
 BLUEPRINT.md
 
@@ -15,3 +18,6 @@ third_party/*/
 !third_party/.gitkeep
 
 __pycache__/
+
+# Docker build logs
+scripts/docker/logger/

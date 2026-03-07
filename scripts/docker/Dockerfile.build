@@ -1,0 +1,81 @@
+# =============================================================================
+# CFDesktop Build Environment - Multi-Architecture Support
+# =============================================================================
+# Pure Linux build environment for CI and local verification
+#
+# Default: Qt 6.8.1 installed via aqtinstall (pre-built binaries)
+#
+# Build multi-arch image:
+#   docker buildx build --platform linux/amd64,linux/arm64 \
+#     -f scripts/docker/Dockerfile.build -t cfdesktop-build .
+#
+# Single arch build:
+#   docker build -t cfdesktop-build -f scripts/docker/Dockerfile.build .
+#
+# ARM64 build:
+#   docker build --build-arg QT_ARCH=linux_gcc_arm64 --platform linux/arm64 \
+#     -f scripts/docker/Dockerfile.build -t cfdesktop-build:arm64 .
+#
+# Usage:
+#   docker run --rm --platform linux/amd64 -v $(pwd):/project cfdesktop-build
+#   docker run --rm --platform linux/arm64 -v $(pwd):/project cfdesktop-build
+# =============================================================================
+
+# Allow override of base image via build-arg
+# Build scripts will use this for Docker Hub mirror fallback
+ARG BASE_IMAGE=ubuntu:24.04
+FROM ${BASE_IMAGE}
+
+# Qt version configuration
+# Uses aqtinstall to install Qt 6.8.1 (Ubuntu 24.04 apt only has 6.4.2)
+ARG QT_VERSION=6.8.1
+# Qt architecture: auto-detected by build script based on target platform
+# amd64 -> linux_gcc_64, arm64 -> linux_gcc_arm64
+ARG QT_ARCH=linux_gcc_64
+ENV QT_ARCH=${QT_ARCH}
+# Qt mirror: empty = official, or use https://mirrors.tuna.tsinghua.edu.cn/qt
+ARG QT_MIRROR=
+
+# Accept build arg from host (auto-detected by build scripts)
+ARG HOST_TIMEZONE=UTC
+
+# Avoid interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# =============================================================================
+# Install build dependencies (optional, controlled by INSTALL_DEPS arg)
+# =============================================================================
+# Set INSTALL_DEPS=0 to skip automatic dependency installation
+# Useful for interactive mode where you want to install manually
+# =============================================================================
+ARG INSTALL_DEPS=1
+
+COPY scripts/dependency/install_build_dependencies.sh /tmp/install_deps.sh
+RUN if [ "$INSTALL_DEPS" = "1" ]; then \
+        echo "Installing dependencies..."; \
+        chmod +x /tmp/install_deps.sh && \
+        /tmp/install_deps.sh && \
+        rm /tmp/install_deps.sh; \
+    else \
+        echo "Skipping dependency installation (INSTALL_DEPS=0)"; \
+        rm /tmp/install_deps.sh; \
+    fi
+
+# Add Python venv to PATH (only if dependencies were installed)
+RUN if [ -d "/opt/venv/bin" ]; then \
+        echo "Adding Python venv to PATH..."; \
+        echo 'export PATH="/opt/venv/bin:$PATH"' >> /root/.bashrc; \
+    fi
+ENV PATH="/opt/venv/bin:$PATH"
+
+# =============================================================================
+# Set working directory
+# =============================================================================
+WORKDIR /project
+
+# =============================================================================
+# Default command - starts bash
+# =============================================================================
+# Both docker_start.ps1 and docker_start.sh override this with /bin/bash
+# when running interactively. CI mode runs ci_build_entry.sh.
+CMD ["/bin/bash"]

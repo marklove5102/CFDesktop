@@ -2,3 +2,6 @@
 # Every man owns his configurations, please specified the
 # cmake prefix path
 *.cmake
+!ci-aarch64-toolchain.cmake
+!ci-armhf-toolchain.cmake
+!ci-x86_64-toolchain.cmake

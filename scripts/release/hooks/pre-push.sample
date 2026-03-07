@@ -1,0 +1,304 @@
+#!/bin/bash
+# =============================================================================
+# Git Pre-Push Hook - 本地 Docker 构建验证
+# =============================================================================
+#
+# 安装方法: bash scripts/release/hooks/install_hooks.sh
+#
+# 行为:
+#   - main 分支: X64 FastBuild + Tests
+#   - release/* 分支: 根据版本号自动检测验证级别
+#     * Major: X64 + ARM64 完整构建 + 测试
+#     * Minor: X64 完整构建 + 测试
+#     * Patch: X64 FastBuild + 测试
+#   - 其他分支: 跳过验证
+#
+# 绕过方法: git push --no-verify
+# =============================================================================
+
+set -e
+
+# =============================================================================
+# 颜色定义
+# =============================================================================
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+# =============================================================================
+# 日志函数
+# =============================================================================
+log_info() {
+    echo -e "${BLUE}>>>${NC} $1"
+}
+
+log_success() {
+    echo -e "${GREEN}✓${NC} $1"
+}
+
+log_warning() {
+    echo -e "${YELLOW}⚠${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}✗${NC} $1"
+}
+
+log_step() {
+    echo -e "${CYAN}==>${NC} $1"
+}
+
+# =============================================================================
+# 获取项目根目录
+# =============================================================================
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+cd "$PROJECT_ROOT"
+
+# =============================================================================
+# 加载版本工具函数
+# =============================================================================
+VERSION_UTILS="$SCRIPT_DIR/version_utils.sh"
+if [[ -f "$VERSION_UTILS" ]]; then
+    source "$VERSION_UTILS"
+else
+    log_error "版本工具脚本不存在: $VERSION_UTILS"
+    exit 1
+fi
+
+# =============================================================================
+# 获取当前分支
+# =============================================================================
+CURRENT_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null || echo "")
+
+# 如果在 detached HEAD 状态，尝试从推送参数获取分支
+if [[ -z "$CURRENT_BRANCH" ]]; then
+    # 从 stdin 读取推送信息
+    while read local_ref local_sha remote_ref remote_sha; do
+        CURRENT_BRANCH=$(echo "$local_ref" | sed 's|refs/heads/||')
+        break
+    done < /dev/stdin
+fi
+
+# =============================================================================
+# 分支判断
+# =============================================================================
+# 检查是否是 main 分支
+is_main_branch() {
+    [[ "$CURRENT_BRANCH" == "main" ]]
+}
+
+# 检查是否是 release 分支
+is_release_branch() {
+    [[ "$CURRENT_BRANCH" == release/* ]]
+}
+
+# 检查是否需要验证
+should_verify() {
+    is_main_branch || is_release_branch
+}
+
+# =============================================================================
+# 如果不需要验证，直接退出
+# =============================================================================
+if ! should_verify; then
+    echo ""
+    log_info "Pre-Push Hook: 分支 '$CURRENT_BRANCH' 跳过 Docker 验证"
+    echo ""
+    echo "Docker 验证仅在以下分支启用:"
+    echo "  - main: X64 FastBuild + Tests"
+    echo "  - release/*: 根据版本号自动检测验证级别"
+    echo ""
+    exit 0
+fi
+
+# =============================================================================
+# 需要验证，开始检查
+# =============================================================================
+echo ""
+log_info "========================================"
+log_info "Pre-Push Hook: Docker 构建验证"
+log_info "========================================"
+echo ""
+log_info "当前分支: ${YELLOW}$CURRENT_BRANCH${NC}"
+echo ""
+
+# =============================================================================
+# 检测 Docker 是否可用
+# =============================================================================
+if ! command -v docker >/dev/null 2>&1; then
+    log_error "Docker 未安装或未在 PATH 中"
+    echo ""
+    echo "请安装 Docker:"
+    echo "  Windows/macOS: https://www.docker.com/products/docker-desktop"
+    echo "  Linux: sudo apt install docker.io"
+    echo ""
+    echo -e "${YELLOW}或使用 --no-verify 跳过此检查: git push --no-verify${NC}"
+    exit 1
+fi
+
+# 检测 Docker daemon 是否运行
+if ! docker info &> /dev/null; then
+    log_error "Docker daemon 未运行"
+    echo ""
+    echo "请启动 Docker Desktop 或 Docker 服务"
+    echo ""
+    echo -e "${YELLOW}或使用 --no-verify 跳过此检查: git push --no-verify${NC}"
+    exit 1
+fi
+log_success "Docker 检测通过"
+echo ""
+
+# =============================================================================
+# 确定验证参数
+# =============================================================================
+DOCKER_START_SCRIPT="$PROJECT_ROOT/scripts/build_helpers/docker_start.sh"
+
+# 检查脚本是否存在
+if [[ ! -f "$DOCKER_START_SCRIPT" ]]; then
+    log_error "Docker 启动脚本不存在: $DOCKER_START_SCRIPT"
+    exit 1
+fi
+
+# 构建参数数组
+declare -a DOCKER_ARGS
+
+if is_main_branch; then
+    # =============================================================================
+    # main 分支: X64 FastBuild + Tests
+    # =============================================================================
+    log_step "检测到 main 分支"
+    log_info "验证级别: X64 FastBuild + Tests"
+    echo ""
+
+    DOCKER_ARGS=(
+        "--verify"
+        "--fast-build"
+        "--arch"
+        "amd64"
+    )
+
+elif is_release_branch; then
+    # =============================================================================
+    # release 分支: 根据版本号自动检测验证级别
+    # =============================================================================
+    log_step "检测到 release 分支"
+    echo ""
+
+    # 获取版本号
+    LOCAL_VERSION=$(get_local_version)
+    REMOTE_VERSION=$(get_remote_version)
+
+    # 确定验证级别
+    VERIFY_LEVEL=$(determine_verify_level "$LOCAL_VERSION" "$REMOTE_VERSION")
+
+    # 打印版本信息
+    print_version_info "$LOCAL_VERSION" "$REMOTE_VERSION" "$VERIFY_LEVEL"
+    echo ""
+
+    case "$VERIFY_LEVEL" in
+        major)
+            # Major: X64 + ARM64 完整构建
+            log_warning "Major 版本变更，将执行 X64 + ARM64 完整构建"
+            log_warning "这可能需要较长时间（ARM64 使用 QEMU 仿真）"
+            echo ""
+
+            # 先构建 X64
+            log_step "开始 X64 验证..."
+            DOCKER_ARGS=(
+                "--verify"
+                "--arch"
+                "amd64"
+            )
+
+            if ! bash "$DOCKER_START_SCRIPT" "${DOCKER_ARGS[@]}"; then
+                log_error "X64 构建验证失败"
+                exit 1
+            fi
+
+            log_success "X64 验证通过"
+            echo ""
+
+            # 再构建 ARM64
+            log_step "开始 ARM64 验证..."
+            DOCKER_ARGS=(
+                "--verify"
+                "--arch"
+                "arm64"
+            )
+
+            if ! bash "$DOCKER_START_SCRIPT" "${DOCKER_ARGS[@]}"; then
+                log_error "ARM64 构建验证失败"
+                exit 1
+            fi
+
+            log_success "ARM64 验证通过"
+            echo ""
+            log_success "========================================"
+            log_success "所有验证通过，可以推送"
+            log_success "========================================"
+            exit 0
+            ;;
+
+        minor)
+            # Minor: X64 完整构建
+            log_info "验证级别: X64 完整构建"
+            echo ""
+
+            DOCKER_ARGS=(
+                "--verify"
+                "--arch"
+                "amd64"
+            )
+            ;;
+
+        patch)
+            # Patch: X64 FastBuild + Tests
+            log_info "验证级别: X64 FastBuild + Tests"
+            echo ""
+
+            DOCKER_ARGS=(
+                "--verify"
+                "--fast-build"
+                "--arch"
+                "amd64"
+            )
+            ;;
+
+        *)
+            log_error "未知的验证级别: $VERIFY_LEVEL"
+            exit 1
+            ;;
+    esac
+fi
+
+# =============================================================================
+# 执行验证
+# =============================================================================
+log_step "开始 Docker 验证..."
+echo ""
+
+if bash "$DOCKER_START_SCRIPT" "${DOCKER_ARGS[@]}"; then
+    echo ""
+    log_success "========================================"
+    log_success "验证通过，可以推送"
+    log_success "========================================"
+    echo ""
+    exit 0
+else
+    exit_code=$?
+    echo ""
+    log_error "========================================"
+    log_error "验证失败，推送被阻止"
+    log_error "========================================"
+    echo ""
+    echo "回退方法:"
+    echo "  git reset --hard origin/$CURRENT_BRANCH"
+    echo ""
+    echo -e "${YELLOW}或使用 --no-verify 强制推送（不推荐）${NC}"
+    echo ""
+    exit $exit_code
+fi
