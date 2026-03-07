@@ -6,7 +6,7 @@
 
 | 模块 | TODO 文件 | 参考文档 | 状态 |
 |------|----------|----------|------|
-| 工程骨架 | [00_project_skeleton.md](00_project_skeleton.md) | [done/00_project_skeleton_ref.md](done/00_project_skeleton_ref.md) | 🚧 70% |
+| 工程骨架 | [00_project_skeleton.md](00_project_skeleton.md) | [done/00_project_skeleton_ref.md](done/00_project_skeleton_ref.md) | 🚧 85% |
 | 硬件探针 | [01_hardware_probe.md](01_hardware_probe.md) | [done/01_hardware_probe_ref.md](done/01_hardware_probe_ref.md) | ⬜ 0% |
 | Base库 | [02_base_library.md](02_base_library.md) | [done/02_base_library_ref.md](done/02_base_library_ref.md) | 🚧 35% |
 | 输入层 | [03_input_layer.md](03_input_layer.md) | [done/03_input_layer_ref.md](done/03_input_layer_ref.md) | ⬜ 0% |
@@ -17,7 +17,7 @@
 ## 项目状态报告
 
 - **综合报告**: [PROJECT_STATUS_REPORT.md](done/PROJECT_STATUS_REPORT.md)
-- **整体完成度**: 约 40%
+- **整体完成度**: 约 42%
 
 ## 详细信息
 
@@ -25,4 +25,4 @@
 
 ---
 
-*最后更新: 2026-03-05*
+*最后更新: 2026-03-07*

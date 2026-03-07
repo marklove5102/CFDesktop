@@ -161,11 +161,13 @@ DOCKER_PLATFORM="linux/$ARCH"
 # =============================================================================
 # Logging setup
 # =============================================================================
-LOG_DIR="$PROJECT_ROOT/scripts/docker/logger"
+LOG_DIR=""
 LOG_FILE=""
 
 setup_logging() {
     if [[ "$ENABLE_LOG" == true ]]; then
+        # Set LOG_DIR now that PROJECT_ROOT is defined
+        LOG_DIR="$PROJECT_ROOT/scripts/docker/logger"
         # Create logger directory if it doesn't exist
         mkdir -p "$LOG_DIR"
 
@@ -243,7 +245,12 @@ format_docker_line() {
 # Main flow
 # =============================================================================
 
-# Setup logging before any output
+# Get paths FIRST (needed for logging)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+DOCKERFILE_PATH="$PROJECT_ROOT/scripts/docker/Dockerfile.build"
+
+# Setup logging before any output (now that PROJECT_ROOT is defined)
 setup_logging
 
 show_header "${PROJECT_NAME} Docker Build Environment"
@@ -253,11 +260,6 @@ show_info "Architecture: $ARCH"
 show_info "Platform: $DOCKER_PLATFORM"
 show_info "Image: $IMAGE_NAME"
 show_info "Fast build: $FAST_BUILD"
-
-# Get paths
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-DOCKERFILE_PATH="$PROJECT_ROOT/scripts/docker/Dockerfile.build"
 
 show_info "Project root: $PROJECT_ROOT"
 
@@ -379,8 +381,9 @@ HOST_TIMEZONE=$(detect_timezone)
 # Run container
 # =============================================================================
 # Get mount path
+# Convert Windows path to Docker-compatible path
 if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
-    MOUNT_PATH="$(pwd | sed 's|^\([A-Za-z]\):|/\1|' | sed 's|\\|/|g')"
+    MOUNT_PATH="$(echo "$PROJECT_ROOT" | sed 's|^\([A-Za-z]\):|/\1|' | sed 's|\\|/|g')"
 else
     MOUNT_PATH="$PROJECT_ROOT"
 fi
@@ -391,7 +394,7 @@ if [[ "$RUN_VERIFY" == true ]]; then
     if [[ "$STAY_ON_ERROR" == true ]]; then
         show_info "Stay-on-error enabled: container will remain open on failure"
 
-        docker run --rm -it --platform "$DOCKER_PLATFORM" \
+        MSYS_NO_PATHCONV=1 docker run --rm -it --platform "$DOCKER_PLATFORM" \
             -v "$MOUNT_PATH:/project" \
             -w /project \
             "$IMAGE_NAME" \
@@ -406,7 +409,7 @@ if [[ "$RUN_VERIFY" == true ]]; then
             exit $exit_code
         fi
     else
-        docker run --rm --platform "$DOCKER_PLATFORM" \
+        MSYS_NO_PATHCONV=1 docker run --rm --platform "$DOCKER_PLATFORM" \
             -v "$MOUNT_PATH:/project" \
             -w /project \
             "$IMAGE_NAME" \
@@ -439,7 +442,7 @@ elif [[ "$RUN_BUILD_PROJECT" == true ]] || [[ "$RUN_BUILD_PROJECT_FAST" == true 
     esac
 
     show_stage "BUILD" "Running $BUILD_DESC in container"
-    docker run --rm -it --platform "$DOCKER_PLATFORM" \
+    MSYS_NO_PATHCONV=1 docker run --rm -it --platform "$DOCKER_PLATFORM" \
         -v "$MOUNT_PATH:/project" \
         -w /project \
         "$IMAGE_NAME" \
@@ -462,7 +465,7 @@ elif [[ "$RUN_PROJECT_TEST" == true ]]; then
     esac
 
     show_stage "TEST" "Running tests in container"
-    docker run --rm -it --platform "$DOCKER_PLATFORM" \
+    MSYS_NO_PATHCONV=1 docker run --rm -it --platform "$DOCKER_PLATFORM" \
         -v "$MOUNT_PATH:/project" \
         -w /project \
         "$IMAGE_NAME" \
@@ -480,7 +483,7 @@ else
     show_info "Type 'exit' to leave the container"
     echo ""
 
-    docker run --rm -it --platform "$DOCKER_PLATFORM" \
+    MSYS_NO_PATHCONV=1 docker run --rm -it --platform "$DOCKER_PLATFORM" \
         -v "$MOUNT_PATH:/project" \
         -w /project \
         "$IMAGE_NAME" \

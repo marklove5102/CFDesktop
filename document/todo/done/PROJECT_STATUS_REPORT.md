@@ -1,7 +1,7 @@
 # CFDesktop 项目状态报告
 
-> **报告日期**: 2026-03-05
-> **报告版本**: v1.0
+> **报告日期**: 2026-03-07
+> **报告版本**: v1.1
 > **项目周期**: Phase 0-6
 
 ---
@@ -10,11 +10,11 @@
 
 CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material Design 3 设计规范。项目旨在为嵌入式 Linux 设备提供一套完整的 UI 框架和开发工具链。
 
-### 整体完成度: 约 40%
+### 整体完成度: 约 42%
 
 | 模块 | 完成度 | 状态 | 优先级 |
 |------|--------|------|--------|
-| Phase 0: 工程骨架 | 70% | 🚧 进行中 | P0 |
+| Phase 0: 工程骨架 | 85% | 🚧 进行中 | P0 |
 | Phase 1: 硬件探针 | 0% | ⬜ 待开始 | P0 |
 | Phase 2: Base库核心 | 35% | 🚧 进行中 | P0 |
 | Phase 3: 输入抽象层 | 0% | ⬜ 待开始 | P1 |
@@ -26,7 +26,7 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
 
 ## 一、各模块详细状态
 
-### 1.1 工程骨架 (Phase 0) - 70%
+### 1.1 工程骨架 (Phase 0) - 85%
 
 #### ✅ 已完成
 - **CMake 构建系统** (90%)
@@ -36,9 +36,10 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
   - 自动化 MOC/RCC/UIC
   - 输出目录结构 (bin/, lib/, examples/)
 
-- **代码规范配置** (60%)
+- **代码规范配置** (80%)
   - .clang-format 配置 (LLVM 风格, 4空格缩进, 100列宽)
   - .clangd 配置
+  - Git pre-commit hook (空白字符检查 + clang-format 自动格式化)
 
 - **开发工具配置** (70%)
   - .vscode/settings.json
@@ -52,18 +53,28 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
   - test/ - 测试代码
   - cmake/ - CMake 工具模块
 
-- **CI/CD** (50%)
-  - .github/workflows/deploy.yml (文档部署)
+- **CI/CD** (100%) - Git Hooks 本地验证策略
+  - `scripts/docker/Dockerfile.build` - 多架构构建镜像 (amd64/arm64/armhf)
+  - `scripts/build_helpers/docker_start.sh` - Docker 构建脚本
+  - `scripts/build_helpers/ci_build_entry.sh` - CI 构建入口 (自动架构检测)
+  - `scripts/release/hooks/pre-push.sample` - **Git pre-push hook** (版本检查 + Docker 验证)
+    - main 分支: X64 FastBuild + Tests
+    - release 分支: 根据 Major/Minor/Patch 自动检测验证级别
+  - `scripts/release/hooks/pre-commit.sample` - **Git pre-commit hook** (代码质量检查)
+    - 空白字符检查 (trailing whitespace)
+    - C++ 代码自动格式化 (clang-format)
+  - `scripts/release/hooks/version_utils.sh` - 版本号解析工具
+  - `scripts/release/hooks/install_hooks.sh` - Hooks 自动安装脚本
+  - `scripts/dependency/install_build_dependencies.sh` - 依赖自动化
+  - `.github/workflows/deploy.yml` - MkDocs 文档自动部署到 gh-pages
 
 #### ⚠️ 待完成
-- .clang-tidy 静态分析配置
-- tools/format.sh 脚本
-- Git pre-commit hooks
-- .github/workflows/build.yml 构建流水线
+- ~~.clang-tidy 静态分析配置~~ (不考虑)
+- ~~.github/workflows/build.yml 构建流水线~~ (使用 Git Hooks 替代)
 
 #### 📝 已调整
 - ~~CMakePresets.json~~ - 不需要，不方便维护
-- ~~ARM 交叉编译工具链~~ - 不需要
+- ~~ARM 交叉编译工具链~~ - 使用 Docker 多架构构建替代
 - ~~src/base/sdk/shell 结构~~ - 使用现有 base/ui 结构
 
 ---
@@ -241,7 +252,7 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
 │                                                                 │
 │  ┌──────────────┐      ┌──────────────┐                        │
 │  │ 工程骨架     │──────│  测试体系     │                        │
-│  │ (70%)        │      │ (40%)        │                        │
+│  │ (85%)        │      │ (40%)        │                        │
 │  └──────────────┘      └──────────────┘                        │
 │         │                                                      │
 │         ▼                                                      │
@@ -400,6 +411,6 @@ CFDesktop/
 
 ---
 
-*报告生成时间: 2026-03-05*
+*报告生成时间: 2026-03-07*
 *报告生成工具: Claude Code*
 *项目路径: d:/ProjectHome/CFDesktop*

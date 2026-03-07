@@ -8,13 +8,13 @@
 
 | TODO 文件 | 模块 | 预计周期 | 依赖 | 状态 |
 |----------|------|---------|------|------|
-| [00_project_skeleton.md](00_project_skeleton.md) | 工程骨架搭建 | 1~2 周 | - | 🚧 进行中 |
-| [01_hardware_probe.md](01_hardware_probe.md) | 硬件探针与能力分级 | 2~3 周 | Phase 0 | ⬜ 待开始 |
-| [02_base_library.md](02_base_library.md) | Base 库核心 | 3~4 周 | Phase 0, 1 | ⬜ 待开始 |
-| [03_input_layer.md](03_input_layer.md) | 输入抽象层 | 1~2 周 | Phase 0, 1, 2 | ⬜ 待开始 |
-| [04_simulator.md](04_simulator.md) | 多平台模拟器 | 2~3 周 | Phase 0, 2, 3 | ⬜ 待开始 |
-| [05_testing.md](05_testing.md) | 测试体系 | 贯穿全程 | 所有阶段 | ⬜ 待开始 |
-| [99_ui_material_framework.md](99_ui_material_framework.md) | UI Material Framework | 持续迭代 | Phase 0-3 | ⬜ 待开始 |
+| [00_project_skeleton.md](00_project_skeleton.md) | 工程骨架搭建 | 1~2 周 | - | 🚧 85% |
+| [01_hardware_probe.md](01_hardware_probe.md) | 硬件探针与能力分级 | 2~3 周 | Phase 0 | ⬜ 0% |
+| [02_base_library.md](02_base_library.md) | Base 库核心 | 3~4 周 | Phase 0, 1 | 🚧 35% |
+| [03_input_layer.md](03_input_layer.md) | 输入抽象层 | 1~2 周 | Phase 0, 1, 2 | ⬜ 0% |
+| [04_simulator.md](04_simulator.md) | 多平台模拟器 | 2~3 周 | Phase 0, 2, 3 | ⬜ 0% |
+| [05_testing.md](05_testing.md) | 测试体系 | 贯穿全程 | 所有阶段 | 🚧 40% |
+| [99_ui_material_framework.md](99_ui_material_framework.md) | UI Material Framework | 持续迭代 | Phase 0-3 | 🚧 62% |
 
 ## 状态图例
 
@@ -28,7 +28,7 @@
 
 | 里程碑 | 时间 | 交付物 |
 |--------|------|--------|
-| M0 | Week 2 | 工程骨架 + CI 跑通 |
+| M0 | Week 2 | ✅ 工程骨架 + Git Hooks CI/CD |
 | M1 | Week 5 | 硬件探针 + 三档能力分级 |
 | M2 | Week 9 | Base 库 + 主题引擎 + 输入抽象 |
 | M3 | Week 15 | Shell UI 主体可用 |
@@ -64,8 +64,9 @@
 
 | 日期 | 变更 | 影响模块 |
 |------|------|----------|
+| 2026-03-07 | CI/CD 完成 (Git Hooks 策略) | 工程骨架 |
 | 2026-03-05 | 创建 TODO 看板 | 全部 |
 
 ---
 
-*最后更新: 2026-03-05*
+*最后更新: 2026-03-07*

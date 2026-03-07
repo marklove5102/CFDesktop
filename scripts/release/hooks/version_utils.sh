@@ -110,6 +110,22 @@ get_remote_version() {
     git describe --tags --abbrev=0 origin/main 2>/dev/null || echo "0.0.0"
 }
 
+# 获取 CMakeLists.txt 中定义的版本号
+# 参数: $1 - 项目根目录路径
+# 返回: CMakeLists.txt 中的版本号，如果未找到则返回空字符串
+get_cmake_version() {
+    local project_root="$1"
+    local cmake_file="$project_root/CMakeLists.txt"
+
+    if [[ ! -f "$cmake_file" ]]; then
+        echo ""
+        return
+    fi
+
+    # 提取 VERSION x.y.z 格式的版本号
+    grep -oP 'VERSION\s+\K[\d.]+' "$cmake_file" 2>/dev/null || echo ""
+}
+
 # =============================================================================
 # 调试辅助函数
 # =============================================================================

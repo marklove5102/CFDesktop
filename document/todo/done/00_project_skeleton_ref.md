@@ -1,9 +1,9 @@
 # Phase 0: 工程骨架搭建 - 参考文档
 
 > **模块状态**: 进行中
-> **完成度**: 70%
-> **更新日期**: 2026-03-05
-> **说明**: 基础构建系统已就绪，部分开发工具待完善
+> **完成度**: 85%
+> **更新日期**: 2026-03-07
+> **说明**: 基础构建系统已就绪，Git Hooks CI/CD 已完成
 
 ---
 
@@ -22,15 +22,15 @@
 
 ## 二、当前实现状态
 
-### 总体完成度: 70%
+### 总体完成度: 85%
 
 | 项目 | 完成度 | 说明 |
 |------|--------|------|
 | CMake 构建系统 | 90% | 主配置完成，缺少交叉编译工具链 |
-| 代码规范配置 | 60% | .clang-format 已配置，缺少 .clang-tidy |
-| 开发工具配置 | 70% | VSCode/clangd 配置完成，缺少格式化脚本 |
-| CI/CD 流水线 | 50% | 文档部署已完成，缺少构建流水线 |
-| 交叉编译支持 | 0% | 未实现 |
+| 代码规范配置 | 80% | .clang-format + Git pre-commit hook 已配置 |
+| 开发工具配置 | 70% | VSCode/clangd 配置完成 |
+| CI/CD 流水线 | 100% | Git Hooks 本地验证策略已完整实现 |
+| 交叉编译支持 | 0% | 未实现 (Docker 多架构构建替代) |
 
 ---
 
@@ -122,7 +122,80 @@ SortIncludes: true
 
 ### 3.4 CI/CD 流水线
 
-**部署流水线**: `.github/workflows/deploy.yml`
+**策略**: Git Hooks 本地验证，无需远程 CI 构建流水线
+
+#### 3.4.1 Git Pre-Push Hook
+
+**文件**: `scripts/release/hooks/pre-push.sample`
+
+**已完成功能**:
+- 版本号检查 (阻止未更新版本的推送)
+- Docker 构建验证 (本地执行)
+- main 分支: X64 FastBuild + Tests
+- release 分支: 根据 Major/Minor/Patch 自动检测验证级别
+  - Major: X64 + ARM64 完整构建
+  - Minor: X64 完整构建
+  - Patch: X64 FastBuild + Tests
+
+#### 3.4.2 Git Pre-Commit Hook
+
+**文件**: `scripts/release/hooks/pre-commit.sample`
+
+**已完成功能**:
+- 空白字符检查 (trailing whitespace)
+- C++ 代码自动格式化 (clang-format)
+- 支持跨平台 (Windows PowerShell / Linux bash)
+
+#### 3.4.3 Docker 构建系统
+
+**文件**: `scripts/docker/Dockerfile.build`
+
+**已完成功能**:
+- 多架构支持 (amd64/arm64/armhf)
+- Qt 6.8.1 通过 aqtinstall 自动安装
+- 依赖自动化安装 (`scripts/dependency/install_build_dependencies.sh`)
+
+#### 3.4.4 Docker 构建脚本
+
+**文件**: `scripts/build_helpers/docker_start.sh`
+
+**已完成功能**:
+- 多架构构建 (--arch amd64/arm64)
+- CI 验证模式 (--verify)
+- 快速构建 (--fast-build)
+- 项目构建 (--build-project)
+- 测试运行 (--run-project-test)
+- 美化日志输出
+
+#### 3.4.5 CI 构建入口
+
+**文件**: `scripts/build_helpers/ci_build_entry.sh`
+
+**已完成功能**:
+- 自动架构检测 (x86_64/aarch64/armv7l)
+- 自动选择对应配置文件
+
+#### 3.4.6 版本工具
+
+**文件**: `scripts/release/hooks/version_utils.sh`
+
+**已完成功能**:
+- 版本号解析 (Major/Minor/Patch)
+- 验证级别自动检测
+- 本地/远程版本比较
+
+#### 3.4.7 Hooks 安装脚本
+
+**文件**: `scripts/release/hooks/install_hooks.sh`
+
+**已完成功能**:
+- 自动安装 pre-commit 和 pre-push hooks
+- 支持交互式确认
+- 备份现有 hooks
+
+#### 3.4.8 文档部署流水线
+
+**文件**: `.github/workflows/deploy.yml`
 
 **已完成功能**:
 - MkDocs 文档自动构建
@@ -371,11 +444,11 @@ example/     # 示例程序
 | 项目 | 原计划需求 | 已实现 | 完成度 |
 |------|-----------|--------|--------|
 | CMake 构建系统 | 100% | 90% | 90% |
-| 代码规范配置 | 100% | 60% | 60% |
+| 代码规范配置 | 100% | 80% | 80% |
 | 开发工具配置 | 100% | 70% | 70% |
-| CI/CD 流水线 | 100% | 50% | 50% |
+| CI/CD 流水线 | 100% | 100% | 100% |
 | 交叉编译支持 | 100% | 0% | 0% |
-| **总体** | **100%** | **70%** | **70%** |
+| **总体** | **100%** | **85%** | **85%** |
 
 ---
 
@@ -394,6 +467,21 @@ CFDesktop/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml                # 文档部署流水线
+├── scripts/
+│   ├── docker/
+│   │   └── Dockerfile.build          # 多架构 Docker 镜像
+│   ├── build_helpers/
+│   │   ├── docker_start.sh           # Docker 构建脚本
+│   │   ├── ci_build_entry.sh         # CI 构建入口
+│   │   └── build_ci_*.ini            # 多架构配置
+│   ├── release/
+│   │   └── hooks/
+│   │       ├── pre-commit.sample     # Pre-commit hook
+│   │       ├── pre-push.sample       # Pre-push hook
+│   │       ├── version_utils.sh      # 版本工具
+│   │       └── install_hooks.sh      # Hooks 安装脚本
+│   └── dependency/
+│       └── install_build_dependencies.sh  # 依赖安装
 └── cmake/
     ├── build_log_helper.cmake        # 构建日志
     ├── check_toolchain.cmake         # 工具链检查
@@ -408,19 +496,14 @@ CFDesktop/
 
 ```
 CFDesktop/
-├── .clang-tidy                       # 静态分析配置
-├── tools/
-│   └── format.sh                     # 格式化脚本
-├── .git/
-│   └── hooks/
-│       └── pre-commit                # Git pre-commit hook
+├── .clang-tidy                       # 静态分析配置 (不考虑)
 ├── .github/
 │   └── workflows/
-│       └── build.yml                 # 构建流水线
+│       └── build.yml                 # 构建流水线 (不需要，Git Hooks 替代)
 └── cmake/
     └── toolchains/
-        ├── arm-linux-gnueabihf.cmake # ARMv7 工具链
-        └── aarch64-linux-gnu.cmake   # ARM64 工具链
+        ├── arm-linux-gnueabihf.cmake # ARMv7 工具链 (推迟)
+        └── aarch64-linux-gnu.cmake   # ARM64 工具链 (推迟)
 ```
 
 ---
@@ -429,39 +512,24 @@ CFDesktop/
 
 ### 优先级1 (高)
 
-1. **添加 .clang-tidy 配置**
+1. **编写开发环境设置文档**
    - 优先级: 最高
-   - 理由: 提高代码质量
-   - 预计工作量: 1天
-
-2. **创建格式化脚本**
-   - 优先级: 高
-   - 理由: 统一代码格式
-   - 预计工作量: 1天
-
-3. **配置 Git pre-commit hooks**
-   - 优先级: 高
-   - 理由: 防止不规范代码提交
+   - 理由: 帮助新成员快速上手
    - 预计工作量: 1天
 
 ### 优先级2 (中)
 
-4. **创建构建流水线**
+2. **添加交叉编译工具链**
    - 优先级: 中
-   - 理由: 自动化构建和测试
-   - 预计工作量: 2-3天
-
-5. **编写开发环境设置文档**
-   - 优先级: 中
-   - 理由: 帮助新成员快速上手
-   - 预计工作量: 1天
-
-### 优先级3 (低)
-
-6. **添加交叉编译工具链**
-   - 优先级: 低
    - 理由: 嵌入式平台后续支持
    - 预计工作量: 3-4天
+
+### 已完成项目
+
+- ✅ Git pre-commit hooks (空白字符检查 + clang-format)
+- ✅ Git pre-push hooks (版本检查 + Docker 验证)
+- ✅ Docker 多架构构建系统
+- ✅ CI 构建入口脚本
 
 ---
 
@@ -473,4 +541,4 @@ CFDesktop/
 
 ---
 
-*最后更新: 2026-03-05*
+*最后更新: 2026-03-07*
