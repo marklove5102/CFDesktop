@@ -10,7 +10,9 @@
 $ErrorActionPreference = "Stop"
 
 # 导入路径模块
-$LibDir = Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) "scripts\lib\powershell"
+# $PSScriptRoot = scripts/release/hooks, 需要向上 3 级到项目根目录
+$ProjectRootForLib = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+$LibDir = Join-Path $ProjectRootForLib "scripts\lib\powershell"
 Import-Module (Join-Path $LibDir "LibPaths.psm1") -Force
 
 # Set caller's PSScriptRoot for module functions to access
@@ -30,7 +32,8 @@ $Reset = "`e[0m"
 # 路径设置
 # =============================================================================
 $ScriptDir = Get-ScriptDir
-$ProjectRoot = Get-ProjectRoot
+# $PSScriptRoot = scripts/release/hooks, 需要向上 3 级到项目根目录
+$ProjectRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $ScriptDir))
 $HooksSourceDir = $ScriptDir
 $HooksTargetDir = "$ProjectRoot\.git\hooks"
 
