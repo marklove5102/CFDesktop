@@ -7,81 +7,29 @@ param(
     [string]$Config = "develop"
 )
 
+# 导入库模块
+$LibDir = Join-Path (Split-Path -Parent $PSScriptRoot) "lib\powershell"
+Import-Module (Join-Path $LibDir "LibCommon.psm1") -Force
+Import-Module (Join-Path $LibDir "LibConfig.psm1") -Force
+Import-Module (Join-Path $LibDir "LibPaths.psm1") -Force
+
 $ErrorActionPreference = "Stop"
 
-# Function to read INI configuration file
-function Get-IniConfig {
-    param(
-        [string]$FilePath
-    )
+Write-LogSeparator
+Write-LogInfo "Starting Windows CMake Configuration"
+Write-LogInfo "Configuration: $Config"
+Write-LogSeparator
 
-    $config = @{}
-    $currentSection = ""
+# Set caller's PSScriptRoot for module functions to access
+$global:CallerPSScriptRoot = $PSScriptRoot
+$global:CallerMyInvocationPath = $MyInvocation.MyCommand.Path
 
-    if (Test-Path $FilePath) {
-        Get-Content $FilePath | ForEach-Object {
-            $line = $_.Trim()
+# Get the script directory and project root using library functions
+$ScriptDir = Get-ScriptDir
+$ProjectRoot = Get-ProjectRoot
 
-            # Skip empty lines and comments
-            if ([string]::IsNullOrEmpty($line) -or $line.StartsWith("#") -or $line.StartsWith(";")) {
-                return
-            }
-
-            # Section header
-            if ($line -match '^\[([^\]]+)\]$') {
-                $currentSection = $matches[1]
-                if (-not $config.ContainsKey($currentSection)) {
-                    $config[$currentSection] = @{}
-                }
-                return
-            }
-
-            # Key=value pair
-            if ($line -match '^([^=]+)=(.*)$') {
-                $key = $matches[1].Trim()
-                $value = $matches[2].Trim()
-
-                if ($currentSection -and $config.ContainsKey($currentSection)) {
-                    $config[$currentSection][$key] = $value
-                }
-            }
-        }
-    }
-    else {
-        throw "Configuration file not found: $FilePath"
-    }
-
-    return $config
-}
-
-# Log function
-function Write-Log {
-    param(
-        [string]$Message,
-        [string]$Level = "INFO"
-    )
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $color = switch ($Level) {
-        "INFO" { "Cyan" }
-        "SUCCESS" { "Green" }
-        "WARNING" { "Yellow" }
-        "ERROR" { "Red" }
-        default { "White" }
-    }
-    Write-Host "[$timestamp] [$Level] $Message" -ForegroundColor $color
-}
-
-Write-Log "========================================" "INFO"
-Write-Log "Starting Windows CMake Configuration" "INFO"
-Write-Log "Configuration: $Config" "INFO"
-Write-Log "========================================" "INFO"
-
-# Get the script directory and project root
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ProjectRoot = Split-Path -Parent (Split-Path -Parent $ScriptDir)
-
-Write-Log "Project root: $ProjectRoot" "INFO"
-Write-Log "Changing to project directory" "INFO"
+Write-LogInfo "Project root: $ProjectRoot"
+Write-LogInfo "Changing to project directory"
 
 Set-Location $ProjectRoot
 
@@ -93,14 +41,14 @@ else {
     $ConfigFile = Join-Path $ScriptDir "build_develop_config.ini"
 }
 
-Write-Log "Loading configuration from: $ConfigFile" "INFO"
+Write-LogInfo "Loading configuration from: $ConfigFile"
 
 try {
     $ConfigData = Get-IniConfig -FilePath $ConfigFile
-    Write-Log "Configuration loaded successfully!" "SUCCESS"
+    Write-LogSuccess "Configuration loaded successfully!"
 }
 catch {
-    Write-Log "Failed to load configuration: $_" "ERROR"
+    Write-LogError "Failed to load configuration: $_"
     exit 1
 }
 
@@ -109,14 +57,14 @@ $Generator = $ConfigData["cmake"]["generator"]
 $Toolchain = $ConfigData["cmake"]["toolchain"]
 $BuildType = $ConfigData["cmake"]["build_type"]
 if (-not $BuildType) {
-    Write-Log "ERROR: build_type not specified in config file" "ERROR"
+    Write-LogError "ERROR: build_type not specified in config file"
     exit 1
 }
 
 # Validate BuildType value
 $ValidBuildTypes = @("Debug", "Release", "RelWithDebInfo")
 if ($BuildType -notin $ValidBuildTypes) {
-    Write-Log "ERROR: Invalid build_type '$BuildType'. Must be one of: $($ValidBuildTypes -join ', ')" "ERROR"
+    Write-LogError "ERROR: Invalid build_type '$BuildType'. Must be one of: $($ValidBuildTypes -join ', ')"
     exit 1
 }
 
@@ -135,17 +83,17 @@ else {
     }
 }
 
-Write-Log "Generator: $Generator" "INFO"
-Write-Log "Toolchain: $Toolchain" "INFO"
-Write-Log "Build Type: $BuildType" "INFO"
-Write-Log "Source directory: $SourceDir (resolved: $ResolvedSourceDir)" "INFO"
-Write-Log "Build directory: $BuildDir" "INFO"
+Write-LogInfo "Generator: $Generator"
+Write-LogInfo "Toolchain: $Toolchain"
+Write-LogInfo "Build Type: $BuildType"
+Write-LogInfo "Source directory: $SourceDir (resolved: $ResolvedSourceDir)"
+Write-LogInfo "Build directory: $BuildDir"
 
 # Configure with CMake
-Write-Log "========================================" "INFO"
-Write-Log "Configuring with CMake (NO BUILD)" "INFO"
-Write-Log "Command: cmake -G $Generator -DUSE_TOOLCHAIN=$Toolchain -DCMAKE_BUILD_TYPE=$BuildType -S $ResolvedSourceDir -B $BuildDir" "INFO"
-Write-Log "========================================" "INFO"
+Write-LogSeparator
+Write-LogInfo "Configuring with CMake (NO BUILD)"
+Write-LogInfo "Command: cmake -G $Generator -DUSE_TOOLCHAIN=$Toolchain -DCMAKE_BUILD_TYPE=$BuildType -S $ResolvedSourceDir -B $BuildDir"
+Write-LogSeparator
 
 $cmakeConfigArgs = @(
     "-G", $Generator,
@@ -158,17 +106,17 @@ $cmakeConfigArgs = @(
 try {
     & cmake @cmakeConfigArgs
     if ($LASTEXITCODE -eq 0) {
-        Write-Log "========================================" "INFO"
-        Write-Log "CMake configuration completed successfully!" "SUCCESS"
-        Write-Log "To build the project, run: cmake --build $BuildDir" "INFO"
-        Write-Log "========================================" "INFO"
+        Write-LogSeparator
+        Write-LogSuccess "CMake configuration completed successfully!"
+        Write-LogInfo "To build the project, run: cmake --build $BuildDir"
+        Write-LogSeparator
     }
     else {
-        Write-Log "CMake configuration failed with exit code: $LASTEXITCODE" "ERROR"
+        Write-LogError "CMake configuration failed with exit code: $LASTEXITCODE"
         exit $LASTEXITCODE
     }
 }
 catch {
-    Write-Log "Error during CMake configuration: $_" "ERROR"
+    Write-LogError "Error during CMake configuration: $_"
     exit 1
 }

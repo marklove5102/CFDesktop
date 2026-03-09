@@ -6,79 +6,27 @@ param(
     [string]$Config = "develop"
 )
 
+# 导入库模块
+$LibDir = Join-Path (Split-Path -Parent $PSScriptRoot) "lib\powershell"
+Import-Module (Join-Path $LibDir "LibCommon.psm1") -Force
+Import-Module (Join-Path $LibDir "LibConfig.psm1") -Force
+Import-Module (Join-Path $LibDir "LibPaths.psm1") -Force
+
 $ErrorActionPreference = "Stop"
 
-# Function to read INI configuration file
-function Get-IniConfig {
-    param(
-        [string]$FilePath
-    )
+# Set caller's PSScriptRoot for module functions to access
+$global:CallerPSScriptRoot = $PSScriptRoot
+$global:CallerMyInvocationPath = $MyInvocation.MyCommand.Path
 
-    $config = @{}
-    $currentSection = ""
+Write-LogSeparator
+Write-LogInfo "Running Tests (Config: $Config)"
+Write-LogSeparator
 
-    if (Test-Path $FilePath) {
-        Get-Content $FilePath | ForEach-Object {
-            $line = $_.Trim()
+# Get the script directory and project root using library functions
+$ScriptDir = Get-ScriptDir
+$ProjectRoot = Get-ProjectRoot
 
-            # Skip empty lines and comments
-            if ([string]::IsNullOrEmpty($line) -or $line.StartsWith("#") -or $line.StartsWith(";")) {
-                return
-            }
-
-            # Section header
-            if ($line -match '^\[([^\]]+)\]$') {
-                $currentSection = $matches[1]
-                if (-not $config.ContainsKey($currentSection)) {
-                    $config[$currentSection] = @{}
-                }
-                return
-            }
-
-            # Key=value pair
-            if ($line -match '^([^=]+)=(.*)$') {
-                $key = $matches[1].Trim()
-                $value = $matches[2].Trim()
-
-                if ($currentSection -and $config.ContainsKey($currentSection)) {
-                    $config[$currentSection][$key] = $value
-                }
-            }
-        }
-    }
-    else {
-        throw "Configuration file not found: $FilePath"
-    }
-
-    return $config
-}
-
-# Log function
-function Write-Log {
-    param(
-        [string]$Message,
-        [string]$Level = "INFO"
-    )
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $color = switch ($Level) {
-        "INFO" { "Cyan" }
-        "SUCCESS" { "Green" }
-        "WARNING" { "Yellow" }
-        "ERROR" { "Red" }
-        default { "White" }
-    }
-    Write-Host "[$timestamp] [$Level] $Message" -ForegroundColor $color
-}
-
-Write-Log "========================================" "INFO"
-Write-Log "Running Tests (Config: $Config)" "INFO"
-Write-Log "========================================" "INFO"
-
-# Get the script directory and project root
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ProjectRoot = Split-Path -Parent (Split-Path -Parent $ScriptDir)
-
-Write-Log "Project root: $ProjectRoot" "INFO"
+Write-LogInfo "Project root: $ProjectRoot"
 Set-Location $ProjectRoot
 
 # Determine which config file to use
@@ -86,20 +34,20 @@ $ConfigFile = switch ($Config) {
     "develop" { "build_develop_config.ini" }
     "deploy" { "build_deploy_config.ini" }
     default {
-        Write-Log "Unknown config: $Config. Valid options are: develop, deploy" "ERROR"
+        Write-LogError "Unknown config: $Config. Valid options are: develop, deploy"
         exit 1
     }
 }
 
 $ConfigFilePath = Join-Path $ScriptDir $ConfigFile
-Write-Log "Loading configuration from: $ConfigFilePath" "INFO"
+Write-LogInfo "Loading configuration from: $ConfigFilePath"
 
 try {
     $ConfigData = Get-IniConfig -FilePath $ConfigFilePath
-    Write-Log "Configuration loaded successfully!" "SUCCESS"
+    Write-LogSuccess "Configuration loaded successfully!"
 }
 catch {
-    Write-Log "Failed to load configuration: $_" "ERROR"
+    Write-LogError "Failed to load configuration: $_"
     exit 1
 }
 
@@ -107,39 +55,39 @@ catch {
 $BuildDir = $ConfigData["paths"]["build_dir"]
 $BuildDir = Join-Path $ProjectRoot $BuildDir "test"
 
-Write-Log "Test directory: $BuildDir" "INFO"
-Write-Log "Command: ctest --test-dir $BuildDir --output-on-failure" "INFO"
+Write-LogInfo "Test directory: $BuildDir"
+Write-LogInfo "Command: ctest --test-dir $BuildDir --output-on-failure"
 
 # Check if build directory exists
 if (-not (Test-Path $BuildDir)) {
-    Write-Log "Build directory does not exist: $BuildDir" "ERROR"
-    Write-Log "Please run the build script first before running tests." "ERROR"
+    Write-LogError "Build directory does not exist: $BuildDir"
+    Write-LogError "Please run the build script first before running tests."
     exit 1
 }
 
 # Run tests
-Write-Log "========================================" "INFO"
-Write-Log "Running tests..." "INFO"
-Write-Log "========================================" "INFO"
+Write-LogSeparator
+Write-LogInfo "Running tests..."
+Write-LogSeparator
 
 try {
     & ctest --test-dir $BuildDir --output-on-failure
     $exitCode = $LASTEXITCODE
 
     if ($exitCode -eq 0) {
-        Write-Log "========================================" "INFO"
-        Write-Log "All tests passed successfully!" "SUCCESS"
-        Write-Log "========================================" "INFO"
+        Write-LogSeparator
+        Write-LogSuccess "All tests passed successfully!"
+        Write-LogSeparator
         exit 0
     }
     else {
-        Write-Log "========================================" "INFO"
-        Write-Log "Some tests failed with exit code: $exitCode" "WARNING"
-        Write-Log "========================================" "INFO"
+        Write-LogSeparator
+        Write-LogWarning "Some tests failed with exit code: $exitCode"
+        Write-LogSeparator
         exit $exitCode
     }
 }
 catch {
-    Write-Log "Error during test execution: $_" "ERROR"
+    Write-LogError "Error during test execution: $_"
     exit 1
 }

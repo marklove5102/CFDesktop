@@ -9,6 +9,14 @@
 
 $ErrorActionPreference = "Stop"
 
+# 导入路径模块
+$LibDir = Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) "scripts\lib\powershell"
+Import-Module (Join-Path $LibDir "LibPaths.psm1") -Force
+
+# Set caller's PSScriptRoot for module functions to access
+$global:CallerPSScriptRoot = $PSScriptRoot
+$global:CallerMyInvocationPath = $MyInvocation.MyCommand.Path
+
 # =============================================================================
 # 颜色定义
 # =============================================================================
@@ -21,8 +29,8 @@ $Reset = "`e[0m"
 # =============================================================================
 # 路径设置
 # =============================================================================
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ProjectRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $ScriptDir))
+$ScriptDir = Get-ScriptDir
+$ProjectRoot = Get-ProjectRoot
 $HooksSourceDir = $ScriptDir
 $HooksTargetDir = "$ProjectRoot\.git\hooks"
 

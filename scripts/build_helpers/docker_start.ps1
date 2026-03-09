@@ -43,6 +43,10 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# 导入路径模块
+$LibDir = Join-Path (Split-Path -Parent $PSScriptRoot) "lib\powershell"
+Import-Module (Join-Path $LibDir "LibPaths.psm1") -Force
+
 # =============================================================================
 # Configuration
 # =============================================================================
@@ -345,11 +349,15 @@ $mode = if ($RunVerify) { 'CI Verify' }
         else { 'Interactive' }
 Show-Info "Mode: $mode"
 
+# Set caller's PSScriptRoot for module functions to access
+$global:CallerPSScriptRoot = $PSScriptRoot
+$global:CallerMyInvocationPath = $MyInvocation.MyCommand.Path
+
 # =============================================================================
 # Paths
 # =============================================================================
-$ScriptDir = $PSScriptRoot
-$ProjectRoot = Split-Path -Parent (Split-Path -Parent $ScriptDir)
+$ScriptDir = Get-ScriptDir
+$ProjectRoot = Get-ProjectRoot
 $DockerDir = Join-Path $ProjectRoot "scripts\docker"
 $DockerfilePath = Join-Path $DockerDir "Dockerfile.build"
 

@@ -1,97 +1,52 @@
 # This script configures and builds the project (FAST version - no cleaning)
 # It calls the configure script first, then builds
+
+# 导入库模块
+$LibDir = Join-Path (Split-Path -Parent $PSScriptRoot) "lib\powershell"
+Import-Module (Join-Path $LibDir "LibCommon.psm1") -Force
+Import-Module (Join-Path $LibDir "LibConfig.psm1") -Force
+Import-Module (Join-Path $LibDir "LibPaths.psm1") -Force
+Import-Module (Join-Path $LibDir "LibBuild.psm1") -Force
+
 $ErrorActionPreference = "Stop"
 
-# Function to read INI configuration file
-function Get-IniConfig {
-    param(
-        [string]$FilePath
-    )
+# Set caller's PSScriptRoot for module functions to access
+$global:CallerPSScriptRoot = $PSScriptRoot
+$global:CallerMyInvocationPath = $MyInvocation.MyCommand.Path
 
-    $config = @{}
-    $currentSection = ""
+Write-LogSeparator
+Write-LogInfo "Starting Windows FAST Build Process"
+Write-LogSeparator
 
-    if (Test-Path $FilePath) {
-        Get-Content $FilePath | ForEach-Object {
-            $line = $_.Trim()
+# Get the script directory and project root using library functions
+$ScriptDir = Get-ScriptDir
+$ProjectRoot = Get-ProjectRoot
 
-            # Skip empty lines and comments
-            if ([string]::IsNullOrEmpty($line) -or $line.StartsWith("#") -or $line.StartsWith(";")) {
-                return
-            }
-
-            # Section header
-            if ($line -match '^\[([^\]]+)\]$') {
-                $currentSection = $matches[1]
-                if (-not $config.ContainsKey($currentSection)) {
-                    $config[$currentSection] = @{}
-                }
-                return
-            }
-
-            # Key=value pair
-            if ($line -match '^([^=]+)=(.*)$') {
-                $key = $matches[1].Trim()
-                $value = $matches[2].Trim()
-
-                if ($currentSection -and $config.ContainsKey($currentSection)) {
-                    $config[$currentSection][$key] = $value
-                }
-            }
-        }
-    }
-    else {
-        throw "Configuration file not found: $FilePath"
-    }
-
-    return $config
-}
-
-# Log function
-function Write-Log {
-    param(
-        [string]$Message,
-        [string]$Level = "INFO"
-    )
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $color = switch ($Level) {
-        "INFO" { "Cyan" }
-        "SUCCESS" { "Green" }
-        "WARNING" { "Yellow" }
-        "ERROR" { "Red" }
-        default { "White" }
-    }
-    Write-Host "[$timestamp] [$Level] $Message" -ForegroundColor $color
-}
-
-Write-Log "========================================" "INFO"
-Write-Log "Starting Windows FAST Build Process" "INFO"
-Write-Log "========================================" "INFO"
-
-# Get the script directory and project root
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ProjectRoot = Split-Path -Parent (Split-Path -Parent $ScriptDir)
-
-Write-Log "Project root: $ProjectRoot" "INFO"
+Write-LogInfo "Project root: $ProjectRoot"
 Set-Location $ProjectRoot
 
+# Start build timer
+Start-BuildTimer
+
 # Step 1: Call the configure script
-Write-Log "========================================" "INFO"
-Write-Log "Step 1: Configuring with CMake" "INFO"
-Write-Log "========================================" "INFO"
+Write-LogSeparator
+Write-LogInfo "Step 1: Configuring with CMake"
+Write-LogSeparator
 
 $ConfigureScript = Join-Path $ScriptDir "windows_configure.ps1"
-Write-Log "Executing: $ConfigureScript -Config develop" "INFO"
+Write-LogInfo "Executing: $ConfigureScript -Config develop"
 
 try {
     & $ConfigureScript -Config "develop"
     if ($LASTEXITCODE -ne 0) {
-        Write-Log "Configure script failed with exit code: $LASTEXITCODE" "ERROR"
+        Write-LogError "Configure script failed with exit code: $LASTEXITCODE"
+        Stop-BuildTimer
         exit $LASTEXITCODE
     }
 }
 catch {
-    Write-Log "Error during configuration: $_" "ERROR"
+    Write-LogError "Error during configuration: $_"
+    Stop-BuildTimer
     exit 1
 }
 
@@ -102,32 +57,37 @@ $BuildDir = $Config["paths"]["build_dir"]
 $Jobs = if ($Config["options"] -and $Config["options"]["jobs"]) { $Config["options"]["jobs"] } else { "" }
 
 # Step 3: Build with CMake
-Write-Log "========================================" "INFO"
-Write-Log "Step 2: Building project" "INFO"
+Write-LogSeparator
+Write-LogInfo "Step 2: Building project"
 
 $buildArgs = @("--build", $BuildDir)
 if ($Jobs) {
     $buildArgs += "--parallel", $Jobs
-    Write-Log "Command: cmake --build $BuildDir --parallel $Jobs" "INFO"
+    Write-LogInfo "Command: cmake --build $BuildDir --parallel $Jobs"
 }
 else {
-    Write-Log "Command: cmake --build $BuildDir" "INFO"
+    Write-LogInfo "Command: cmake --build $BuildDir"
 }
-Write-Log "========================================" "INFO"
+Write-LogSeparator
 
 try {
     & cmake @buildArgs
     if ($LASTEXITCODE -eq 0) {
-        Write-Log "========================================" "INFO"
-        Write-Log "Build completed successfully!" "SUCCESS"
-        Write-Log "========================================" "INFO"
+        Write-LogSeparator
+        Write-LogSuccess "Build completed successfully!"
+        Write-LogSeparator
     }
     else {
-        Write-Log "Build failed with exit code: $LASTEXITCODE" "ERROR"
+        Write-LogError "Build failed with exit code: $LASTEXITCODE"
+        Stop-BuildTimer
         exit $LASTEXITCODE
     }
 }
 catch {
-    Write-Log "Error during build: $_" "ERROR"
+    Write-LogError "Error during build: $_"
+    Stop-BuildTimer
     exit 1
 }
+
+# Stop build timer
+Stop-BuildTimer

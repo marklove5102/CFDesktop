@@ -13,52 +13,22 @@
 #
 # =============================================================================
 
+# 导入库模块
+$LibDir = Join-Path (Split-Path -Parent $PSScriptRoot) "lib\powershell"
+Import-Module (Join-Path $LibDir "LibCommon.psm1") -Force
+Import-Module (Join-Path $LibDir "LibPaths.psm1") -Force
+
 $ErrorActionPreference = "Stop"
 
-# =============================================================================
-# Color definitions
-# =============================================================================
-$Green = "`e[0;32m"
-$Blue = "`e[0;34m"
-$Yellow = "`e[0;33m"
-$Red = "`e[0;31m"
-$Cyan = "`e[0;36m"
-$Gray = "`e[0;90m"
-$Reset = "`e[0m"
+# Set caller's PSScriptRoot for module functions to access
+$global:CallerPSScriptRoot = $PSScriptRoot
+$global:CallerMyInvocationPath = $MyInvocation.MyCommand.Path
 
 # =============================================================================
-# Script directory / project root
+# Script directory / project root using library functions
 # =============================================================================
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ProjectRoot = Split-Path -Parent (Split-Path -Parent $ScriptDir)
-
-# =============================================================================
-# Logging functions
-# =============================================================================
-function Log-Info {
-    param([string]$Message)
-    Write-Host "${Gray}$Message${Reset}"
-}
-
-function Log-Success {
-    param([string]$Message)
-    Write-Host "${Green}$Message${Reset}"
-}
-
-function Log-Warning {
-    param([string]$Message)
-    Write-Host "${Yellow}$Message${Reset}"
-}
-
-function Log-Error {
-    param([string]$Message)
-    Write-Host "${Red}$Message${Reset}"
-}
-
-function Log-Cyan {
-    param([string]$Message)
-    Write-Host "${Cyan}$Message${Reset}"
-}
+$ScriptDir = Get-ScriptDir
+$ProjectRoot = Get-ProjectRoot
 
 # =============================================================================
 # Show help
@@ -105,7 +75,8 @@ foreach ($arg in $args) {
             Show-Help
         }
         default {
-            Write-Host "${Red}Unknown option: $arg${Reset}"
+            Write-Host ""
+            Write-LogError "Unknown option: $arg"
             Show-Help
         }
     }
@@ -127,14 +98,14 @@ $ExcludeExtensions = @(
 # Print header
 # =============================================================================
 Write-Host ""
-Log-Cyan "=== Remove Trailing Whitespace ==="
-Log-Info "Project: $ProjectRoot"
+Write-LogInfo "=== Remove Trailing Whitespace ==="
+Write-Host "Project: $ProjectRoot" -ForegroundColor Gray
 if ($StagedOnly) {
     if ($StagedCheck) {
-        Log-Info "Mode: Check staged files (pre-commit)"
+        Write-Host "Mode: Check staged files (pre-commit)" -ForegroundColor Gray
     }
     else {
-        Log-Info "Mode: Staged files only"
+        Write-Host "Mode: Staged files only" -ForegroundColor Gray
     }
 }
 Write-Host ""
@@ -176,16 +147,16 @@ if ($StagedOnly) {
 
                 if ($hasTrailing) {
                     if ($DryRun -or $CheckMode) {
-                        Log-Warning "${relPath}:"
+                        Write-LogWarning "${relPath}:"
                         $lineNumbers | Select-Object -First 5 | ForEach-Object {
-                            Write-Host "  ${Gray}${_}:$($lines[$_ - 1])${Reset}"
+                            Write-Host "  $($_):$($lines[$_ - 1])" -ForegroundColor Gray
                         }
                         $Changed++
                     }
                     else {
                         $newContent = $lines | ForEach-Object { $_ -replace '\s+$', '' }
                         $newContent | Out-File -FilePath $filePath -Encoding UTF8 -NoNewline
-                        Log-Info "Fixed: $relPath"
+                        Write-Host "Fixed: $relPath" -ForegroundColor Gray
                         $Changed++
                     }
                 }
@@ -223,16 +194,16 @@ else {
 
             if ($hasTrailing) {
                 if ($DryRun) {
-                    Log-Warning "${relPath}:"
+                    Write-LogWarning "${relPath}:"
                     $lineNumbers | Select-Object -First 5 | ForEach-Object {
                         $lineContent = $lines[$_ - 1]
-                        Write-Host "  ${Gray}${_}:$lineContent${Reset}" -NoNewline
-                        Write-Host "${Red}← trailing space${Reset}"
+                        Write-Host "  ${_}:$lineContent" -NoNewline -ForegroundColor Gray
+                        Write-Host " ← trailing space" -ForegroundColor Red
                     }
                     $Changed++
                 }
                 elseif ($CheckMode) {
-                    Log-Error "$relPath"
+                    Write-LogError "$relPath"
                     $Changed++
                 }
                 else {
@@ -241,7 +212,7 @@ else {
                         $_ -replace '\s+$', ''
                     }
                     $newContent | Out-File -FilePath $filePath -Encoding UTF8 -NoNewline
-                    Log-Info "Fixed: $relPath"
+                    Write-Host "Fixed: $relPath" -ForegroundColor Gray
                     $Changed++
                 }
             }
@@ -256,32 +227,32 @@ else {
 # Print summary
 # =============================================================================
 Write-Host ""
-Log-Cyan "=== Summary ==="
-Log-Info "Processed: $Processed files"
+Write-LogInfo "=== Summary ==="
+Write-Host "Processed: $Processed files" -ForegroundColor Gray
 
 if ($DryRun) {
     if ($Changed -gt 0) {
-        Log-Warning "Files with trailing whitespace: $Changed"
+        Write-LogWarning "Files with trailing whitespace: $Changed"
     } else {
-        Log-Success "No trailing whitespace found!"
+        Write-LogSuccess "No trailing whitespace found!"
     }
 }
 elseif ($CheckMode) {
     if ($Changed -gt 0) {
-        Log-Error "Files with trailing whitespace: $Changed"
+        Write-LogError "Files with trailing whitespace: $Changed"
         if ($StagedCheck) {
-            Log-Warning "Run with -Staged to fix staged files"
+            Write-LogWarning "Run with -Staged to fix staged files"
         }
         else {
-            Log-Warning "Run without -Check to fix"
+            Write-LogWarning "Run without -Check to fix"
         }
         exit 1
     } else {
-        Log-Success "No trailing whitespace found!"
+        Write-LogSuccess "No trailing whitespace found!"
     }
 }
 else {
-    Log-Success "Fixed: $Changed files"
+    Write-LogSuccess "Fixed: $Changed files"
 }
 
 Write-Host ""
