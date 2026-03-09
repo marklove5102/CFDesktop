@@ -320,7 +320,6 @@ elif is_release_branch; then
             echo ""
 
             DOCKER_ARGS=(
-                "--verify"
                 "--fast-build"
                 "--arch"
                 "amd64"
