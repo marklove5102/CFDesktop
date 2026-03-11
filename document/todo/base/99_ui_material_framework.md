@@ -1,9 +1,20 @@
 # UI Material Framework TODO
 
-> **状态**: ⬜ 待开始
+> **状态**: 🚧 进行中
 > **预计周期**: 持续迭代
 > **依赖阶段**: Phase 0-3
 > **参考文档**: [../../ui/MaterialRules.md](../../ui/MaterialRules.md)
+> **完成归档**: [done/99_ui_layer1-4_and_p0_widgets_done.md](done/99_ui_layer1-4_and_p0_widgets_done.md)
+
+**完成进度**:
+- ✅ Layer 1: Core Math & Utility (100%)
+- ✅ Layer 2: Theme Engine (100%)
+- ✅ Layer 3: Animation Engine (100% - 实际使用部分)
+- ✅ Layer 4: Material Behavior (100%)
+- ✅ P0核心控件 (7/7)
+- ⬜ P1控件 (0/12)
+- ⬜ P2控件 (0/27)
+- ⬜ P3控件 (0/25)
 
 ---
 
@@ -49,173 +60,183 @@ Layer 1: Core Math & Utility Layer (math_helper, color, geometry, ...)
 
 ---
 
-## 三、Layer 2: Theme Engine Layer
+## 三、Layer 2: Theme Engine Layer ✅ 已完成
 
-### Token 系统
-- [ ] Reference Token → System Token → Component Token 三层结构
-- [ ] 实现 `ICFColorScheme` 接口
-- [ ] 实现 `MaterialColorScheme`
-  - [ ] 文件: `ui/core/color_scheme.h` (接口)
-  - [ ] 文件: `ui/core/material/cfmaterial_scheme.h` (实现)
+> 完成归档: [done/99_ui_layer1-4_and_p0_widgets_done.md](done/99_ui_layer1-4_and_p0_widgets_done.md)
 
-### 字体系统
-- [ ] 实现 `IFontType` 接口
-  - [ ] 文件: `ui/core/font_type.h`
-- [ ] 实现 `MaterialTypography`
-  - [ ] 文件: `ui/core/material/cfmaterial_fonttype.h`
-  - [ ] Material Type Scale 支持
+### Token 系统 ✅
+- [x] Reference Token → System Token → Component Token 三层结构
+- [x] 实现 `ICFColorScheme` 接口
+- [x] 实现 `MaterialColorScheme`
+  - [x] 文件: `ui/core/color_scheme.h` (接口)
+  - [x] 文件: `ui/core/material/cfmaterial_scheme.h/cpp` (实现)
 
-### 形状系统
-- [ ] 实现 `Shape` 类
-  - [ ] 全局 Shape Scale 配置
-  - [ ] 控件圆角查询
+### 字体系统 ✅
+- [x] 实现 `IFontType` 接口
+  - [x] 文件: `ui/core/font_type.h`
+- [x] 实现 `MaterialTypography`
+  - [x] 文件: `ui/core/material/cfmaterial_fonttype.h/cpp`
+  - [x] Material Type Scale 支持
 
-### 动画规格
-- [ ] 实现 `MotionSpec` 类
-  - [ ] 动画时长配置
-  - [ ] 缓动曲线配置
-  - [ ] 与控件无关的可复用规格
+### 形状系统 ✅
+- [x] 实现 `Shape` 类
+  - [x] 全局 Shape Scale 配置
+  - [x] 控件圆角查询
 
-### 主题聚合
-- [ ] 实现 `ICFTheme` 接口
-  - [ ] 文件: `ui/core/theme.h`
-- [ ] 实现 `ThemeManager`
-  - [ ] 文件: `ui/core/theme_manager.h`
-  - [ ] 管理当前主题实例
-  - [ ] 响应切换请求
-  - [ ] 广播变更信号
-- [ ] 实现 `ThemeFactory`
-  - [ ] 文件: `ui/core/theme_factory.h`
+### 动画规格 ✅
+- [x] 实现 `MotionSpec` 类
+  - [x] 动画时长配置
+  - [x] 缓动曲线配置
+  - [x] 与控件无关的可复用规格
 
-### Token 访问
-- [ ] 实现 Token 字符串定义
-  - [ ] 文件: `ui/core/token/` 目录
-  - [ ] 颜色 token literals
-  - [ ] 字体 token literals
-  - [ ] 形状 token literals
-  - [ ] 运动 token literals
+### 主题聚合 ✅
+- [x] 实现 `ICFTheme` 接口
+  - [x] 文件: `ui/core/theme.h`
+- [x] 实现 `ThemeManager`
+  - [x] 文件: `ui/core/theme_manager.h/cpp`
+  - [x] 管理当前主题实例
+  - [x] 响应切换请求
+  - [x] 广播变更信号
+- [x] 实现 `ThemeFactory`
+  - [x] 文件: `ui/core/material/material_factory.h/cpp`
 
----
-
-## 四、Layer 3: Animation Engine Layer
-
-### 动画接口
-- [ ] `ICFAbstractAnimation` - 抽象动画基类
-  - [ ] 文件: `ui/components/animation.h`
-  - [ ] 状态管理 (Idle/Running/Paused/Finished)
-  - [ ] 方向控制 (Forward/Backward)
-  - [ ] 生命周期方法 (start/pause/stop/reverse/tick)
-
-### 时间动画
-- [ ] `ICFTimingAnimation` - 基于时间的动画
-  - [ ] 文件: `ui/components/timing_animation.h`
-  - [ ] 使用 MotionSpec 获取时长和缓动
-  - [ ] 支持值范围 `setRange(from, to)`
-
-### 弹簧动画
-- [ ] `ICFSpringAnimation` - 基于弹簧物理的动画
-  - [ ] 文件: `ui/components/spring_animation.h`
-  - [ ] 使用 `SpringPreset` 实现自然弹性运动
-  - [ ] 支持目标值和初速度配置
-
-### 动画组
-- [ ] `ICFAnimationGroup` - 动画组容器
-  - [ ] 文件: `ui/components/animation_group.h`
-  - [ ] 支持并行 (Parallel) 执行
-  - [ ] 支持顺序 (Sequential) 执行
-
-### 工厂管理
-- [ ] `ICFAnimationManagerFactory` - 动画工厂管理器接口
-  - [ ] 文件: `ui/components/animation_factory_manager.h`
-  - [ ] Token-based 动画注册与检索
-  - [ ] 类型安全创建
-  - [ ] 全局/单个动画开关控制
-  - [ ] 目标 FPS 设置
-
-### Material 动画工厂
-- [ ] `CFMaterialAnimationFactory` - Material Design 3 动画工厂
-  - [ ] 文件: `ui/components/material/cfmaterial_animation_factory.h`
-  - [ ] 实现 `ICFAnimationManagerFactory`
-  - [ ] Token 映射到具体动画实例
-  - [ ] 策略模式支持控件级定制
-
-### 动画策略
-- [ ] `AnimationStrategy` - 动画策略接口
-  - [ ] 文件: `ui/components/material/cfmaterial_animation_strategy.h`
-  - [ ] 允许控件类型定制动画参数
-  - [ ] 支持条件性开关逻辑（如无障碍设置）
-
-### 动画 Token
-- [ ] `AnimationToken` - Material Design 3 动画 token
-  - [ ] 文件: `ui/components/material/token/animation_token_literals.h`
-  - [ ] fadeIn/fadeOut/slideUp/slideDown
-  - [ ] scaleUp/scaleDown
-  - [ ] rotateIn/rotateOut
+### Token 访问 ✅
+- [x] 实现 Token 字符串定义
+  - [x] 文件: `ui/core/token/` 目录 (5个子目录)
+  - [x] 颜色 token literals
+  - [x] 字体 token literals
+  - [x] 形状 token literals
+  - [x] 运动 token literals
 
 ---
 
-## 五、Layer 4: Material Behavior Layer
+## 四、Layer 3: Animation Engine Layer ✅ 已完成
+
+> 完成归档: [done/99_ui_layer1-4_and_p0_widgets_done.md](done/99_ui_layer1-4_and_p0_widgets_done.md)
+
+### 动画接口 ✅
+- [x] `ICFAbstractAnimation` - 抽象动画基类
+  - [x] 文件: `ui/components/animation.h/cpp`
+  - [x] 状态管理 (Idle/Running/Paused/Finished)
+  - [x] 方向控制 (Forward/Backward)
+  - [x] 生命周期方法 (start/pause/stop/reverse/tick)
+
+### 时间动画 ✅
+- [x] `ICFTimingAnimation` - 基于时间的动画
+  - [x] 文件: `ui/components/timing_animation.h/cpp`
+  - [x] 使用 MotionSpec 获取时长和缓动
+  - [x] 支持值范围 `setRange(from, to)`
+
+### 弹簧动画 ⬜ 预留接口
+- [x] `ICFSpringAnimation` - 基于弹簧物理的动画
+  - [x] 文件: `ui/components/spring_animation.h` (接口定义)
+  - [ ] tick() 实现未完成 (预留接口，未被使用)
+
+### 动画组 ⬜ 预留接口
+- [x] `ICFAnimationGroup` - 动画组容器
+  - [x] 文件: `ui/components/animation_group.h` (完全内联)
+  - [ ] 预留接口，未被实际使用
+
+### 工厂管理 ✅
+- [x] `ICFAnimationManagerFactory` - 动画工厂管理器接口
+  - [x] 文件: `ui/components/animation_factory_manager.h/cpp`
+  - [x] Token-based 动画注册与检索
+  - [x] 类型安全创建
+  - [x] 全局/单个动画开关控制
+  - [x] 目标 FPS 设置
+
+### Material 动画工厂 ✅
+- [x] `CFMaterialAnimationFactory` - Material Design 3 动画工厂
+  - [x] 文件: `ui/components/material/cfmaterial_animation_factory.h/cpp`
+  - [x] 实现 `ICFAnimationManagerFactory`
+  - [x] Token 映射到具体动画实例
+  - [x] 策略模式支持控件级定制
+
+### 动画策略 ✅
+- [x] `AnimationStrategy` - 动画策略接口
+  - [x] 文件: `ui/components/material/cfmaterial_animation_strategy.h/cpp`
+  - [x] 允许控件类型定制动画参数
+  - [x] 支持条件性开关逻辑（如无障碍设置）
+
+### 动画 Token ✅
+- [x] `AnimationToken` - Material Design 3 动画 token
+  - [x] 文件: `ui/components/material/token/animation_token_literals.h`
+  - [x] 文件: `ui/components/material/token/animation_token_mapping.h`
+  - [x] fadeIn/fadeOut/slideUp/slideDown
+  - [x] scaleUp/scaleDown
+
+### Material 动画实现 ✅
+- [x] Fade Animation - `cfmaterial_fade_animation.h/cpp`
+- [x] Scale Animation - `cfmaterial_scale_animation.h/cpp`
+- [x] Slide Animation - `cfmaterial_slide_animation.h/cpp`
+- [x] Property Animation - `cfmaterial_property_animation.h/cpp`
+
+---
+
+## 五、Layer 4: Material Behavior Layer ✅ 已完成
+
+> 完成归档: [done/99_ui_layer1-4_and_p0_widgets_done.md](done/99_ui_layer1-4_and_p0_widgets_done.md)
 
 ### 目录结构
 ```
 ui/widget/material/base/
-├── state_machine.h/cpp           [状态机，驱动 StateLayer opacity]
-├── painter_layer.h/cpp           [基础颜色叠加层]
-├── ripple_helper.h/cpp           [涟漪效果控制器]
-├── elevation_controller.h/cpp    [海拔阴影控制器]
-└── focus_ring.h/cpp              [焦点环指示器]
+├── state_machine.h/cpp           ✅ [状态机，驱动 StateLayer opacity]
+├── painter_layer.h/cpp           ✅ [基础颜色叠加层]
+├── ripple_helper.h/cpp           ✅ [涟漪效果控制器]
+├── elevation_controller.h/cpp    ✅ [海拔阴影控制器]
+└── focus_ring.h/cpp              ✅ [焦点环指示器]
 ```
 
-### StateMachine
-- [ ] `state_machine.h/cpp`
-  - [ ] 管理控件视觉状态
-  - [ ] 驱动 StateLayer 的 opacity 动画
-  - [ ] 状态透明度值 (Material Design 3 规范)
-    - [ ] Normal: 0.00
-    - [ ] Hovered: 0.08
-    - [ ] Pressed: 0.12
-    - [ ] Focused: 0.12
-    - [ ] Dragged: 0.16
-    - [ ] Checked: 0.08
-    - [ ] Disabled: 0.00
-  - [ ] 优先级顺序: Disabled > Pressed > Dragged > Focused > Hovered > Normal
+### StateMachine ✅
+- [x] `state_machine.h/cpp`
+  - [x] 管理控件视觉状态
+  - [x] 驱动 StateLayer 的 opacity 动画
+  - [x] 状态透明度值 (Material Design 3 规范)
+    - [x] Normal: 0.00
+    - [x] Hovered: 0.08
+    - [x] Pressed: 0.12
+    - [x] Focused: 0.12
+    - [x] Dragged: 0.16
+    - [x] Checked: 0.08
+    - [x] Disabled: 0.00
+  - [x] 优先级顺序: Disabled > Pressed > Dragged > Focused > Hovered > Normal
 
-### PainterLayer
-- [ ] `painter_layer.h/cpp`
-  - [ ] 提供基础颜色叠加层绘制功能
-  - [ ] 用于 StateLayer 等需要颜色叠加的场景
+### PainterLayer ✅
+- [x] `painter_layer.h/cpp`
+  - [x] 提供基础颜色叠加层绘制功能
+  - [x] 用于 StateLayer 等需要颜色叠加的场景
 
-### RippleHelper
-- [ ] `ripple_helper.h/cpp`
-  - [ ] 管理涟漪效果的生命周期与绘制
-  - [ ] Ripple 生命周期
-    - [ ] `onPress(pos)` → 创建并开始扩散
-    - [ ] `onRelease()` → 触发 fade-out
-    - [ ] 动画结束 → 清除状态
-  - [ ] 多 Ripple 支持（快速多次点击）
+### RippleHelper ✅
+- [x] `ripple_helper.h/cpp`
+  - [x] 管理涟漪效果的生命周期与绘制
+  - [x] Ripple 生命周期
+    - [x] `onPress(pos)` → 创建并开始扩散
+    - [x] `onRelease()` → 触发 fade-out
+    - [x] 动画结束 → 清除状态
+  - [x] 多 Ripple 支持（快速多次点击）
 
-### MdElevationController
-- [ ] `elevation_controller.h/cpp`
-  - [ ] 管理控件的 Material 海拔值
-  - [ ] 绘制对应阴影
-  - [ ] Material Elevation Levels
-    - [ ] Level 0 (0dp): 无阴影
-    - [ ] Level 1 (1dp): blur=2px, offset=1px, opacity=0.15
-    - [ ] Level 2 (3dp): blur=4px, offset=2px, opacity=0.20
-    - [ ] Level 3 (6dp): blur=8px, offset=4px, opacity=0.25
-    - [ ] Level 4 (8dp): blur=12px, offset=6px, opacity=0.30
-    - [ ] Level 5 (12dp): blur=16px, offset=8px, opacity=0.35
-  - [ ] Dark Theme 海拔表示
-    - [ ] 向 Surface 叠加 Primary 色调
-    - [ ] 使用 `tonalOverlay()` 方法
+### MdElevationController ✅
+- [x] `elevation_controller.h/cpp`
+  - [x] 管理控件的 Material 海拔值
+  - [x] 绘制对应阴影
+  - [x] Material Elevation Levels
+    - [x] Level 0 (0dp): 无阴影
+    - [x] Level 1 (1dp): blur=2px, offset=1px, opacity=0.15
+    - [x] Level 2 (3dp): blur=4px, offset=2px, opacity=0.20
+    - [x] Level 3 (6dp): blur=8px, offset=4px, opacity=0.25
+    - [x] Level 4 (8dp): blur=12px, offset=6px, opacity=0.30
+    - [x] Level 5 (12dp): blur=16px, offset=8px, opacity=0.35
+  - [x] Dark Theme 海拔表示
+    - [x] 向 Surface 叠加 Primary 色调
+    - [x] 使用 `tonalOverlay()` 方法
 
-### MdFocusIndicator
-- [ ] `focus_ring.h/cpp`
-  - [ ] 绘制符合 Material 规范的焦点环
-  - [ ] Material 规范
-    - [ ] 环宽度: 3dp
-    - [ ] 内边距: 3dp
-    - [ ] 动画: 淡入淡出效果
+### MdFocusIndicator ✅
+- [x] `focus_ring.h/cpp`
+  - [x] 绘制符合 Material 规范的焦点环
+  - [x] Material 规范
+    - [x] 环宽度: 3dp
+    - [x] 内边距: 3dp
+    - [x] 动画: 淡入淡出效果
 
 ---
 
@@ -503,4 +524,10 @@ connect(&ThemeManager::instance(), &ThemeManager::themeChanged,
 
 ---
 
-*最后更新: 2026-03-05*
+*最后更新: 2026-03-11*
+
+---
+
+## 已完成归档
+
+**Layer 1-4 及 P0 核心控件已完成并归档**: [done/99_ui_layer1-4_and_p0_widgets_done.md](done/99_ui_layer1-4_and_p0_widgets_done.md)

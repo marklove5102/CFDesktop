@@ -1,7 +1,7 @@
 # CFDesktop 项目状态报告
 
-> **报告日期**: 2026-03-07
-> **报告版本**: v1.1
+> **报告日期**: 2026-03-11
+> **报告版本**: v1.2
 > **项目周期**: Phase 0-6
 
 ---
@@ -10,23 +10,25 @@
 
 CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material Design 3 设计规范。项目旨在为嵌入式 Linux 设备提供一套完整的 UI 框架和开发工具链。
 
-### 整体完成度: 约 42%
+### 整体完成度: 约 55%
 
 | 模块 | 完成度 | 状态 | 优先级 |
 |------|--------|------|--------|
-| Phase 0: 工程骨架 | 85% | 🚧 进行中 | P0 |
+| Phase 0: 工程骨架 | 100% | ✅ 已完成并归档 | P0 |
 | Phase 1: 硬件探针 | 0% | ⬜ 待开始 | P0 |
 | Phase 2: Base库核心 | 35% | 🚧 进行中 | P0 |
 | Phase 3: 输入抽象层 | 0% | ⬜ 待开始 | P1 |
 | Phase 4: 多平台模拟器 | 0% | ⬜ 待开始 | P1 |
-| Phase 5: 测试体系 | 40% | 🚧 进行中 | P0 |
-| Phase 6: UI框架 | 62% | 🚧 进行中 | P0 |
+| Phase 5: 测试体系 | 60% | 🚧 进行中 | P0 |
+| Phase 6: UI框架 | 80% | 🚧 进行中 | P0 |
 
 ---
 
 ## 一、各模块详细状态
 
-### 1.1 工程骨架 (Phase 0) - 85%
+### 1.0 工程骨架 (Phase 0) - 100% ✅ 已完成并归档
+
+> 完成归档: [00_project_skeleton_done.md](00_project_skeleton_done.md)
 
 #### ✅ 已完成
 - **CMake 构建系统** (90%)
@@ -79,11 +81,14 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
 
 ---
 
-### 1.2 硬件探针 (Phase 1) - 0%
+### 1.2 硬件探针 (Phase 1) - 15% 🚧 进行中
 
-#### ✅ 已有基础
+> 部分归档: [01_hardware_probe_partial_done.md](01_hardware_probe_partial_done.md)
+
+#### ✅ 已完成 (已归档)
 - **CPU 检测器** (80%) - `base/system/cpu/` 模块
 - **内存检测器** (80%) - `base/system/memory/` 模块
+- Linux/Windows 双平台支持
 
 #### ❌ 待完成
 - HWTier 枚举定义 (Low/Mid/High 三档)
@@ -102,19 +107,21 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
 
 ---
 
-### 1.3 Base库核心 (Phase 2) - 35%
+### 1.3 Base库核心 (Phase 2) - 30% 🚧 进行中
+
+> 部分归档: [02_base_library_partial_done.md](02_base_library_partial_done.md)
 
 #### ✅ 已完成 (在 UI 层)
-- **ThemeEngine** (60%)
+- **ThemeEngine** (100%)
   - `ui/core/theme_manager.h` - 主题管理器
   - `ui/core/theme_factory.h` - 主题工厂
   - `ui/core/material/cfmaterial_scheme.h` - 配色方案
 
-- **AnimationManager** (65%)
+- **AnimationManager** (100%)
   - `ui/components/animation_factory_manager.h` - 动画工厂
   - `ui/components/material/cfmaterial_animation_*.h` - Material 动画
 
-- **DPI 管理** (80%)
+- **DPI 管理** (100%)
   - `ui/base/device_pixel.h` - dp/sp 转换
 
 #### ❌ 待完成
@@ -175,19 +182,23 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
 
 ---
 
-### 1.6 测试体系 (Phase 5) - 40%
+### 1.6 测试体系 (Phase 5) - 60%
+
+> 完成归档: [05_testing_foundation_done.md](05_testing_foundation_done.md)
 
 #### ✅ 已完成
 - **测试框架** (100%)
-  - Google Test 集成
+  - Google Test v1.14.0 集成
+  - CMake `add_gtest_executable` 辅助函数
   - test/ 目录结构
+  - 跨平台测试脚本 (PowerShell + Bash)
 
-- **测试用例** (40%)
-  - Base utilities (weak_ptr, expected, hash, scope_guard)
-  - UI base (math_helper, device_pixel, easing, color, geometry)
-  - UI components (state_machine, ripple_helper, elevation_controller)
-  - System queries (memory, CPU)
-  - Boot tests
+- **测试用例** (60%)
+  - Base utilities (expected, scope_guard, hash, weak_ptr) ✅
+  - UI base (math_helper, color, device_pixel, geometry, easing) ✅
+  - UI components (state_machine, ripple, elevation, focus_ring, painter_layer) ✅
+  - UI core (token_test) ✅
+  - System queries (cpu_info, memory_info) ✅
 
 #### ❌ 待完成
 - Widget 测试
@@ -204,7 +215,9 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
 
 ---
 
-### 1.7 UI Material Framework (Phase 6) - 62%
+### 1.7 UI Material Framework (Phase 6) - 80%
+
+> 完成归档: [99_ui_layer1-4_and_p0_widgets_done.md](99_ui_layer1-4_and_p0_widgets_done.md)
 
 #### ✅ Layer 1-4 完成 100%
 - **Layer 1**: Core Math & Utility
@@ -386,14 +399,19 @@ CFDesktop/
 │       ├── 05_testing.md
 │       ├── 99_ui_material_framework.md
 │       └── done/             # ✅ 参考文档
+│           ├── 00_project_skeleton_done.md
+│           ├── 01_hardware_probe_partial_done.md
+│           ├── 02_base_library_partial_done.md
+│           ├── 05_testing_foundation_done.md
+│           ├── 99_ui_layer1-4_and_p0_widgets_done.md
+│           ├── PROJECT_STATUS_REPORT.md
 │           ├── 00_project_skeleton_ref.md
 │           ├── 01_hardware_probe_ref.md
 │           ├── 02_base_library_ref.md
 │           ├── 03_input_layer_ref.md
 │           ├── 04_simulator_ref.md
 │           ├── 05_testing_ref.md
-│           ├── 99_ui_material_framework_ref.md
-│           └── PROJECT_STATUS_REPORT.md
+│           └── 99_ui_material_framework_ref.md
 └── ui/MaterialRules.md       # Material 架构规范
 ```
 
@@ -411,6 +429,28 @@ CFDesktop/
 
 ---
 
-*报告生成时间: 2026-03-07*
+*报告生成时间: 2026-03-11*
+*报告版本: v1.3*
 *报告生成工具: Claude Code*
 *项目路径: d:/ProjectHome/CFDesktop*
+
+---
+
+## 更新记录 (v1.3)
+
+### 2026-03-11 更新 (v1.3)
+- ✅ 归档 Phase 1 硬件探针 (15% 部分)
+  - CPU 检测器 (80%)
+  - 内存检测器 (80%)
+- ✅ 归档 Phase 2 Base库核心 (30% 部分)
+  - ThemeEngine (100%)
+  - AnimationManager (100%)
+  - DPI 管理 (100%)
+- 📝 新增归档文档:
+  - `01_hardware_probe_partial_done.md`
+  - `02_base_library_partial_done.md`
+- 📝 清理原文档，移除已完成任务
+
+## 更新记录 (v1.2)
+
+### 2026-03-11 更新 (v1.2)

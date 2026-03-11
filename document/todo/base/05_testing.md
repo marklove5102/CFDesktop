@@ -1,9 +1,22 @@
 # Phase 8: 测试体系 TODO
 
-> **状态**: ⬜ 待开始
+> **状态**: 🚧 进行中
 > **预计周期**: 贯穿全程
 > **依赖阶段**: 所有阶段
 > **目标交付物**: 单元测试框架、集成测试、UI 自动化、CI/CD 配置
+> **完成归档**: [done/05_testing_foundation_done.md](done/05_testing_foundation_done.md)
+
+**完成进度**:
+- ✅ 基础测试框架 (100%)
+- ✅ base 库测试 (expected, scope_guard, hash, weak_ptr)
+- ✅ ui 基础测试 (math_helper, color, device_pixel, geometry, easing)
+- ✅ ui 组件测试 (state_machine, ripple, elevation, focus_ring, painter_layer)
+- ✅ ui core 测试 (token_test)
+- ✅ system 测试 (cpu_info, memory_info)
+- ⬜ Animation 测试套件
+- ⬜ Theme 测试套件
+- ⬜ 控件测试
+- ⬜ 集成测试、UI 自动化测试、性能测试
 
 ---
 
@@ -49,55 +62,52 @@
 
 ---
 
-## 三、Week 1: 基础设施
+## 三、Week 1: 基础设施 ✅ 已完成
 
-### Day 1-2: 框架配置
-- [ ] 配置 CMake 测试框架
-  - [ ] `enable_testing()`
-  - [ ] Qt6 Test 组件
-  - [ ] 测试子目录
-- [ ] 创建测试目录结构
-  - [ ] `tests/unit/`
-  - [ ] `tests/integration/`
-  - [ ] `tests/ui/`
-  - [ ] `tests/performance/`
-  - [ ] `tests/mock/`
-  - [ ] `tests/fixtures/`
-- [ ] 实现 Mock 系统
-  - [ ] `MockSystem` 类
-  - [ ] 环境变量注入
-  - [ ] 假数据生成
-- [ ] 创建测试应用框架
-  - [ ] `TestApplication` 类
-  - [ ] 测试环境隔离
-- [ ] 配置 CI 基础流水线
-  - [ ] GitHub Actions 模板
-  - [ ] Docker 测试镜像
+> 完成归档: [done/05_testing_foundation_done.md](done/05_testing_foundation_done.md)
 
-### Day 3-4: 测试工具开发
-- [ ] 创建测试辅助工具
-  - [ ] `TestHelpers` 类
-  - [ ] 信号 spy 工具
-  - [ ] 对象比较工具
-- [ ] 实现 Mock 数据生成器
-  - [ ] CPU 信息生成
-  - [ ] 内存信息生成
-  - [ ] GPU 信息生成
-- [ ] 创建测试夹具
-  - [ ] `TestThemeBuilder`
-  - [ ] `TestWidget`
-  - [ ] `TestApp`
+### Day 1-2: 框架配置 ✅
+- [x] 配置 CMake 测试框架
+  - [x] `enable_testing()`
+  - [x] Google Test 集成
+  - [x] 测试子目录
+- [x] 创建测试目录结构
+  - [x] `test/base/`
+  - [x] `test/ui/`
+  - [x] `test/system/`
+  - [x] `test/scripts/`
+- [x] 实现 `add_gtest_executable` 辅助函数
+- [x] 配置跨平台测试脚本
+  - [x] PowerShell (Windows)
+  - [x] Bash (Linux/macOS)
 
-### Day 5: CI 配置
+### Day 3-4: 测试工具开发 ✅
+- [x] base 库测试实现
+  - [x] expected_test.cpp
+  - [x] scope_guard_test.cpp
+  - [x] constexpr_fnv1a_test.cpp
+  - [x] weak_ptr_test.cpp
+- [x] ui 基础测试实现
+  - [x] math_helper_test.cpp
+  - [x] color_test.cpp
+  - [x] color_helper_test.cpp
+  - [x] device_pixel_test.cpp
+  - [x] geometry_helper_test.cpp
+  - [x] easing_test.cpp
+- [x] ui 组件测试实现
+  - [x] state_machine_test.cpp
+  - [x] ripple_helper_test.cpp
+  - [x] elevation_controller_test.cpp
+  - [x] focus_ring_test.cpp
+  - [x] painter_layer_test.cpp
+- [x] system 测试实现
+  - [x] test_cpu_info_query.cpp
+  - [x] test_memory_info_query.cpp
+
+### Day 5: CI 配置 ⬜ 待完善
+- [x] 测试脚本配置
 - [ ] 配置 GitHub Actions
-  - [ ] 单元测试作业
-  - [ ] 集成测试作业
-  - [ ] UI 测试作业
-  - [ ] 性能测试作业
 - [ ] 配置测试报告
-  - [ ] JUnit 格式输出
-  - [ ] 覆盖率报告
-  - [ ] 测试结果上传
 
 ---
 
@@ -322,4 +332,10 @@
 
 ---
 
-*最后更新: 2026-03-05*
+*最后更新: 2026-03-11*
+
+---
+
+## 已完成归档
+
+**测试基础框架和基础测试已完成并归档**: [done/05_testing_foundation_done.md](done/05_testing_foundation_done.md)

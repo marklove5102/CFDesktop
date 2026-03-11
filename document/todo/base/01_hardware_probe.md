@@ -1,9 +1,11 @@
 # Phase 1: 硬件探针与能力分级 TODO
 
-> **状态**: ⬜ 待开始
+> **状态**: 🚧 进行中 (~15%)
 > **预计周期**: 2~3 周
 > **依赖阶段**: Phase 0
 > **目标交付物**: 硬件检测模块、能力档位枚举、配置文件系统
+
+> **已完成归档**: [`done/01_hardware_probe_partial_done.md`](done/01_hardware_probe_partial_done.md) (CPU/内存检测)
 
 ---
 
@@ -21,26 +23,9 @@
 
 ---
 
-## 二、Week 1: 基础检测器实现
+## 二、待实现任务
 
-### Day 1-2: CPU 检测器
-- [ ] 创建 `CPUDetector` 类框架
-  - [ ] 定义 `CPUInfo` 结构体
-  - [ ] 实现 `detectCPU()` 方法
-- [ ] 实现 `/proc/cpuinfo` 解析
-  - [ ] 解析 CPU 型号
-  - [ ] 解析核心数
-  - [ ] 解析频率
-  - [ ] 解析特性 (neon, vfpv4)
-- [ ] 实现设备树 compatible 读取
-  - [ ] 读取 `/sys/firmware/devicetree/base/compatible`
-- [ ] 实现 `uname` 架构检测
-- [ ] 编写 CPU 检测单元测试
-  - [ ] IMX6ULL Mock 数据
-  - [ ] RK3568 Mock 数据
-  - [ ] RK3588 Mock 数据
-
-### Day 3: GPU 检测器
+### GPU 检测器 (Day 3)
 - [ ] 创建 `GPUDetector` 类框架
   - [ ] 定义 `GPUInfo` 结构体
 - [ ] 实现 DRM 设备检测
@@ -53,19 +38,13 @@
   - [ ] OpenGL 版本
 - [ ] 编写 GPU 检测单元测试
 
-### Day 4: 内存与网络检测器
-- [ ] 实现 `/proc/meminfo` 解析
-  - [ ] 定义 `MemoryInfo` 结构体
-  - [ ] 解析总内存
-  - [ ] 解析可用内存
-  - [ ] 解析 Swap
+### 网络检测器 (Day 4)
 - [ ] 实现网络接口枚举
   - [ ] 定义 `NetworkInterface` 结构体
   - [ ] 枚举 `/sys/class/net/*`
   - [ ] 获取 IP 地址
-- [ ] 编写相应单元测试
 
-### Day 5: 档位计算逻辑
+### 档位计算逻辑 (Day 5)
 - [ ] 实现评分算法
   - [ ] CPU 评分规则
   - [ ] GPU 评分规则
@@ -184,7 +163,7 @@
 
 ---
 
-## 六、文件清单
+## 六、文件清单 (待实现)
 
 ### 头文件
 - [ ] `include/CFDesktop/Base/HardwareProbe/HWTier.h`
@@ -197,9 +176,7 @@
 - [ ] `src/base/hardware/HardwareProbe.cpp`
 - [ ] `src/base/hardware/CapabilityPolicy.cpp`
 - [ ] `src/base/hardware/DeviceConfig.cpp`
-- [ ] `src/base/hardware/detectors/CPUDetector.cpp`
 - [ ] `src/base/hardware/detectors/GPUDetector.cpp`
-- [ ] `src/base/hardware/detectors/MemoryDetector.cpp`
 - [ ] `src/base/hardware/detectors/NetworkDetector.cpp`
 - [ ] `src/base/hardware/platform/LinuxDetector.cpp`
 - [ ] `src/base/hardware/platform/WindowsDetector.cpp`
@@ -219,8 +196,9 @@
 ## 七、相关文档
 
 - 设计文档: [../design_stage/01_phase1_hardware_probe.md](../design_stage/01_phase1_hardware_probe.md)
+- 完成归档: [done/01_hardware_probe_partial_done.md](done/01_hardware_probe_partial_done.md)
 - 依赖: [00_project_skeleton.md](00_project_skeleton.md)
 
 ---
 
-*最后更新: 2026-03-05*
+*最后更新: 2026-03-11*
