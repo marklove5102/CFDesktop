@@ -5,7 +5,7 @@
   ### 一个可部署到任意支持 Qt 的嵌入式设备上的现代化桌面框架
 
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![Version](https://img.shields.io/badge/version-0.9.0-blue.svg)](https://github.com)
+  [![Version](https://img.shields.io/badge/version-0.9.3-blue.svg)](https://github.com)
   [![C++](https://img.shields.io/badge/C++-23-00599C.svg)](https://en.cppreference.com/w/C++23)
   [![Qt](https://img.shields.io/badge/Qt-6.8.3-41CD52.svg)](https://www.qt.io/)
   [![CMake](https://img.shields.io/badge/CMake-3.16+-064F8C.svg)](https://cmake.org/)

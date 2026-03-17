@@ -53,11 +53,6 @@ Layer 1: Core Math & Utility Layer (math_helper, color, geometry, ...)
 - [x] `ui/base/geometry_helper.h` - 圆角形状生成
 - [x] `ui/base/device_pixel.h` - DPI 单位转换
 
-### 待完成 ⬜
-- [ ] 添加更多缓动曲线
-  - [ ] Material 缓动标准曲线
-  - [ ] 自定义缓动支持
-
 ---
 
 ## 三、Layer 2: Theme Engine Layer ✅ 已完成
@@ -135,7 +130,6 @@ Layer 1: Core Math & Utility Layer (math_helper, color, geometry, ...)
 ### 动画组 ⬜ 预留接口
 - [x] `ICFAnimationGroup` - 动画组容器
   - [x] 文件: `ui/components/animation_group.h` (完全内联)
-  - [ ] 预留接口，未被实际使用
 
 ### 工厂管理 ✅
 - [x] `ICFAnimationManagerFactory` - 动画工厂管理器接口
