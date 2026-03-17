@@ -259,7 +259,7 @@
 ## 七、相关文档
 
 - 设计文档: [../design_stage/04_phase6_simulator.md](../design_stage/04_phase6_simulator.md)
-- 依赖: [00_project_skeleton.md](00_project_skeleton.md), [02_base_library.md](02_base_library.md), [03_input_layer.md](03_input_layer.md)
+- 依赖: [00_project_skeleton.md](../00_project_skeleton.md), [02_input_layer.md](02_input_layer.md)
 
 ---
 

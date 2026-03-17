@@ -204,7 +204,8 @@
 ## 六、相关文档
 
 - 设计文档: [../design_stage/03_phase3_input_layer.md](../design_stage/03_phase3_input_layer.md)
-- 依赖: [00_project_skeleton.md](00_project_skeleton.md), [01_hardware_probe.md](01_hardware_probe.md), [02_base_library.md](02_base_library.md)
+- 依赖: [00_project_skeleton.md](../00_project_skeleton.md), [01_hardware_probe.md](01_hardware_probe.md)
+- Base库已完成: [done/02_base_library_status.md](../done/02_base_library_status.md)
 
 ---
 

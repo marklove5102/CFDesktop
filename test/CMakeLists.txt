@@ -25,6 +25,9 @@ enable_testing()
 # Add base unit tests subdirectory
 add_subdirectory(base)
 
+# Add config manager tests subdirectory
+add_subdirectory(config_manager)
+
 # Add logger tests subdirectory
 add_subdirectory(logger)
 

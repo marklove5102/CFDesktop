@@ -8,11 +8,11 @@
 |------|----------|----------|------|
 | 工程骨架 | [00_project_skeleton.md](00_project_skeleton.md) | [done/00_project_skeleton_ref.md](done/00_project_skeleton_ref.md) | 🚧 85% |
 | 硬件探针 | [01_hardware_probe.md](01_hardware_probe.md) | [done/01_hardware_probe_ref.md](done/01_hardware_probe_ref.md) | ⬜ 0% |
-| Base库 | [02_base_library.md](02_base_library.md) | [done/02_base_library_ref.md](done/02_base_library_ref.md) | 🚧 35% |
-| 输入层 | [03_input_layer.md](03_input_layer.md) | [done/03_input_layer_ref.md](done/03_input_layer_ref.md) | ⬜ 0% |
-| 模拟器 | [04_simulator.md](04_simulator.md) | [done/04_simulator_ref.md](done/04_simulator_ref.md) | ⬜ 0% |
-| 测试 | [05_testing.md](05_testing.md) | [done/05_testing_ref.md](done/05_testing_ref.md) | 🚧 40% |
-| UI框架 | [99_ui_material_framework.md](99_ui_material_framework.md) | [done/99_ui_material_framework_ref.md](done/99_ui_material_framework_ref.md) | 🚧 62% |
+| ~~Base库~~ | ~~[02_base_library.md](02_base_library.md)~~ | [done/02_base_library_status.md](done/02_base_library_status.md) | ✅ 100% |
+| 输入层 | [02_input_layer.md](base/02_input_layer.md) | [done/03_input_layer_status.md](done/03_input_layer_status.md) | ⬜ 0% |
+| 模拟器 | [03_simulator.md](base/03_simulator.md) | [done/04_simulator_status.md](done/04_simulator_status.md) | ⬜ 0% |
+| 测试 | [04_testing.md](base/04_testing.md) | [done/05_testing_status.md](done/05_testing_status.md) | 🚧 40% |
+| UI框架 | [99_ui_material_framework.md](base/99_ui_material_framework.md) | [done/99_ui_material_framework_status.md](done/99_ui_material_framework_status.md) | 🚧 62% |
 
 ## 项目状态报告
 
@@ -25,4 +25,4 @@
 
 ---
 
-*最后更新: 2026-03-07*
+*最后更新: 2026-03-18*

@@ -11,13 +11,6 @@ Diagnostics:
     - builtin-declaration-mismatch
     - builtin_definition
 
-Completion:
-  Include:
-    InsertIncludes: Keep
-    MaxPathLength: 30
-    PathWhitelist:
-      - Qt.*
-
 InlayHints:
   Enabled: No
   ParameterNames: No

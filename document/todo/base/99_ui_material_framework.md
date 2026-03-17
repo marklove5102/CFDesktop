@@ -514,7 +514,7 @@ connect(&ThemeManager::instance(), &ThemeManager::themeChanged,
 ## 九、相关文档
 
 - 架构规范: [../../ui/MaterialRules.md](../../ui/MaterialRules.md)
-- 依赖: [00_project_skeleton.md](00_project_skeleton.md), [02_base_library.md](02_base_library.md), [03_input_layer.md](03_input_layer.md)
+- 依赖: [00_project_skeleton.md](../00_project_skeleton.md), [02_input_layer.md](02_input_layer.md)
 
 ---
 

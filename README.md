@@ -2,151 +2,111 @@
 
   # CFDesktop
 
-  ### 一个可部署到任意支持 Qt 的嵌入式设备上的现代化桌面框架
+  ### 为嵌入式设备打造的现代化 Material Design 3 桌面框架
 
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![Version](https://img.shields.io/badge/version-0.9.3-blue.svg)](https://github.com)
-  [![C++](https://img.shields.io/badge/C++-23-00599C.svg)](https://en.cppreference.com/w/C++23)
-  [![Qt](https://img.shields.io/badge/Qt-6.8.3-41CD52.svg)](https://www.qt.io/)
-  [![CMake](https://img.shields.io/badge/CMake-3.16+-064F8C.svg)](https://cmake.org/)
-  [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey.svg)]()
+  [![License: MIT][license-badge]] [![Version: 0.9.3][version-badge]]
+  [![C++23][cpp-badge]] [![Qt 6.8][qt-badge]] [![CMake][cmake-badge]]
+  [![Documentation][docs-badge]]
 
-  [功能特性](#-功能特性) &bull; [快速开始](#-快速开始) &bull; [开发文档](#-开发文档) &bull; [路线图](#-路线图)
+  [项目简介](#项目简介) • [项目进度](#项目进度) • [架构概览](#架构概览) • [快速开始](#快速开始)
 
 </div>
 
 ---
 
-## 简介
+## 项目简介
 
-**CFDesktop** 旨在为各种嵌入式设备提供统一、现代化的桌面环境。通过模块化设计和硬件能力分级，CFDesktop 能够根据设备性能动态调整用户体验，从低端 ARM 设备到高性能 RK3588 平台都能流畅运行。
+**CFDesktop** 是一个基于 Qt6 的嵌入式桌面框架项目，旨在解决以下问题：
 
-### 设计理念
+### 解决的问题
 
-| 理念 | 描述 |
-|:---:|:---|
-| **跨平台** | 支持 Windows/Linux 嵌入式设备，可移植到多种架构 (x86_64/ARM64/ARMhf) |
-| **性能自适应** | 根据设备硬件能力自动调整 UI 特效和功能 |
-| **开发友好** | 提供完整的 SDK 和模拟器，简化应用开发 |
-| **模块化** | 各功能模块解耦，便于裁剪和定制 |
+- **嵌入式设备 UI 现代化** - 提供符合 Material Design 3 规范的现代 UI
+- **性能自适应** - 根据设备硬件能力动态调整 UI 复杂度，从低端 ARM 到高性能 RK3588 都能流畅运行
+- **开发效率低** - 提供完整的 SDK 和模拟器，简化嵌入式 GUI 应用开发
+- **跨平台移植难** - 模块化设计，易于移植到不同架构 (x86_64/ARM64/ARMhf)
+
+### 目标用户
+
+- 想尝试部署所有端统一的桌面模拟器的嵌入式Linux爱好者
+- Qt 应用开发爱好者（嘿！想想一个All Same的桌面，可以运行在imx6ull，rk系列甚至是上位机的桌面！）
+- 嵌入式 Linux 系统集成商（幻想开始.png）
 
 ---
 
-## 当前进度
+## 项目进度
 
-> **版本**: 0.9.3 | **状态**: 活跃开发中
+### 已完成 ✅
 
-### 已完成
+| 阶段 | 模块 | 完成度 | 说明 |
+|:---|:---|:---:|:---|
+| Phase 0 | 工程骨架 | 100% | CMake 构建系统、代码规范、CI/CD、Docker 多架构构建 |
+| Phase 2 | Base 库核心 | 100% | ConfigStore 配置中心、Logger 日志系统、DPI 管理 |
+| Phase 5 | 测试体系 | 70% | Google Test 集成、单元测试覆盖 |
+| Phase 6 | UI 框架核心 | 100% | Material Design 3 分层架构 (Layer 1-4) |
+| Phase 6 | P0 核心控件 | 100% | Button, TextField, TextArea, Label, CheckBox, RadioButton, GroupBox |
 
-```diff
-+ 基础设施 (Phase 0)
-  ✓ Boot Test 环境检测系统
-  ✓ VSCode + Clangd 开发环境配置
-  ✓ 自动化构建脚本 (PowerShell/Bash)
-  ✓ CMake 模块化架构
-  ✓ Git Hooks 验证系统
-  ✓ Docker 多架构构建支持
+### 进行中 🚧
 
-+ 硬件探针模块 (Phase 1)
-  ✓ CPU 信息检测 (型号、核心数、频率)
-  ✓ CPU Profile 和 Features 检测
-  ✓ 内存信息检测 (Windows 平台)
+| 阶段 | 模块 | 完成度 | 说明 |
+|:---|:---|:---:|:---|
+| Phase 6 | P1+ 控件 | 0% | ComboBox, Slider, ProgressBar 等 12+ 常用控件 |
+| Phase 1 | 硬件探针 | 15% | CPU/Memory 检测完成，缺少 GPU 检测和档位判定 |
 
-+ Base 基础库 (Phase 2)
-  ✓ 统一 cfbase.dll 动态库架构
-  ✓ expected 类型 (std::expected 风格)
-  ✓ scope_guard (RAII 风格资源管理)
-  ✓ constexpr_fnv1a 哈希实现
-  ✓ weak_ptr 辅助工具
+### 待开始 ⬜
 
-+ UI 组件库 (Phase 4 - 提前启动)
-  ✓ Material Design 规范文档
-  ✓ 基础数学工具 (math_helper)
-  ✓ 颜色处理工具 (color_helper, color)
-  ✓ 缓动曲线封装 (easing)
-  ✓ 几何图形工具 (geometry_helper)
-  ✓ 设备像素转换 (device_pixel)
+| 阶段 | 模块 | 说明 |
+|:---|:---|:---|
+| Phase 3 | 输入抽象层 | 触摸/按键/手势统一接口 |
+| Phase 4 | 多平台模拟器 | 开发调试用模拟器 |
 
-+ P0 Widgets 核心组件
-  ✓ Button - 按钮组件
-  ✓ Label - 标签组件
-  ✓ TextField - 文本输入框
-  ✓ TextArea - 多行文本区域
-  ✓ CheckBox - 复选框
-  ✓ RadioButton - 单选按钮
-  ✓ GroupBox - 分组框
+详细状态报告: [document/todo/done/PROJECT_STATUS_REPORT.md](document/todo/done/PROJECT_STATUS_REPORT.md)
 
-+ Material Design 应用程序框架
-  ✓ 应用程序抽象层
-  ✓ 焦点环 (Focus Ring)
-  ✓ 波纹效果 (Ripple)
-  ✓ 高度控制器 (Elevation Controller)
-  ✓ 状态机 (State Machine)
-  ✓ 绘制层 (Painter Layer)
+---
 
-+ 动画系统
-  ✓ Spring 弹簧动画
-  ✓ 时间动画
-  ✓ 淡入淡出动画
-  ✓ 缩放动画
-  ✓ 滑动动画
-  ✓ 动画工厂和管理器
+## 架构概览
 
-+ 主题引擎
-  ✓ 主题抽象层
-  ✓ 令牌系统 (Token System)
-  ✓ 颜色方案管理
-  ✓ 运动规格管理
-  ✓ 半径缩放管理
-  ✓ 字体类型管理
+### 分层设计
 
-+ 文档系统
-  ✓ Doxygen 配置
-  ✓ 文件扫描器
-  ✓ 代码注释规范
-  ✓ MkDocs 自动部署
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Material Widget Layer                         │
+│  (P0: 7控件 ✅ | P1: 12控件 ⬜ | P2: 27控件 ⬜ | P3: 25控件 ⬜)    │
+├─────────────────────────────────────────────────────────────────┤
+│                    Material Behavior Layer (100%)                │
+│  StateMachine | RippleHelper | ElevationController | FocusRing   │
+├─────────────────────────────────────────────────────────────────┤
+│                     Animation Engine Layer (100%)                │
+│  AnimationFactory | SpringAnimation | Fade/Slide/Scale           │
+├─────────────────────────────────────────────────────────────────┤
+│                      Theme Engine Layer (100%)                   │
+│  ThemeManager | ColorScheme | Typography | Motion | Radius      │
+├─────────────────────────────────────────────────────────────────┤
+│                    Math & Utility Layer (100%)                   │
+│  MathHelper | Color | Easing | Geometry | DevicePixel           │
+├─────────────────────────────────────────────────────────────────┤
+│                      Desktop Base Layer (100%)                   │
+│  ConfigStore (4层存储) | Logger (多Sink) | System Detect         │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### 开发中
+### 模块说明
 
-| 模块 | 状态 | 阶段 | 进度 |
-|:---|:---:|:---:|:---:|
-| 硬件探针模块 | 进行中 | Phase 1 | 60% |
-| Base 基础库 | 进行中 | Phase 2 | 40% |
-| UI 组件库 | 核心完成 | Phase 4 | 70% |
-| 输入抽象层 | 计划中 | Phase 3 | 0% |
+| 模块 | 路径 | 功能 |
+|:---|:---|:---|
+| 配置中心 | [desktop/base/config_manager/](desktop/base/config_manager/) | 四层存储 (Temp/App/User/System)、变更监听、JSON 持久化 |
+| 日志系统 | [desktop/base/logger/](desktop/base/logger/) | 多等级日志、异步处理、多 Sink 支持 |
+| 系统检测 | [base/system/](base/system/) | CPU/Memory 信息检测、跨平台支持 |
+| UI 核心 | [ui/core/](ui/core/) | Material Design 主题引擎、Token 系统 |
+| UI 组件 | [ui/components/](ui/components/) | 动画工厂、动画组、策略模式 |
+| UI 控件 | [ui/widget/material/](ui/widget/material/) | Material Design 控件实现 |
 
----
+### 技术栈
 
-## 功能特性
-
-<details>
-<summary><b>点击展开核心功能</b></summary>
-
-### 硬件能力检测
-- 自动检测 CPU、GPU、内存性能
-- 动态调整 UI 复杂度
-- 智能资源管理
-
-### 现代化 UI
-- Material Design 3 完整实现
-- 流畅的动画效果 (Spring、淡入淡出、缩放、滑动)
-- 响应式布局
-- 主题定制支持 (颜色、运动、半径、字体)
-- P0 核心组件 (Button、Label、TextField 等)
-
-### 模块化架构
-- 插件式扩展
-- 松耦合设计
-- 易于维护和升级
-
-### 开发工具链
-- 完整的 SDK
-- Doxygen 文档系统
-- VSCode + Clangd 集成
-- 示例程序 (Material Gallery、主题定制)
-
-</details>
+- **语言**: C++23
+- **框架**: Qt 6.8.3
+- **构建**: CMake 3.16+, Ninja
+- **测试**: Google Test
+- **文档**: MkDocs + Doxygen
 
 ---
 
@@ -154,189 +114,67 @@
 
 ### 前置要求
 
-| 依赖 | 最低版本 | 推荐版本 |
-|:---|:---:|:---:|
-| **编译器** | LLVM/Clang 或 GCC | 最新版 |
-| **CMake** | 3.16 | 3.20+ |
-| **Qt** | 6.8.3 | 6.8+ |
+- C++23 编译器 (LLVM/Clang 或 GCC)
+- CMake 3.16+
+- Qt 6.8+
 
-### Windows 构建
+### 构建项目
 
-```powershell
+```bash
 # 克隆仓库
 git clone https://github.com/your-org/CFDesktop.git
 cd CFDesktop
 
-# 快速构建 (推荐日常开发)
+# Windows 快速构建
 .\scripts\build_helpers\windows_fast_develop_build.ps1
 
-# 运行测试
-.\scripts\build_helpers\windows_run_tests.ps1
-```
-
-### Linux 构建
-
-```bash
-# 克隆仓库
-git clone https://github.com/your-org/CFDesktop.git
-cd CFDesktop
-
-# 快速构建
+# Linux 快速构建
 ./scripts/build_helpers/linux_fast_develop_build.sh
-
-# 运行测试
-./scripts/build_helpers/linux_run_tests.sh
 ```
 
-### Docker 构建 (多架构)
+### 运行示例
 
 ```bash
-# AMD64 构建验证
-bash scripts/build_helpers/docker_start.sh --verify
-
-# ARM64 构建验证
-bash scripts/build_helpers/docker_start.sh --arch arm64 --verify
-```
-
-### 构建配置说明
-
-| 配置文件 | 用途 | 输出目录 |
-|:---|:---|:---|
-| `build_deploy_config.ini` | 部署构建 | `out/build_deploy` |
-| `build_develop_config.ini` | 开发构建 | `out/build_develop` |
-
----
-
-## 开发环境
-
-### VSCode + Clangd (推荐)
-
-项目已配置自动生成 VSCode 开发配置：
-
-**自动生成文件**:
-- `.vscode/launch.json` - 调试配置 (自动检测 GDB/LLDB)
-- `.vscode/tasks.json` - 构建任务
-- `.clangd` - Clangd 语言服务器配置
-
-**功能支持**:
-- 精准的代码补全
-- 实时语法检查
-- 跳转到定义
-- 重构支持
-- 一键调试 (F5)
-- 快速构建 (Ctrl+Shift+B)
-
-### QtCreator
-
-也可以直接使用 QtCreator 打开 `CMakeLists.txt` 进行开发。
-
----
-
-## 示例程序
-
-| 示例 | 描述 |
-|:---|:---|
-| **Material Gallery** | Material Design 组件展示 |
-| **主题定制** | 颜色、运动、半径、字体定制示例 |
-| **Widget 组件** | P0 核心控件演示 |
-
-运行示例：
-```powershell
-# Windows
+# 运行 Material Gallery (查看所有 UI 组件)
 .\out\build_deploy\bin\material_gallery.exe
+
+# 运行主题定制示例
+.\out\build_deploy\bin\material_theme_customizer.exe
 ```
+
+### 开发环境配置
+
+项目使用 VSCode + Clangd 作为推荐开发环境，首次构建后会自动生成配置文件。
+
+详细配置说明: [document/development/README.md](document/development/README.md)
 
 ---
 
-## 开发文档
+## 完整文档
 
-| 文档 | 内容 | 阶段 |
-|:---|:---|:---:|
-| [工程骨架搭建](document/design_stage/00_phase0_project_skeleton.md) | 项目基础设施与环境配置 | Phase 0 |
-| [硬件探针与能力分级](document/design_stage/01_phase1_hardware_probe.md) | 硬件检测与性能评估 | Phase 1 |
-| [Base 库核心功能](document/design_stage/02_phase2_base_library.md) | 基础库设计与实现 | Phase 2 |
-| [输入抽象层](document/design_stage/03_phase3_input_layer.md) | 输入设备统一接口 | Phase 3 |
-| [多平台模拟器](document/design_stage/04_phase6_simulator.md) | 开发调试模拟器 | Phase 6 |
-| [测试体系](document/design_stage/05_phase8_testing.md) | 单元测试与集成测试 | Phase 8 |
+📚 **项目文档站**: [https://awesome-embedded-learning-studio.github.io/CFDesktop/](https://awesome-embedded-learning-studio.github.io/CFDesktop/)
 
-**TODO 任务清单**: [document/todo/](document/todo/)
+### 开发文档
 
----
+| 文档 | 说明 | 链接 |
+|:---|:---|:---|
+| 开发环境设置 | 前置要求、快速开始、构建系统 | [development/](https://awesome-embedded-learning-studio.github.io/CFDesktop/development/) |
+| API 参考手册 | 基础库 API 文档 | [HandBook/api/](https://awesome-embedded-learning-studio.github.io/CFDesktop/HandBook/api/) |
+| UI 框架文档 | Material Design 实现架构 | [HandBook/ui/](https://awesome-embedded-learning-studio.github.io/CFDesktop/HandBook/ui/) |
+| 代码示例 | 各模块使用示例 | [example/](https://awesome-embedded-learning-studio.github.io/CFDesktop/examples/) |
 
-## 技术栈
+### 设计文档
 
-<div align="center">
+| 文档 | 说明 | 链接 |
+|:---|:---|:---|
+| 工程骨架设计 | 项目基础设施与环境配置 | [design_stage/00_phase0_project_skeleton.md](document/design_stage/00_phase0_project_skeleton.md) |
+| Base 库设计 | 基础库设计与实现 | [design_stage/02_phase2_base_library.md](document/design_stage/02_phase2_base_library.md) |
+| UI 框架设计 | Material Design 分层架构 | [HandBook/ui/architecture/](document/HandBook/ui/architecture/) |
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        CFDesktop 架构                           │
-├─────────────────────────────────────────────────────────────────┤
-│  C++23  │  Qt 6.8.3  │  CMake  │  LLVM/Clang  │  Ninja        │
-├─────────────────────────────────────────────────────────────────┤
-│  VSCode  │  Clangd  │  Git Hooks  │  Docker  │  MkDocs        │
-└─────────────────────────────────────────────────────────────────┘
-```
+### TODO 跟踪
 
-| 技术 | 版本 | 用途 |
-|:---|:---:|:---|
-| **C++** | 23 | 核心开发语言 |
-| **CMake** | 3.16+ | 构建系统 |
-| **Qt** | 6.8.3+ | UI 框架 |
-| **LLVM/Clang** | 最新 | 编译器 (首选) |
-| **GCC** | 最新 | Linux 编译器 |
-| **Ninja** | - | 构建工具 |
-| **Docker** | - | 多架构构建验证 |
-
-</div>
-
----
-
-## 路线图
-
-<details>
-<summary><b>查看完整开发计划</b></summary>
-
-```mermaid
-graph LR
-    A[Phase 0<br/>工程骨架] --> B[Phase 1<br/>硬件探针]
-    B --> C[Phase 2<br/>Base 库]
-    C --> D[Phase 3<br/>输入抽象层]
-    D --> E[Phase 4<br/>UI 组件库]
-    E --> F[Phase 5<br/>窗口管理器]
-    F --> G[Phase 6<br/>模拟器]
-    G --> H[Phase 7<br/>应用框架]
-    H --> I[Phase 8<br/>测试体系]
-    I --> J[Phase 9<br/>文档完善]
-    J --> K[Phase 10<br/>发布准备]
-
-    style A fill:#4CAF50
-    style B fill:#2196F3
-    style C fill:#9C27B0
-    style D fill:#9E9E9E
-    style E fill:#2196F3
-    style F fill:#9E9E9E
-    style G fill:#9E9E9E
-    style H fill:#9E9E9E
-    style I fill:#9E9E9E
-    style J fill:#9E9E9E
-    style K fill:#9E9E9E
-```
-
-**当前阶段**: Phase 1-2 并行开发，Phase 4 核心组件已完成
-
-</details>
-
----
-
-## 版本管理策略
-
-| 版本类型 | 验证要求 |
-|:---|:---|
-| **Major** (x.y.z → x+1.0.0) | X64 + ARM64 完整构建 + 测试 |
-| **Minor** (x.y.z → x.y+1.0) | X64 完整构建 + 测试 |
-| **Patch** (x.y.z → x.y.z+1) | X64 快速构建 + 测试 |
-
-详见: [scripts/release/README.md](scripts/release/README.md)
+- [任务看板](document/todo/README.md) - 当前开发任务列表
+- [状态报告](document/todo/done/PROJECT_STATUS_REPORT.md) - 项目整体进度报告
 
 ---
 
@@ -344,7 +182,7 @@ graph LR
 
 欢迎贡献代码、报告问题或提出建议！
 
-请查看 [CONTRIBUTING.md](CONTRIBUTING.md) 了解贡献指南。
+请查看 [document/todo/](document/todo/) 了解当前开发任务和优先级。
 
 ---
 
@@ -356,10 +194,14 @@ graph LR
 
 <div align="center">
 
-  **Made with ❤️ for embedded devices**
-
-  *版本: 0.9.0 | 最后更新: 2026-03-07*
-
-  [⬆ 返回顶部](#cfdesktop)
+  **很早就像做一个酷酷的统一桌面，现在，终于可以尝试开始了！**
 
 </div>
+
+<!-- Badge Links -->
+[license-badge]: https://img.shields.io/badge/License-MIT-yellow.svg
+[version-badge]: https://img.shields.io/badge/version-0.9.3-blue.svg
+[cpp-badge]: https://img.shields.io/badge/C++-23-00599C.svg
+[qt-badge]: https://img.shields.io/badge/Qt-6.8-41CD52.svg
+[cmake-badge]: https://img.shields.io/badge/CMake-3.16+-064F8C.svg
+[docs-badge]: https://img.shields.io/badge/docs-latest-brightgreen.svg
