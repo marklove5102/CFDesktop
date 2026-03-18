@@ -12,7 +12,7 @@
 | 输入层 | [02_input_layer.md](base/02_input_layer.md) | [done/03_input_layer_status.md](done/03_input_layer_status.md) | ⬜ 0% |
 | 模拟器 | [03_simulator.md](base/03_simulator.md) | [done/04_simulator_status.md](done/04_simulator_status.md) | ⬜ 0% |
 | 测试 | [04_testing.md](base/04_testing.md) | [done/05_testing_status.md](done/05_testing_status.md) | 🚧 40% |
-| UI框架 | [99_ui_material_framework.md](base/99_ui_material_framework.md) | [done/99_ui_material_framework_status.md](done/99_ui_material_framework_status.md) | 🚧 62% |
+| UI框架 | [99_ui_material_framework.md](base/99_ui_material_framework.md) | [done/99_ui_material_framework_status.md](done/99_ui_material_framework_status.md) | 🚧 81% |
 
 ## 项目状态报告
 
@@ -25,4 +25,4 @@
 
 ---
 
-*最后更新: 2026-03-18*
+*最后更新: 2026-03-19*

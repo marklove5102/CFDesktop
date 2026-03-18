@@ -1,9 +1,9 @@
 # Phase 6: UI Material 框架 - 状态文档
 
 > **模块ID**: Phase 6
-> **状态**: 🚧 核心框架完成，控件开发中
-> **总体进度**: 62%
-> **最后更新**: 2026-03-11
+> **状态**: 🚧 P1 控件完成，P2/P3 待开发
+> **总体进度**: 81%
+> **最后更新**: 2026-03-19
 
 ---
 
@@ -13,7 +13,7 @@
 
 ```
 Layer 6: Performance Profile (0%)
-Layer 5: Material Widget Adapter (P0: 100%, P1: 0%, P2: 0%, P3: 0%)
+Layer 5: Material Widget Adapter (P0: 100%, P1: 100%, P2: 0%, P3: 0%)
 Layer 4: Material Behavior Layer (100%)
 Layer 3: Animation Engine Layer (100%)
 Layer 2: Theme Engine Layer (100%)
@@ -54,7 +54,7 @@ ui/base             -> QtCore only (no QtWidgets/QtGui)
 | Layer 3: Animation Engine | ✅ | 100% |
 | Layer 4: Material Behavior | ✅ | 100% |
 | Layer 5: P0 核心控件 | ✅ | 100% (7/7) |
-| Layer 5: P1 常用控件 | ⬜ | 0% (0/12) |
+| Layer 5: P1 常用控件 | ✅ | 100% (12/12) |
 | Layer 5: P2 高级控件 | ⬜ | 0% (0/27) |
 | Layer 5: P3 专业控件 | ⬜ | 0% (0/25) |
 | Layer 6: Performance Profile | ⬜ | 0% |
@@ -225,22 +225,29 @@ Idle -> Running -> (Paused | Finished)
 
 ## 四、待完成工作
 
-### 4.1 Layer 5: P1 常用控件 (0/12)
+### 4.1 Layer 5: P1 常用控件 (12/12) ✅
 
-| 控件 | Qt 基类 | 优先级 |
-|------|---------|--------|
-| ComboBox | QComboBox | P1 |
-| Slider | QSlider | P1 |
-| ProgressBar | QProgressBar | P1 |
-| Switch | QCheckBox (custom) | P1 |
-| ListView | QListView | P1 |
-| TreeView | QTreeView | P1 |
-| TableView | QTableView | P1 |
-| TabView | QTabWidget | P1 |
-| ScrollView | QScrollArea | P1 |
-| Separator | QFrame | P1 |
-| SpinBox | QSpinBox | P1 |
-| DoubleSpinBox | QDoubleSpinBox | P1 |
+| 控件 | Qt 基类 | 路径 | Demo |
+|------|---------|------|------|
+| **Button** | QPushButton | [button/](../../../ui/widget/material/widget/button/) | ButtonDemo |
+| **CheckBox** | QCheckBox | [checkbox/](../../../ui/widget/material/widget/checkbox/) | CheckBoxDemo |
+| **ComboBox** | QComboBox | [comboBox/](../../../ui/widget/material/widget/comboBox/) | ComboBoxDemo |
+| **DoubleSpinBox** | QDoubleSpinBox | [doublespinbox/](../../../ui/widget/material/widget/doublespinbox/) | DoubleSpinBoxDemo |
+| **GroupBox** | QGroupBox | [groupbox/](../../../ui/widget/material/widget/groupbox/) | GroupBoxDemo |
+| **Label** | QLabel | [label/](../../../ui/widget/material/widget/label/) | LabelDemo |
+| **ListView** | QListView | [listview/](../../../ui/widget/material/widget/listview/) | ListViewDemo |
+| **ProgressBar** | QProgressBar | [progressbar/](../../../ui/widget/material/widget/progressbar/) | ProgressBarDemo |
+| **RadioButton** | QRadioButton | [radiobutton/](../../../ui/widget/material/widget/radiobutton/) | RadioButtonDemo |
+| **ScrollView** | QScrollArea | [scrollview/](../../../ui/widget/material/widget/scrollview/) | ScrollViewDemo |
+| **Separator** | QFrame | [separator/](../../../ui/widget/material/widget/separator/) | SeparatorDemo |
+| **Slider** | QSlider | [slider/](../../../ui/widget/material/widget/slider/) | SliderDemo |
+| **SpinBox** | QSpinBox | [spinbox/](../../../ui/widget/material/widget/spinbox/) | SpinBoxDemo |
+| **Switch** | QCheckBox | [switch/](../../../ui/widget/material/widget/switch/) | SwitchDemo |
+| **TabView** | QTabWidget | [tabview/](../../../ui/widget/material/widget/tabview/) | TabViewDemo |
+| **TableView** | QTableView | [tableview/](../../../ui/widget/material/widget/tableview/) | TableViewDemo |
+| **TextArea** | QTextEdit | [textarea/](../../../ui/widget/material/widget/textarea/) | TextAreaDemo |
+| **TextField** | QLineEdit | [textfield/](../../../ui/widget/material/widget/textfield/) | TextFieldDemo |
+| **TreeView** | QTreeView | [treeview/](../../../ui/widget/material/widget/treeview/) | TreeViewDemo |
 
 ### 4.2 Layer 5: P2 高级控件 (0/27)
 
@@ -480,35 +487,62 @@ d:\ProjectHome\CFDesktop\ui\widget\material\base\
 └── focus_ring.h/cpp
 ```
 
-**控件层 (Layer 5 - P0):**
+**控件层 (Layer 5 - P0 + P1):**
 ```
-d:\ProjectHome\CFDesktop\ui\widget\material\widget\
-├── button/button.h/cpp
-├── textfield/textfield.h/cpp
-├── textarea/textarea.h/cpp
-├── label/label.h/cpp
-├── checkbox/checkbox.h/cpp
-├── radiobutton/radiobutton.h/cpp
-└── groupbox/groupbox.h/cpp
+/home/charliechen/CFDesktop/ui/widget/material/widget/
+├── button/button.h/cpp ✅
+├── textfield/textfield.h/cpp ✅
+├── textarea/textarea.h/cpp ✅
+├── label/label.h/cpp ✅
+├── checkbox/checkbox.h/cpp ✅
+├── radiobutton/radiobutton.h/cpp ✅
+├── groupbox/groupbox.h/cpp ✅
+├── combobox/combobox.h/cpp ✅ (P1)
+├── slider/slider.h/cpp ✅ (P1)
+├── progressbar/progressbar.h/cpp ✅ (P1)
+├── switch/switch.h/cpp ✅ (P1)
+├── listview/listview.h/cpp ✅ (P1)
+├── treeview/treeview.h/cpp ✅ (P1)
+├── tableview/tableview.h/cpp ✅ (P1)
+├── tabview/tabview.h/cpp ✅ (P1)
+├── scrollview/scrollview.h/cpp ✅ (P1)
+├── separator/separator.h/cpp ✅ (P1)
+├── spinbox/spinbox.h/cpp ✅ (P1)
+└── doublespinbox/doublespinbox.h/cpp ✅ (P1)
 ```
 
 ### 待创建文件
 
-**Layer 5 - P1 控件目录:**
+**Layer 5 - P2 高级控件 (27个):**
 ```
-d:\ProjectHome\CFDesktop\ui\widget\material\widget\
-├── combobox/combobox.h/cpp
-├── slider/slider.h/cpp
-├── progress/progress_bar.h/cpp
-├── switch/switch.h/cpp
-├── listview/list_view.h/cpp
-├── treeview/tree_view.h/cpp
-├── tableview/table_view.h/cpp
-├── tabview/tab_view.h/cpp
-├── scrollview/scroll_view.h/cpp
-├── separator/separator.h/cpp
-├── spinbox/spin_box.h/cpp
-└── spinbox/double_spin_box.h/cpp
+ui/widget/material/widget/
+├── datepicker/          # 日期选择器
+├── timepicker/          # 时间选择器
+├── colorpicker/         # 颜色选择器
+├── menubar/             # 菜单栏
+├── contextmenu/         # 右键菜单
+├── toolbar/             # 工具栏
+├── statusbar/           # 状态栏
+├── dialog/              # 对话框
+├── snackbar/            # 消息条
+├── card/                # 卡片
+├── floatingactionbutton/ # 浮动操作按钮
+├── bottomnavigation/    # 底部导航
+├── drawer/              # 抽屉
+├── searchbar/           # 搜索栏
+├── dial/                # 旋钮
+├── stepper/             # 步进器
+├── chip/                # 芯片
+├── badge/               # 徽章
+├── tooltip/             # 工具提示
+├── popover/             # 弹出框
+├── circularprogressbar/ # 圆形进度条
+├── navigationrail/      # 侧边导航
+├── navigationdrawer/    # 导航抽屉
+├── topappbar/           # 顶栏
+├── bottomsheet/         # 底部面板
+├── alertdialog/         # 警告对话框
+└── menu/                # 菜单
 ```
 
 **Layer 6 - 性能配置:**
@@ -519,7 +553,53 @@ d:\ProjectHome\CFDesktop\ui\core\
 
 ---
 
-## 八、相关文档
+## 八、P1 控件完成里程碑 (2026-03-19)
+
+### 完成概览
+- **完成日期**: 2026-03-18
+- **组件总数**: 19 个 (P0: 7 + P1: 12)
+- **Demo 示例**: 19 个完整示例
+- **代码行数**: ~15000 行 (估算)
+
+### P1 新增组件详情
+
+| 组件 | 主要功能 | 特性 |
+|------|---------|------|
+| **Slider** | 滑块输入 | 水平/垂直、刻度标记、轨道激活态 |
+| **Switch** | 开关切换 | 动画滑块、52x32dp 尺寸、轨道颜色过渡 |
+| **ProgressBar** | 进度显示 | 确定/不确定模式、平滑动画 |
+| **ComboBox** | 下拉选择 | Filled/Outlined 变体、自定义弹出窗口 |
+| **ListView** | 列表显示 | 单/双/三行项、自定义委托、分割线 |
+| **TableView** | 表格显示 | Material 表头、网格线、行选择涟漪 |
+| **TreeView** | 树形显示 | 展开/折叠动画、树连接线、56dp/级缩进 |
+| **TabView** | 标签页 | 滑动指示器动画、关闭按钮、选项卡滚动 |
+| **ScrollView** | 滚动视图 | 12dp 滚动条、淡入淡出、悬停扩展 |
+| **Separator** | 分隔线 | 水平/垂直、FullBleed/Inset/MiddleInset |
+| **SpinBox** | 整数输入 | 增量/减量按钮、轮廓样式、焦点指示器 |
+| **DoubleSpinBox** | 浮点输入 | 同 SpinBox，支持浮点数 |
+
+### 共同特性实现
+- ✅ Material Design 3 色彩系统 (CFColor + MD3 tokens)
+- ✅ 状态机管理 (hover/press/focus/disabled)
+- ✅ 涟漪效果 (RippleHelper)
+- ✅ 焦点指示器 (FocusRing)
+- ✅ 动画支持 (CFMaterialAnimationFactory)
+- ✅ 7步绘制流水线
+
+### 构建集成
+所有组件已集成到 CMake 构建系统：
+- `ui/widget/CMakeLists.txt` 已更新
+- `example/ui/widget/material_example/CMakeLists.txt` 已更新
+- MaterialGalleryWindow 已注册所有 Demo
+
+### 下一步工作
+1. **P2 高级控件** (27个) - 菜单、对话框、工具栏等
+2. **单元测试补充** - 提高 P0/P1 控件测试覆盖率
+3. **Layer 6: 性能配置** - HWTier 联动降级策略
+
+---
+
+## 九、相关文档
 
 - 原始TODO: [../99_ui_material_framework.md](../99_ui_material_framework.md)
 - 架构规范: [../../ui/MaterialRules.md](../../ui/MaterialRules.md)
@@ -528,5 +608,5 @@ d:\ProjectHome\CFDesktop\ui\core\
 
 ---
 
-*文档版本: v1.0*
-*生成时间: 2026-03-11*
+*文档版本: v1.1*
+*生成时间: 2026-03-19*
