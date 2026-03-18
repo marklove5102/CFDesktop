@@ -46,7 +46,7 @@ void SwitchDemo::setupUI() {
     scrollLayout->addStretch();
 
     scrollArea->setWidget(scrollContent_);
-    layout_->addWidget(scrollArea);
+    layout_->addWidget(scrollArea, 1);
 }
 
 void SwitchDemo::createBasicStatesSection() {

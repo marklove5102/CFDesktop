@@ -10,9 +10,9 @@
 #include <QApplication>
 #include <QButtonGroup>
 #include <QFont>
-#include <QStyle>
 #include <QHBoxLayout>
 #include <QScrollArea>
+#include <QStyle>
 
 using namespace cf::ui::widget::material;
 
@@ -43,7 +43,7 @@ void RadioButtonDemo::setupUI() {
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scrollArea->setWidget(scrollContent_);
 
-    layout_->addWidget(scrollArea);
+    layout_->addWidget(scrollArea, 1);
 }
 
 void RadioButtonDemo::createBasicRadioSection() {
@@ -198,8 +198,8 @@ void RadioButtonDemo::createErrorStateSection() {
     toggleLayout->addStretch();
     layout->addLayout(toggleLayout);
 
-    connect(toggleGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
-            this, [toggleRadio1, toggleRadio2](QAbstractButton* button) {
+    connect(toggleGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this,
+            [toggleRadio1, toggleRadio2](QAbstractButton* button) {
                 bool isError = (button == toggleRadio2);
                 toggleRadio1->setError(isError);
                 toggleRadio2->setError(isError);
@@ -234,8 +234,8 @@ void RadioButtonDemo::createInteractionDemoSection() {
     layout->addWidget(demoOption2);
     layout->addWidget(demoOption3);
 
-    connect(demoGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
-            this, [this](QAbstractButton* button) {
+    connect(demoGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this,
+            [this](QAbstractButton* button) {
                 selectionLabel_->setText(QString("Selected: %1").arg(button->text()));
             });
 

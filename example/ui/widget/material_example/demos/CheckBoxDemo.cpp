@@ -9,11 +9,11 @@
 
 #include <QApplication>
 #include <QFont>
-#include <QStyle>
-#include <QGroupBox>
-#include <QLabel>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QStyle>
 
 using namespace cf::ui::widget::material;
 
@@ -28,8 +28,6 @@ CheckBoxDemo::CheckBoxDemo(QWidget* parent) : QWidget(parent) {
     createDisabledSection();
     createInteractiveDemoSection();
     createCustomLabelsSection();
-
-    layout_->addStretch();
 }
 
 void CheckBoxDemo::setupUI() {
@@ -49,7 +47,7 @@ void CheckBoxDemo::setupUI() {
     scrollLayout->setContentsMargins(0, 0, 0, 0);
 
     scrollArea->setWidget(scrollContent_);
-    layout_->addWidget(scrollArea);
+    layout_->addWidget(scrollArea, 1);
 }
 
 void CheckBoxDemo::createCheckboxStatesSection() {
@@ -304,8 +302,7 @@ void CheckBoxDemo::createCustomLabelsSection() {
     QHBoxLayout* newsletterLayout = new QHBoxLayout();
     CheckBox* newsletterBox = new CheckBox(
         "Subscribe to our newsletter for updates and special offers (订阅我们的新闻通讯)", this);
-    connect(newsletterBox, &CheckBox::clicked, this,
-            &CheckBoxDemo::onNewsletterCheckboxClicked);
+    connect(newsletterBox, &CheckBox::clicked, this, &CheckBoxDemo::onNewsletterCheckboxClicked);
     newsletterLayout->addWidget(newsletterBox);
     newsletterLayout->addStretch();
     layout->addLayout(newsletterLayout);

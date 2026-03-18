@@ -30,7 +30,7 @@ GroupBoxDemo::GroupBoxDemo(QWidget* parent) : QWidget(parent) {
     createContentExamplesSection();
     createNestedGroupBoxSection();
 
-    // Add stretch at the end
+    // Add stretch at the end of scroll content
     layout_->addStretch();
 }
 
@@ -54,7 +54,7 @@ void GroupBoxDemo::setupUI() {
     // Main layout
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addWidget(scrollArea);
+    mainLayout->addWidget(scrollArea, 1);
 }
 
 void GroupBoxDemo::createBasicGroupBoxSection() {
@@ -64,10 +64,10 @@ void GroupBoxDemo::createBasicGroupBoxSection() {
     gbLayout->setContentsMargins(16, 32, 16, 16);
 
     // Description label
-    QLabel* descLabel = new QLabel(
-        "This is a basic Material Design 3 GroupBox with default settings.\n"
-        "It features rounded corners, a subtle elevation shadow, and a border.",
-        groupBox);
+    QLabel* descLabel =
+        new QLabel("This is a basic Material Design 3 GroupBox with default settings.\n"
+                   "It features rounded corners, a subtle elevation shadow, and a border.",
+                   groupBox);
     descLabel->setWordWrap(true);
     gbLayout->addWidget(descLabel);
 
@@ -282,7 +282,8 @@ void GroupBoxDemo::createNestedGroupBoxSection() {
     outerLayout->setSpacing(16);
     outerLayout->setContentsMargins(16, 32, 16, 16);
 
-    QLabel* outerLabel = new QLabel("This is the outer group box containing nested group boxes:", outerGroup);
+    QLabel* outerLabel =
+        new QLabel("This is the outer group box containing nested group boxes:", outerGroup);
     outerLayout->addWidget(outerLabel);
 
     // Inner group box 1

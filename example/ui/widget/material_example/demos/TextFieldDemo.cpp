@@ -9,12 +9,12 @@
 
 #include <QApplication>
 #include <QFont>
-#include <QStyle>
 #include <QFrame>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QScrollArea>
+#include <QStyle>
 #include <QVBoxLayout>
 
 using namespace cf::ui::widget::material;
@@ -31,7 +31,6 @@ TextFieldDemo::TextFieldDemo(QWidget* parent) : QWidget(parent) {
     createTextFieldAdvancedSection();
 
     // Add stretch at the end
-    layout_->addStretch();
 }
 
 void TextFieldDemo::setupUI() {
@@ -52,7 +51,7 @@ void TextFieldDemo::setupUI() {
     scrollLayout->setContentsMargins(0, 0, 0, 0);
 
     scrollArea->setWidget(scrollContent_);
-    layout_->addWidget(scrollArea);
+    layout_->addWidget(scrollArea, 1);
 
     // Use scrollLayout for adding content
     layout_ = scrollLayout;
@@ -159,7 +158,8 @@ void TextFieldDemo::createTextFieldWithIconsSection() {
     outlinedSuffixLabel->setMinimumWidth(120);
     TextField* outlinedSuffixField = new TextField(TextFieldVariant::Outlined, this);
     outlinedSuffixField->setLabel("Email");
-    outlinedSuffixField->setSuffixIcon(QApplication::style()->standardIcon(QStyle::SP_DialogOkButton));
+    outlinedSuffixField->setSuffixIcon(
+        QApplication::style()->standardIcon(QStyle::SP_DialogOkButton));
     outlinedSuffixLayout->addWidget(outlinedSuffixLabel);
     outlinedSuffixLayout->addWidget(outlinedSuffixField);
     outlinedSuffixLayout->addStretch();
@@ -172,7 +172,8 @@ void TextFieldDemo::createTextFieldWithIconsSection() {
     TextField* passwordField = new TextField(TextFieldVariant::Filled, this);
     passwordField->setLabel("Password");
     passwordField->setEchoMode(TextField::Password);
-    passwordField->setPrefixIcon(QApplication::style()->standardIcon(QStyle::SP_DialogCancelButton));
+    passwordField->setPrefixIcon(
+        QApplication::style()->standardIcon(QStyle::SP_DialogCancelButton));
     passwordLayout->addWidget(passwordLabel);
     passwordLayout->addWidget(passwordField);
     passwordLayout->addStretch();
@@ -234,7 +235,9 @@ void TextFieldDemo::createTextFieldAdvancedSection() {
     QHBoxLayout* multilineLayout = new QHBoxLayout();
     QLabel* multilineLabel = new QLabel("TextArea hint:", this);
     multilineLabel->setMinimumWidth(120);
-    TextField* multilineField = new TextField("This is a single-line TextField. For multi-line input, use TextArea.", TextFieldVariant::Filled, this);
+    TextField* multilineField =
+        new TextField("This is a single-line TextField. For multi-line input, use TextArea.",
+                      TextFieldVariant::Filled, this);
     multilineField->setLabel("Description");
     multilineField->setHelperText("Enter a description (multi-line not supported in TextField)");
     multilineLayout->addWidget(multilineLabel);

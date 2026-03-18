@@ -26,6 +26,22 @@ add_executable(material_widget_gallery
     demos/SliderDemo.h
     demos/SwitchDemo.cpp
     demos/SwitchDemo.h
+    demos/SpinBoxDemo.cpp
+    demos/SpinBoxDemo.h
+    demos/DoubleSpinBoxDemo.cpp
+    demos/DoubleSpinBoxDemo.h
+    demos/SeparatorDemo.cpp
+    demos/SeparatorDemo.h
+    demos/ScrollViewDemo.cpp
+    demos/ScrollViewDemo.h
+    demos/ListViewDemo.cpp
+    demos/ListViewDemo.h
+    demos/TableViewDemo.cpp
+    demos/TableViewDemo.h
+    demos/TabViewDemo.cpp
+    demos/TabViewDemo.h
+    demos/TreeViewDemo.cpp
+    demos/TreeViewDemo.h
 )
 
 target_link_libraries(material_widget_gallery PRIVATE

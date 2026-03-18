@@ -9,14 +9,22 @@
 #include "demos/ButtonDemo.h"
 #include "demos/CheckBoxDemo.h"
 #include "demos/ComboBoxDemo.h"
+#include "demos/DoubleSpinBoxDemo.h"
 #include "demos/GroupBoxDemo.h"
 #include "demos/LabelDemo.h"
+#include "demos/ListViewDemo.h"
 #include "demos/ProgressBarDemo.h"
 #include "demos/RadioButtonDemo.h"
+#include "demos/ScrollViewDemo.h"
+#include "demos/SeparatorDemo.h"
 #include "demos/SliderDemo.h"
+#include "demos/SpinBoxDemo.h"
 #include "demos/SwitchDemo.h"
+#include "demos/TabViewDemo.h"
+#include "demos/TableViewDemo.h"
 #include "demos/TextAreaDemo.h"
 #include "demos/TextFieldDemo.h"
+#include "demos/TreeViewDemo.h"
 
 #include <QHeaderView>
 
@@ -129,6 +137,46 @@ void MaterialGalleryWindow::registerDemos() {
     auto* textFieldDemo = new TextFieldDemo(contentStack_);
     navList_->addItem(textFieldDemo->title());
     contentStack_->addWidget(textFieldDemo);
+
+    // 12. SpinBox
+    auto* spinBoxDemo = new SpinBoxDemo(contentStack_);
+    navList_->addItem(spinBoxDemo->title());
+    contentStack_->addWidget(spinBoxDemo);
+
+    // 13. DoubleSpinBox
+    auto* doubleSpinBoxDemo = new DoubleSpinBoxDemo(contentStack_);
+    navList_->addItem(doubleSpinBoxDemo->title());
+    contentStack_->addWidget(doubleSpinBoxDemo);
+
+    // 14. Separator
+    auto* separatorDemo = new SeparatorDemo(contentStack_);
+    navList_->addItem(separatorDemo->title());
+    contentStack_->addWidget(separatorDemo);
+
+    // 15. ScrollView
+    auto* scrollViewDemo = new ScrollViewDemo(contentStack_);
+    navList_->addItem(scrollViewDemo->title());
+    contentStack_->addWidget(scrollViewDemo);
+
+    // 16. ListView
+    auto* listViewDemo = new ListViewDemo(contentStack_);
+    navList_->addItem(listViewDemo->title());
+    contentStack_->addWidget(listViewDemo);
+
+    // 17. TableView
+    auto* tableViewDemo = new TableViewDemo(contentStack_);
+    navList_->addItem(tableViewDemo->title());
+    contentStack_->addWidget(tableViewDemo);
+
+    // 18. TabView
+    auto* tabViewDemo = new TabViewDemo(contentStack_);
+    navList_->addItem(tabViewDemo->title());
+    contentStack_->addWidget(tabViewDemo);
+
+    // 19. TreeView
+    auto* treeViewDemo = new TreeViewDemo(contentStack_);
+    navList_->addItem(treeViewDemo->title());
+    contentStack_->addWidget(treeViewDemo);
 
     // Select first item
     navList_->setCurrentRow(0);

@@ -29,7 +29,6 @@ LabelDemo::LabelDemo(QWidget* parent) : QWidget(parent) {
     createFeaturesSection();
 
     // Add stretch at the end
-    layout_->addStretch();
 }
 
 void LabelDemo::setupUI() {
@@ -52,7 +51,7 @@ void LabelDemo::setupUI() {
     // Main layout
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addWidget(scrollArea);
+    mainLayout->addWidget(scrollArea, 1);
 }
 
 void LabelDemo::createDisplaySection() {

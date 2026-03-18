@@ -41,7 +41,7 @@ void SliderDemo::setupUI() {
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scrollArea->setWidget(scrollContent_);
 
-    layout_->addWidget(scrollArea);
+    layout_->addWidget(scrollArea, 1);
 }
 
 void SliderDemo::createHorizontalSection() {

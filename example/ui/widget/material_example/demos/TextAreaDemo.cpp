@@ -29,7 +29,6 @@ TextAreaDemo::TextAreaDemo(QWidget* parent) : QWidget(parent) {
     createInteractionDemoSection();
 
     // Add stretch at the end
-    layout_->addStretch();
 }
 
 void TextAreaDemo::setupUI() {
@@ -50,7 +49,7 @@ void TextAreaDemo::setupUI() {
     scrollLayout->setContentsMargins(0, 0, 0, 0);
 
     scrollArea->setWidget(scrollContent_);
-    layout_->addWidget(scrollArea);
+    layout_->addWidget(scrollArea, 1);
 
     // Use scrollLayout for adding content
     layout_ = scrollLayout;

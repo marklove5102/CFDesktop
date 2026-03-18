@@ -25,8 +25,6 @@ ComboBoxDemo::ComboBoxDemo(QWidget* parent) : QWidget(parent) {
     createItemsSection();
     createStatesSection();
     createInteractiveDemoSection();
-
-    layout_->addStretch();
 }
 
 void ComboBoxDemo::setupUI() {
@@ -46,7 +44,7 @@ void ComboBoxDemo::setupUI() {
     scrollLayout->setContentsMargins(0, 0, 0, 0);
 
     scrollArea->setWidget(scrollContent_);
-    layout_->addWidget(scrollArea);
+    layout_->addWidget(scrollArea, 1);
 }
 
 void ComboBoxDemo::createVariantsSection() {

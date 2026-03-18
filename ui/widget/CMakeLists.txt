@@ -42,6 +42,16 @@ add_library(cf_ui_widget_material STATIC
     material/widget/switch/switch.cpp
     material/widget/textarea/textarea.cpp
     material/widget/textfield/textfield.cpp
+    material/widget/spinbox/spinbox.cpp
+    material/widget/doublespinbox/doublespinbox.cpp
+    material/widget/listview/listview.cpp
+    material/widget/scrollview/scrollview.cpp
+    material/widget/separator/separator.cpp
+    material/widget/tableview/tableview.cpp
+    material/widget/tabview/tabview.cpp
+    material/widget/tabview/private/materialtabbar.cpp
+    material/widget/treeview/treeview.cpp
+    material/widget/treeview/private/treeviewdelegate.cpp
 )
 
 # Define CFUI_EXPORTS so symbols are marked as dllexport when compiling for the DLL

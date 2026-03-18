@@ -9,11 +9,11 @@
 
 #include <QApplication>
 #include <QFont>
-#include <QStyle>
-#include <QGroupBox>
-#include <QLabel>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QStyle>
 
 using namespace cf::ui::widget::material;
 using ButtonVariant = cf::ui::widget::material::Button::ButtonVariant;
@@ -28,8 +28,6 @@ ButtonDemo::ButtonDemo(QWidget* parent) : QWidget(parent) {
     createButtonWithIconSection();
     createElevationSection();
     createInteractionDemoSection();
-
-    layout_->addStretch();
 }
 
 void ButtonDemo::setupUI() {
@@ -49,7 +47,7 @@ void ButtonDemo::setupUI() {
     scrollLayout->setContentsMargins(0, 0, 0, 0);
 
     scrollArea->setWidget(scrollContent_);
-    layout_->addWidget(scrollArea);
+    layout_->addWidget(scrollArea, 1);
 }
 
 void ButtonDemo::createButtonVariantsSection() {

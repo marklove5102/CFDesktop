@@ -24,7 +24,6 @@ ProgressBarDemo::ProgressBarDemo(QWidget* parent) : QWidget(parent) {
     createInteractiveDemoSection();
 
     // Add stretch at the end
-    layout_->addStretch();
 }
 
 ProgressBarDemo::~ProgressBarDemo() {
@@ -53,7 +52,7 @@ void ProgressBarDemo::setupUI() {
     // Main layout
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addWidget(scrollArea);
+    mainLayout->addWidget(scrollArea, 1);
 }
 
 void ProgressBarDemo::createDeterminateSection() {
