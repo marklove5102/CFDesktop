@@ -10,7 +10,7 @@ message("Including Requested CMake Dependencies OK")
 #   cmake -DCMAKE_TOOLCHAIN_FILE=/path/to/toolchain.cmake -S . -B out/build
 #   cmake -DUSE_TOOLCHAIN=windows/llvm -S . -B out/build
 include(cmake/check_toolchain.cmake)
-project(CFDesktop VERSION 0.10.1 LANGUAGES CXX C)
+project(CFDesktop VERSION 0.10.2 LANGUAGES CXX C)
 
 # ------ Build Type Configuration ------
 # Validate and set build type
