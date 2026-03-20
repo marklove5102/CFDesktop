@@ -479,8 +479,8 @@ std::string EarlyWelcomeImpl::factorize_bootWelcomeWithString() const {
         console_size = console_query.fallback_size();
     }
 
-    int width = console_size->second;
-    int height = console_size->first;
+    int width = console_size->first;
+    int height = console_size->second;
     debugftag("BootWelcome", "detected console size: {} x {}", width, height);
     if (width < 60) {
         debug("Runs small shown policy");

@@ -16,7 +16,7 @@ console::console_size_t console_size() {
     struct winsize console_window_size {};
     const auto result = ioctl(STDOUT_FILENO, TIOCGWINSZ, &console_window_size);
     if (result == 0) {
-        return {console_window_size.ws_row, console_window_size.ws_col};
+        return {console_window_size.ws_col, console_window_size.ws_row};
     }
     return INVALID_ONE;
 }
