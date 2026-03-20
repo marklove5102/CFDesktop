@@ -224,7 +224,7 @@ cd CFDesktop
 
 <!-- Badge Links -->
 [license-badge]: https://img.shields.io/badge/License-MIT-yellow.svg
-[version-badge]: https://img.shields.io/badge/version-0.9.6-blue.svg
+[version-badge]: https://img.shields.io/badge/version-0.10.1-blue.svg
 [cpp-badge]: https://img.shields.io/badge/C++-23-00599C.svg
 [qt-badge]: https://img.shields.io/badge/Qt-6.8-41CD52.svg
 [cmake-badge]: https://img.shields.io/badge/CMake-3.16+-064F8C.svg
