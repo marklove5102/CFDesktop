@@ -10,26 +10,30 @@ target_include_directories(cfbase_headers INTERFACE
 )
 add_library(CFDesktop::base_headers ALIAS cfbase_headers)
 
-# Include subdirectory CMakeLists (OBJECT libraries)
+# Include subdirectory CMakeLists (static libraries)
 add_subdirectory(system/cpu)
 add_subdirectory(system/memory)
+add_subdirectory(device)
 
 # ============================================================
 # Unified Base Library - Single DLL: cfbase.dll
 # ============================================================
 
-# Create the unified shared library
-add_library(cfbase SHARED)
+# Create the unified static library
+add_library(cfbase STATIC)
 
-# Merge all object files from sub-modules
-target_sources(cfbase PRIVATE
-    $<TARGET_OBJECTS:cfbase_cpu>
-    $<TARGET_OBJECTS:cfbase_memory>
+# Link static libraries from sub-modules
+target_link_libraries(cfbase PRIVATE
+    cfbase_cpu
+    cfbase_memory
+    cfbase_console
 )
 
 # Set include directories
+# Expose both include/ (for public headers) and . (for sub-module headers like device/console)
 target_include_directories(cfbase PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # Link dependencies
@@ -54,3 +58,4 @@ add_library(CFDesktop::base ALIAS cfbase)
 # For backward compatibility
 add_library(CFDesktop::base_cpu ALIAS cfbase)
 add_library(CFDesktop::base_memory ALIAS cfbase)
+add_library(CFDesktop::base_console ALIAS cfbase)

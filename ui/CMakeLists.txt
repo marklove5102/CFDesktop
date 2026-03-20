@@ -17,14 +17,10 @@ add_subdirectory(widget)
 add_subdirectory(models)
 
 # ============================================================
-# Unified UI Library - Single DLL: cfui.dll
+# Unified UI Library - Static Library
 # ============================================================
 
-add_library(cfui SHARED)
-
-# CMake automatically defines CFUI_EXPORTS when building this SHARED library.
-# This is used by export.h to control __declspec(dllexport/dllimport) on Windows.
-# No manual compile_definitions needed - this is CMake's standard behavior.
+add_library(cfui STATIC)
 
 # Link against STATIC libraries from sub-modules
 # Order: dependent libraries first, then their dependencies

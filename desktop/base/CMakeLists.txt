@@ -1,2 +1,4 @@
 add_subdirectory(logger)
+add_subdirectory(file_operations)
 add_subdirectory(config_manager)
+add_subdirectory(ascii_art)

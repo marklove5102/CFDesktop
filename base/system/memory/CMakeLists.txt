@@ -1,10 +1,12 @@
 # Memory Module - compiled as OBJECT library for merging into cfbase.dll
 cmake_minimum_required(VERSION 3.16)
 
-add_library(cfbase_memory OBJECT)
+add_library(cfbase_memory STATIC)
 set_target_properties(cfbase_memory PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
+# Define export macro since this will be linked into cfbase shared library
+target_compile_definitions(cfbase_memory PUBLIC CFBASE_EXPORTS)
 target_include_directories(cfbase_memory
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../../include

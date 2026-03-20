@@ -12,7 +12,7 @@
  * @ingroup cflog
  */
 #pragma once
-
+#include "base/macro/build_type.h"
 #include <string_view>
 
 namespace cf::log {
@@ -33,12 +33,20 @@ enum class level {
     ERROR    ///< Error level for error events.
 };
 
+static constexpr const level kDEFAULT_LEVEL =
+#ifdef CFDESKTOP_DEBUG_BUILD
+    level::TRACE;
+#elif defined(CFDESKTOP_DEVELOP_BUILD)
+    level::INFO;
+#else
+    level::DEBUG;
+#endif
+
 /**
  * @brief  Default minimum log level.
  *
  * Messages below this level are filtered out.
  */
-static constexpr const level kDEFAULT_LEVEL = level::DEBUG;
 
 /**
  * @brief  Converts a log level to its string representation.

@@ -1,10 +1,12 @@
 # CPU Module - compiled as OBJECT library for merging into cfbase.dll
 cmake_minimum_required(VERSION 3.16)
 
-add_library(cfbase_cpu OBJECT)
+add_library(cfbase_cpu STATIC)
 set_target_properties(cfbase_cpu PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
+# Define export macro since this will be linked into cfbase shared library
+target_compile_definitions(cfbase_cpu PUBLIC CFBASE_EXPORTS)
 target_include_directories(cfbase_cpu
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../../include

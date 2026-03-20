@@ -67,3 +67,15 @@ add_gtest_executable(
     LOG_MODULE     base_tests
     INCLUDE_DIRS   ${BASE_INCLUDE_DIR}
 )
+
+# =============================================================================
+# Base library unit tests - policy_chain_test
+# =============================================================================
+add_gtest_executable(
+    TEST_NAME      policy_chain_test
+    SOURCE_FILE    policy_chain/policy_chain_test.cpp
+    LINK_LIBRARIES Qt6::Core;GTest::gtest;GTest::gtest_main
+    LABELS         "base;unit;policy_chain"
+    LOG_MODULE     base_tests
+    INCLUDE_DIRS   ${BASE_INCLUDE_DIR}
+)

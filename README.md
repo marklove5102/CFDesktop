@@ -4,7 +4,7 @@
 
   ### 为嵌入式设备打造的现代化 Material Design 3 桌面框架
 
-  [![License: MIT][license-badge]] [![Version: 0.9.6][version-badge]]
+  [![License: MIT][license-badge]] [![Version: 0.10.1][version-badge]]
   [![C++23][cpp-badge]] [![Qt 6.8][qt-badge]] [![CMake][cmake-badge]]
   [![Documentation][docs-badge]]
 
@@ -40,25 +40,45 @@
 | 阶段 | 模块 | 完成度 | 说明 |
 |:---|:---|:---:|:---|
 | Phase 0 | 工程骨架 | 100% | CMake 构建系统、代码规范、CI/CD、Docker 多架构构建 |
-| Phase 2 | Base 库核心 | 100% | ConfigStore 配置中心、Logger 日志系统、DPI 管理 |
-| Phase 5 | 测试体系 | 70% | Google Test 集成、单元测试覆盖 |
-| Phase 6 | UI 框架核心 | 100% | Material Design 3 分层架构 (Layer 1-4) |
+| Phase 1 | 硬件探针 | 90% | CPU/Memory 检测完成，缺少 GPU/网络检测 |
+| Phase 2 | Base 库核心 | 85% | ConfigStore、Logger、DPI、ASCII Art、File Operations |
+| Phase 5 | 测试体系 | 30% | Google Test 集成，base/ui 有覆盖，desktop 待补充 |
+| Phase 6 | UI 框架核心 | 95% | Material Design 3 分层架构 (Layer 1-5) |
 | Phase 6 | P0 核心控件 | 100% | Button, TextField, TextArea, Label, CheckBox, RadioButton, GroupBox |
+| Phase 6 | P1 控件 | 100% | Slider, ProgressBar, Switch, ToggleButton, etc. (12个) |
+| Desktop | 桌面基础 | 80% | 配置中心、日志系统、启动初始化、文件操作 |
 
 ### 进行中 🚧
 
 | 阶段 | 模块 | 完成度 | 说明 |
 |:---|:---|:---:|:---|
-| Phase 1 | 硬件探针 | 15% | CPU/Memory 检测完成，缺少 GPU 检测和档位判定 |
+| Phase 6 | UI 动画系统 | 90% | SpringAnimation 待实现 |
+| Phase 2 | 配置日志增强 | 80% | 缺版本控制、迁移、验证、网络日志 |
 
 ### 待开始 ⬜
 
 | 阶段 | 模块 | 说明 |
 |:---|:---|:---|
-| Phase 3 | 输入抽象层 | 触摸/按键/手势统一接口 |
-| Phase 4 | 多平台模拟器 | 开发调试用模拟器 |
+| Phase 1 | 硬件探针完善 | GPU/Network 检测、HWTier 档位、CapabilityPolicy |
+| Phase 3 | 输入抽象层 | 触摸/按键/旋钮/手势统一接口 |
+| Phase 4 | 多平台模拟器 | 开发调试用模拟器、设备配置、DPI 注入 |
+| Phase 6 | P2 控件 | 27个高级控件 (DatePicker, MenuBar, Dialog, etc.) |
+| Phase 6 | P3 控件 | 25个专业控件 (SplitView, ChartView, etc.) |
+| Phase 5 | 测试完善 | desktop 模块、性能基准、UI 自动化 |
+| 文档 | API/示例补充 | 约40%文档缺失，50%示例缺失 |
 
-详细状态报告: [document/todo/done/PROJECT_STATUS_REPORT.md](document/todo/done/PROJECT_STATUS_REPORT.md)
+### 快速统计
+
+| 类别 | 完成度 |
+|:---|:---:|
+| UI 控件 (P0+P1) | 100% (19个) |
+| UI 控件 (P2+P3) | 0% (52个) |
+| 文档覆盖 | 60% |
+| 示例覆盖 | 50% |
+| 测试覆盖 | 30% |
+
+📋 **完整待办清单**: [TODO.md](TODO.md)
+📊 **详细状态报告**: [document/todo/done/PROJECT_STATUS_REPORT.md](document/todo/done/PROJECT_STATUS_REPORT.md)
 
 ---
 
@@ -74,8 +94,8 @@
 │                    Material Behavior Layer (100%)                │
 │  StateMachine | RippleHelper | ElevationController | FocusRing   │
 ├─────────────────────────────────────────────────────────────────┤
-│                     Animation Engine Layer (100%)                │
-│  AnimationFactory | SpringAnimation | Fade/Slide/Scale           │
+│                     Animation Engine Layer (90%)                 │
+│  AnimationFactory | Fade/Slide/Scale ✅ | SpringAnimation ⬜      │
 ├─────────────────────────────────────────────────────────────────┤
 │                      Theme Engine Layer (100%)                   │
 │  ThemeManager | ColorScheme | Typography | Motion | Radius      │
@@ -83,8 +103,8 @@
 │                    Math & Utility Layer (100%)                   │
 │  MathHelper | Color | Easing | Geometry | DevicePixel           │
 ├─────────────────────────────────────────────────────────────────┤
-│                      Desktop Base Layer (100%)                   │
-│  ConfigStore (4层存储) | Logger (多Sink) | System Detect         │
+│                      Desktop Base Layer (85%)                    │
+│  ConfigStore | Logger | ASCII Art | File Operations | System    │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -94,7 +114,11 @@
 |:---|:---|:---|
 | 配置中心 | [desktop/base/config_manager/](desktop/base/config_manager/) | 四层存储 (Temp/App/User/System)、变更监听、JSON 持久化 |
 | 日志系统 | [desktop/base/logger/](desktop/base/logger/) | 多等级日志、异步处理、多 Sink 支持 |
+| 文件操作 | [desktop/base/file_operations/](desktop/base/file_operations/) | 跨平台文件操作、权限管理、监控 |
+| ASCII 艺术 | [desktop/base/ascii_art/](desktop/base/ascii_art/) | 启动 Logo 渲染、ASCII 图形 |
 | 系统检测 | [base/system/](base/system/) | CPU/Memory 信息检测、跨平台支持 |
+| 设备抽象 | [base/device/](base/device/) | 控制台设备抽象层、策略链 |
+| 基础工具 | [base/include/base/](base/include/base/) | Hash、Optional、ScopeGuard、Singleton 等 |
 | UI 核心 | [ui/core/](ui/core/) | Material Design 主题引擎、Token 系统 |
 | UI 组件 | [ui/components/](ui/components/) | 动画工厂、动画组、策略模式 |
 | UI 控件 | [ui/widget/material/](ui/widget/material/) | Material Design 控件实现 |
@@ -172,6 +196,7 @@ cd CFDesktop
 
 ### TODO 跟踪
 
+- [**待办清单**](TODO.md) - 按优先级分类的待办事项 (P0-P3)
 - [任务看板](document/todo/README.md) - 当前开发任务列表
 - [状态报告](document/todo/done/PROJECT_STATUS_REPORT.md) - 项目整体进度报告
 
@@ -199,7 +224,7 @@ cd CFDesktop
 
 <!-- Badge Links -->
 [license-badge]: https://img.shields.io/badge/License-MIT-yellow.svg
-[version-badge]: https://img.shields.io/badge/version-0.9.3-blue.svg
+[version-badge]: https://img.shields.io/badge/version-0.9.6-blue.svg
 [cpp-badge]: https://img.shields.io/badge/C++-23-00599C.svg
 [qt-badge]: https://img.shields.io/badge/Qt-6.8-41CD52.svg
 [cmake-badge]: https://img.shields.io/badge/CMake-3.16+-064F8C.svg

@@ -1,8 +1,8 @@
 # Config manager module
 cmake_minimum_required(VERSION 3.16)
 
-# Shared library (has .cpp sources)
-add_library(cfconfig SHARED)
+# Static library (has .cpp sources)
+add_library(cfconfig STATIC)
 
 # Sources
 target_sources(cfconfig PRIVATE

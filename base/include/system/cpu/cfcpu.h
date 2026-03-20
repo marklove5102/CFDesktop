@@ -13,6 +13,7 @@
  */
 #pragma once
 #include "base/expected/expected.hpp"
+#include "base/export.h"
 #include <string_view>
 
 namespace cf {
@@ -67,6 +68,6 @@ struct CPUInfoView {
  * @since      0.1
  * @ingroup    system_cpu
  */
-expected<CPUInfoView, CPUInfoErrorType> getCPUInfo(bool force_refresh = false);
+CF_BASE_EXPORT expected<CPUInfoView, CPUInfoErrorType> getCPUInfo(bool force_refresh = false);
 
 } // namespace cf

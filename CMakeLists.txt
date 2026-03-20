@@ -10,7 +10,7 @@ message("Including Requested CMake Dependencies OK")
 #   cmake -DCMAKE_TOOLCHAIN_FILE=/path/to/toolchain.cmake -S . -B out/build
 #   cmake -DUSE_TOOLCHAIN=windows/llvm -S . -B out/build
 include(cmake/check_toolchain.cmake)
-project(CFDesktop VERSION 0.9.6 LANGUAGES CXX)
+project(CFDesktop VERSION 0.10.1 LANGUAGES CXX C)
 
 # ------ Build Type Configuration ------
 # Validate and set build type
@@ -22,7 +22,7 @@ set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithD
 
 # Set compiler flags for each build type (use CACHE FORCE to override CMake defaults)
 # Debug: No optimization (-O0), full debug info (-g)
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g" CACHE STRING "Flags used by the C++ compiler during Debug builds" FORCE)
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -D_CFDESKTOPDEBUG" CACHE STRING "Flags used by the C++ compiler during Debug builds" FORCE)
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG "" CACHE STRING "Linker flags used during Debug builds" FORCE)
 
 # Release: Maximum optimization (-O3), no debug info

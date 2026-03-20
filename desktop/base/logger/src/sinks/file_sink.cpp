@@ -1,4 +1,5 @@
 #include "cflog/sinks/file_sink.h"
+#include "cflog/cflog_level.hpp"
 #include "cflog/formatter/default_formatter.h"
 #include <filesystem>
 #include <iostream>
@@ -7,7 +8,6 @@
 namespace cf::log {
 
 FileSink::FileSink(const std::string& filepath, OpenMode mode) : filepath_(filepath), mode_(mode) {
-    // 确保目录存在
     try {
         std::filesystem::path file_path(filepath);
         if (file_path.has_parent_path()) {
@@ -18,7 +18,6 @@ FileSink::FileSink(const std::string& filepath, OpenMode mode) : filepath_(filep
         return;
     }
 
-    // 打开文件
     std::ios::openmode openmode = std::ios::out;
     if (mode_ == OpenMode::Append) {
         openmode |= std::ios::app;
@@ -50,6 +49,10 @@ bool FileSink::write(const LogRecord& record) {
 
     const auto str = formatter_->format_me(record);
     file_ << str;
+
+    if (record.lvl == level::ERROR) {
+        file_.flush(); // if we meet sth important, flush it!
+    }
 
     return !file_.fail();
 }

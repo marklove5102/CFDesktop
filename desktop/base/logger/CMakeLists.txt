@@ -1,8 +1,8 @@
 # Logger module
 cmake_minimum_required(VERSION 3.16)
 
-# Shared library (has .cpp sources)
-add_library(cflogger SHARED)
+# Static library (has .cpp sources)
+add_library(cflogger STATIC)
 
 # Sources
 target_sources(cflogger PRIVATE

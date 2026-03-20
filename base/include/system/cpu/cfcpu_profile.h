@@ -13,6 +13,7 @@
  */
 #pragma once
 #include "base/expected/expected.hpp"
+#include "base/export.h"
 #include <cstdint>
 
 namespace cf {
@@ -66,6 +67,6 @@ struct CPUProfileInfo {
  * @since      0.1
  * @ingroup    system_cpu
  */
-expected<CPUProfileInfo, CPUProfileInfoError> getCPUProfileInfo();
+CF_BASE_EXPORT expected<CPUProfileInfo, CPUProfileInfoError> getCPUProfileInfo();
 
 } // namespace cf

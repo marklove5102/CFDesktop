@@ -4,13 +4,8 @@
         {
             "label": "CMake: Configure",
             "type": "shell",
-            "command": "cmake",
+            "command": "./scripts/build_helpers/linux_fast_develop_build.sh",
             "args": [
-                "-S",
-                "@PROJECT_ROOT_JSON@",
-                "-B",
-                "@CMAKE_BINARY_DIR_JSON@",
-                "-DCMAKE_BUILD_TYPE=Debug"
             ],
             "group": "build",
             "problemMatcher": [],

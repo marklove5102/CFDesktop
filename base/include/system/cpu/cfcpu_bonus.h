@@ -15,6 +15,7 @@
 #pragma once
 
 #include "base/expected/expected.hpp"
+#include "base/export.h"
 #include "base/span/span.h"
 #include <cstdint>
 #include <optional>
@@ -80,17 +81,18 @@ struct CPUBonusInfoView {
  *
  * @throws     None (error reporting via expected type).
  *
- * @note       The returned spans are only valid as long as the internal
- *             cache remains unchanged. The temperature field may be
+ * @note       The returned spans are valid only while the internal cache
+ *             remains unchanged. The temperature field may be
  *             `std::nullopt` if thermal information is unavailable.
  *
- * @warning    Feature detection is platform-specific. Not all features
+ * @warning    Feature detection is platform-specific; not all features
  *             may be detected on all platforms. big.LITTLE detection
  *             requires specific hardware support.
  *
  * @since      0.1
  * @ingroup    system_cpu
  */
-expected<CPUBonusInfoView, CPUBonusInfoViewError> getCPUBonusInfo(bool force_refresh = false);
+CF_BASE_EXPORT expected<CPUBonusInfoView, CPUBonusInfoViewError>
+getCPUBonusInfo(bool force_refresh = false);
 
 } // namespace cf

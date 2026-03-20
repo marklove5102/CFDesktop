@@ -9,6 +9,7 @@
  *
  */
 #pragma once
+#include "base/export.h"
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -92,6 +93,26 @@ struct MemoryInfo {
     std::vector<DimmInfo> dimms; ///< List of memory modules (DIMM info).
 };
 
-void getSystemMemoryInfo(MemoryInfo& info);
+/**
+ * @brief  Retrieves comprehensive system memory information.
+ *
+ * Populates the provided MemoryInfo structure with physical memory,
+ * swap space, cached memory, process memory usage, and DIMM module
+ * information.
+ *
+ * @param[out] info  MemoryInfo structure to populate with memory data.
+ *
+ * @return          void (populates output parameter).
+ *
+ * @throws          None
+ *
+ * @note            None
+ *
+ * @warning         None
+ *
+ * @since           0.1
+ * @ingroup         system_memory
+ */
+void CF_BASE_EXPORT getSystemMemoryInfo(MemoryInfo& info);
 
 } // namespace cf
