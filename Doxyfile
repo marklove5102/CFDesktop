@@ -3,7 +3,7 @@ INPUT                  = base ui desktop
 RECURSIVE              = YES
 
 EXTRACT_ANON_NSPACES   = NO
-FILE_PATTERNS          = *.h *.hpp *.c *.cpp
+FILE_PATTERNS          = *.h *.hpp
 
 EXTRACT_ALL            = YES
 EXTRACT_STATIC         = YES
