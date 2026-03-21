@@ -1,4 +1,5 @@
 site_name: DocHome For CFDesktop  # 网站标题,显示在浏览器标签和页面顶部
+site_url: https://awesome-embedded-learning-studio.github.io/CFDesktop/
 site_description: CFDesktop的文档  # 网站描述,用于SEO优化
 site_author: CharlieChen  # 作者名称,可以改成你的真实姓名或网名
 
