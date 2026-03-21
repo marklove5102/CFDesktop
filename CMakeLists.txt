@@ -10,7 +10,7 @@ message("Including Requested CMake Dependencies OK")
 #   cmake -DCMAKE_TOOLCHAIN_FILE=/path/to/toolchain.cmake -S . -B out/build
 #   cmake -DUSE_TOOLCHAIN=windows/llvm -S . -B out/build
 include(cmake/check_toolchain.cmake)
-project(CFDesktop VERSION 0.10.2 LANGUAGES CXX C)
+project(CFDesktop VERSION 0.10.3 LANGUAGES CXX C)
 
 # ------ Build Type Configuration ------
 # Validate and set build type
@@ -74,7 +74,7 @@ log_info("BuildSettings" "CMAKE_AUTOUIC: ${CMAKE_AUTOUIC}")
 log_info("BuildSettings" "CMAKE_EXPORT_COMPILE_COMMANDS: ${CMAKE_EXPORT_COMPILE_COMMANDS}")
 
 # find Qt6, As Requested
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Network)
 log_info("Post Qt Setups" "Run Post Qt Dependencies check")
 include(cmake/custom_target_helper.cmake)
 log_info("Post Qt Setups" "Run Post Qt Dependencies OK")

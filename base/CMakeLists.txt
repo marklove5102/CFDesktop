@@ -11,8 +11,7 @@ target_include_directories(cfbase_headers INTERFACE
 add_library(CFDesktop::base_headers ALIAS cfbase_headers)
 
 # Include subdirectory CMakeLists (static libraries)
-add_subdirectory(system/cpu)
-add_subdirectory(system/memory)
+add_subdirectory(system)
 add_subdirectory(device)
 
 # ============================================================
@@ -26,6 +25,8 @@ add_library(cfbase STATIC)
 target_link_libraries(cfbase PUBLIC
     cfbase_cpu
     cfbase_memory
+    cfbase_network
+    cfbase_gpu
     cfbase_console
 )
 

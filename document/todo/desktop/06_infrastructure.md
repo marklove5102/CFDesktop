@@ -1,9 +1,19 @@
 # Phase 6: 基础设施补全 TODO
 
-> **状态**: ⬜ 待开始
+> **状态**: 🚧 部分完成 (~50%)
 > **预计周期**: 4~5 周
 > **依赖阶段**: Phase 1, Phase 2, Phase 3
 > **目标交付物**: GPU 检测器、HWTier 系统、ConfigStore、Logger、CrashHandler 崩溃处理、IPC 基础层
+> **完成归档**: [done/06_infrastructure_status.md](done/06_infrastructure_status.md)
+
+## 已完成模块 ✅
+
+- [x] **GPU 检测器** (100%) - GPU/显示信息检测、环境评分算法
+- [x] **Network 检测器** (100%) - 网络接口、IP地址、网络状态
+- [x] **ConfigStore** (100%) - 四层存储、变更监听、INI持久化
+- [x] **Logger** (100%) - 异步日志、ConsoleSink、FileSink、CF_LOG宏
+
+详细完成状态请参考: [done/06_infrastructure_status.md](done/06_infrastructure_status.md)
 
 ---
 
@@ -13,11 +23,11 @@
 补全桌面本体的前置基础设施，建立硬件探测、配置管理、日志通信的完整底座。
 
 ### 具体交付物
-- [ ] `GPUDetector` GPU 检测模块
+- [x] `GPUDetector` GPU 检测模块 ✅
 - [ ] `HWTier` 硬件分级系统
 - [ ] `CapabilityPolicy` 策略引擎
-- [ ] `ConfigStore` 配置中心
-- [ ] `Logger` 日志系统
+- [x] `ConfigStore` 配置中心 ✅
+- [x] `Logger` 日志系统 ✅
 - [ ] `CrashHandler` 崩溃捕获与自动重启
 - [ ] `CrashReporter` 崩溃报告弹窗
 - [ ] `IPCService` 进程间通信层
@@ -26,25 +36,11 @@
 
 ## 二、待实现任务
 
-### Week 1: GPU 检测与 HWTier 系统
+> **注意**: GPU 检测器已完成，请参考 [done/06_infrastructure_status.md](done/06_infrastructure_status.md)
 
-#### Day 1-2: GPU 检测器
-- [ ] 创建 GPUDetector 类框架
-  - [ ] 定义 `GPUInfo` 结构体（厂商/型号/驱动/能力）
-  - [ ] 定义 `GPUCaps` 结构体（纹理尺寸/OpenGL版本/扩展列表）
-- [ ] 实现 DRM 设备检测（Linux）
-  - [ ] 枚举 `/dev/dri/card*`
-  - [ ] 获取设备名称
-  - [ ] 检测渲染能力
-- [ ] 实现 OpenGL 上下文探测
-  - [ ] 创建离屏上下文
-  - [ ] 查询 GL_VERSION / GL_RENDERER
-  - [ ] 获取扩展列表
-- [ ] 编写 GPU 检测单元测试
-  - [ ] Mock DRM 设备测试
-  - [ ] 无 GPU 场景测试
+### Week 1: HWTier 分级系统
 
-#### Day 3-4: HWTier 分级系统
+#### Day 1-2: HWTier 分级系统
 - [ ] 定义 HWTier 枚举
   - [ ] `enum class Tier { Low, Mid, High, Unknown }`
 - [ ] 实现 TierCalculator 评分算法
@@ -79,85 +75,19 @@
 
 ---
 
-### Week 2: ConfigStore 配置中心
+### Week 2: ConfigStore 配置中心 ✅ 已完成
 
-#### Day 1-2: 三层存储模型
-- [ ] 创建 ConfigStore 类
-  - [ ] 单例模式
-  - [ ] 命名空间支持（点分隔）
-- [ ] 实现层级存储
-  - [ ] System 层（系统默认，只读）
-  - [ ] User 层（用户配置，可持久化）
-  - [ ] Runtime 层（运行时覆写，临时）
-- [ ] 实现优先级合并逻辑
-  - [ ] Runtime > User > System
-  - [ ] 缺省值支持
-- [ ] 实现 `get/set()` 接口
-  - [ ] 模板化类型支持
-  - [ ] 类型转换
+> **完成归档**: [done/06_infrastructure_status.md](done/06_infrastructure_status.md)
 
-#### Day 3-4: 变更监听与持久化
-- [ ] 实现变更监听机制
-  - [ ] `ConfigWatcher` 观察者模式
-  - [ ] `watch(key, callback)` 订阅
-  - [ ] 变更信号触发
-- [ ] 实现持久化后端
-  - [ ] JSON 格式序列化
-  - [ ] 文件路径 `~/.config/CFDesktop/settings.json`
-  - [ ] 原子写入（写临时文件+重命名）
-- [ ] 实现配置迁移
-  - [ ] 版本号管理
-  - [ ] 自动迁移旧配置
-
-#### Day 5: ConfigStore 测试
-- [ ] 编写单元测试
-  - [ ] 层级存储测试
-  - [ ] 优先级合并测试
-  - [ ] 变更监听测试
-  - [ ] 持久化测试
-  - [ ] 并发访问测试（线程安全）
+ConfigStore 已完整实现，采用四层存储模型(Temp/App/User/System)，支持INI格式持久化。
 
 ---
 
-### Week 3: Logger 日志系统
+### Week 3: Logger 日志系统 ✅ 已完成
 
-#### Day 1-2: 核心日志框架
-- [ ] 创建 Logger 类
-  - [ ] 单例模式
-  - [ ] 日志级别（Debug/Info/Warning/Error/Fatal）
-- [ ] 实现 LogSink 接口
-  - [ ] `virtual void write(const LogMessage&) = 0`
-- [ ] 实现 ConsoleSink
-  - [ ] 彩色输出（ANSI 转义码）
-  - [ ] Windows 控制台支持
-- [ ] 实现 FileSink
-  - [ ] 文件路径配置
-  - [ ] 缓冲写入
-  - [ ] 自动创建目录
+> **完成归档**: [done/06_infrastructure_status.md](done/06_infrastructure_status.md)
 
-#### Day 3-4: 日志轮转与增强
-- [ ] 实现日志轮转
-  - [ ] 大小限制（默认 10MB）
-  - [ ] 文件数量限制（默认 10 个）
-  - [ ] 按日期轮转可选
-- [ ] 实现标签过滤
-  - [ ] 白名单模式
-  - [ ] 黑名单模式
-- [ ] 实现结构化日志（可选）
-  - [ ] JSON 格式输出
-  - [ ] 键值对字段
-- [ ] 实现 `CF_LOG()` 宏系列
-  - [ ] `CF_LOG_DEBUG()`
-  - [ ] `CF_LOG_INFO()`
-  - [ ] `CF_LOG_WARNING()`
-  - [ ] `CF_LOG_ERROR()`
-
-#### Day 5: Logger 测试
-- [ ] 编写单元测试
-  - [ ] 多 Sink 并发测试
-  - [ ] 日志轮转测试
-  - [ ] 标签过滤测试
-  - [ ] 性能测试（< 1% 影响）
+Logger 已完整实现，包括异步日志、ConsoleSink、FileSink、CF_LOG宏系列。
 
 ---
 

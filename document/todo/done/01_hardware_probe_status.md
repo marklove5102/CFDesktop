@@ -2,8 +2,8 @@
 
 > **模块ID**: Phase 1
 > **状态**: 🚧 部分完成
-> **总体进度**: ~15%
-> **最后更新**: 2026-03-11
+> **总体进度**: ~65%
+> **最后更新**: 2026-03-21
 
 ---
 
@@ -34,12 +34,8 @@
 |------|--------|------|
 | CPUDetector | 80% | ✅ 核心功能已完成 |
 | MemoryDetector | 80% | ✅ 核心功能已完成 |
-| HWTier 枚举定义 | 0% | ⬜ 待实现 |
-| GPUDetector | 0% | ⬜ 待实现 |
-| NetworkDetector | 0% | ⬜ 待实现 |
-| HardwareProbe 主类 | 0% | ⬜ 待实现 |
-| CapabilityPolicy | 0% | ⬜ 待实现 |
-| DeviceConfig | 0% | ⬜ 待实现 |
+| GPUDetector | 100% | ✅ 已完成 |
+| NetworkDetector | 100% | ✅ 已完成 |
 
 ---
 
@@ -103,6 +99,63 @@
 
 ---
 
+### 3.3 GPU 检测器 (100%)
+
+#### 实现文件
+
+| 文件路径 | 说明 |
+|---------|------|
+| [`base/include/system/gpu/gpu.h`](../../../base/include/system/gpu/gpu.h) | GPU/显示信息接口 |
+| [`base/system/gpu/gpu.cpp`](../../../base/system/gpu/gpu.cpp) | 跨平台实现 |
+| `base/system/gpu/private/linux_impl/gpu_info.cpp` | Linux 平台实现 |
+| `base/system/gpu/private/win_impl/gpu_info.cpp` | Windows 平台实现 |
+
+#### 功能实现
+
+- [x] `GPUInfo` 结构体 - GPU 设备信息
+- [x] `DisplayInfo` 结构体 - 显示器信息
+- [x] `EnvironmentScore` 结构体 - 环境评分
+- [x] Linux DRM 设备检测 (`/dev/dri/card*`)
+- [x] Linux DeviceTree SoC 检测
+- [x] WSL2 GPU 探测 (`/dev/dxg`)
+- [x] Windows DXGI 检测
+- [x] GPU 评分算法 (满分 50)
+- [x] 显示评分算法 (满分 50)
+- [x] 档位判定 (Low/Mid/High)
+
+#### 示例
+
+- 示例文件: [`example/base/system/example_gpu_info.cpp`](../../../example/base/system/example_gpu_info.cpp)
+
+---
+
+### 3.4 网络检测器 (100%)
+
+#### 实现文件
+
+| 文件路径 | 说明 |
+|---------|------|
+| [`base/include/system/network/network.h`](../../../base/include/system/network/network.h) | 网络信息接口 |
+| [`base/system/network/network.cpp`](../../../base/system/network/network.cpp) | 基于 Qt 的跨平台实现 |
+
+#### 功能实现
+
+- [x] `IpAddress` 结构体 - IPv4/IPv6 地址
+- [x] `InterfaceInfo` 结构体 - 网卡信息
+- [x] `AddressEntry` 结构体 - IP 地址条目
+- [x] `InterfaceFlags` 结构体 - 接口标志
+- [x] `NetworkStatus` 结构体 - 网络状态
+- [x] `Reachability` 枚举 - 网络可达性
+- [x] `TransportMedium` 枚举 - 传输介质
+- [x] `DnsEligibility` 枚举 - DNS 可达性
+- [x] `getNetworkInfo()` 函数
+
+#### 示例
+
+- 示例文件: [`example/base/system/example_network_info.cpp`](../../../example/base/system/example_network_info.cpp)
+
+---
+
 ## 四、使用示例
 
 ```cpp
@@ -127,6 +180,8 @@ if (mem_info) {
 ---
 
 ## 五、待完成模块
+
+> **注意**: GPU 和 Network 检测器已完成，请参考上方"三、已完成工作"中的 3.3 和 3.4 节。
 
 ### 5.1 HWTier 枚举定义 (P0)
 
@@ -155,79 +210,7 @@ HWTier tierFromString(const QString& str);
 
 ---
 
-### 5.2 GPU 检测器 (P0)
-
-**需求描述**:
-- DRM 设备检测 (`/dev/dri/card*`)
-- OpenGL 上下文创建
-- GPU 信息查询 (供应商、渲染器、版本)
-- 扩展列表获取
-- 硬件加速能力判断
-
-**建议文件路径**:
-- `base/hardware/detectors/GPUDetector.h`
-- `base/hardware/detectors/GPUDetector.cpp`
-
-**接口设计**:
-```cpp
-namespace CFDesktop::Base {
-
-struct GPUInfo {
-    QString renderer;
-    QString vendor;
-    QString version;
-    bool hasHardwareAcceleration = false;
-    QString driverPath;
-    int maxTextureSize = 0;
-    QStringList extensions;
-};
-
-class GPUDetector {
-public:
-    static GPUInfo detect();
-};
-
-} // namespace CFDesktop::Base
-```
-
----
-
-### 5.3 网络检测器 (P1)
-
-**需求描述**:
-- 网络接口枚举 (`/sys/class/net/*`)
-- 接口状态检测
-- 无线接口识别
-- MAC 地址获取
-- IP 地址查询
-
-**建议文件路径**:
-- `base/hardware/detectors/NetworkDetector.h`
-- `base/hardware/detectors/NetworkDetector.cpp`
-
-**接口设计**:
-```cpp
-namespace CFDesktop::Base {
-
-struct NetworkInterface {
-    QString name;
-    bool isUp = false;
-    bool isWireless = false;
-    QString macAddress;
-    QStringList ipAddresses;
-};
-
-class NetworkDetector {
-public:
-    static QList<NetworkInterface> detect();
-};
-
-} // namespace CFDesktop::Base
-```
-
----
-
-### 5.4 HardwareProbe 主类 (P0)
+### 5.2 HardwareProbe 主类 (P0)
 
 **需求描述**:
 - 整合所有检测器
@@ -278,7 +261,7 @@ private:
 
 ---
 
-### 5.5 CapabilityPolicy 策略引擎 (P0)
+### 5.3 CapabilityPolicy 策略引擎 (P0)
 
 **需求描述**:
 - 定义各策略结构体
@@ -343,7 +326,7 @@ signals:
 
 ---
 
-### 5.6 DeviceConfig 配置文件 (P1)
+### 5.4 DeviceConfig 配置文件 (P1)
 
 **需求描述**:
 - INI 格式配置文件解析
@@ -525,41 +508,31 @@ tests/
    - 理由: 其他模块依赖此定义
    - 预计工作量: 0.5天
 
-2. **实现 GPUDetector**
-   - 优先级: 高
-   - 理由: 档位判定的关键因素
-   - 预计工作量: 2-3天
-
-3. **实现 NetworkDetector**
-   - 优先级: 中
-   - 理由: 网络能力检测
-   - 预计工作量: 1-2天
-
 ### 优先级2 (中)
 
-4. **实现 HardwareProbe 主类**
+2. **实现 HardwareProbe 主类**
    - 优先级: 中
    - 理由: 整合所有检测器
    - 预计工作量: 2-3天
 
-5. **实现 CapabilityPolicy**
+3. **实现 CapabilityPolicy**
    - 优先级: 中
    - 理由: 为上层提供策略配置
    - 预计工作量: 2-3天
 
-6. **实现 DeviceConfig**
+4. **实现 DeviceConfig**
    - 优先级: 中
    - 理由: 支持手动配置覆盖
    - 预计工作量: 1-2天
 
 ### 优先级3 (低)
 
-7. **创建 Mock 数据集**
+5. **创建 Mock 数据集**
    - 优先级: 低
    - 理由: 单元测试需要
    - 预计工作量: 1天
 
-8. **编写单元测试**
+6. **编写单元测试**
    - 优先级: 低
    - 理由: 确保代码质量
    - 预计工作量: 3-4天

@@ -1,20 +1,20 @@
 # UI Material Framework TODO
 
-> **状态**: 🚧 进行中
+> **状态**: ⬜ 高级控件待实现
 > **预计周期**: 持续迭代
 > **依赖阶段**: Phase 0-3
 > **参考文档**: [../../ui/MaterialRules.md](../../ui/MaterialRules.md)
-> **完成归档**: [done/99_ui_layer1-4_and_p0_widgets_done.md](done/99_ui_layer1-4_and_p0_widgets_done.md)
 
 **完成进度**:
-- ✅ Layer 1: Core Math & Utility (100%)
-- ✅ Layer 2: Theme Engine (100%)
-- ✅ Layer 3: Animation Engine (100% - 实际使用部分)
-- ✅ Layer 4: Material Behavior (100%)
-- ✅ P0核心控件 (7/7)
-- ⬜ P1控件 (0/12)
+- ✅ Layer 1-4: 基础框架 (100%) - 已归档
+- ✅ P0核心控件 (7/7) - 已归档
+- ✅ P1控件 (12/12) - 已归档
 - ⬜ P2控件 (0/27)
 - ⬜ P3控件 (0/25)
+
+**已完成归档**:
+- [Layer 1-4 及 P0 控件](done/99_ui_layer1-4_and_p0_widgets_done.md)
+- [P1 控件](done/08_p1_controls_status.md)
 
 ---
 
@@ -43,276 +43,8 @@ Layer 1: Core Math & Utility Layer (math_helper, color, geometry, ...)
 
 ---
 
-## 二、Layer 1: Core Math & Utility Layer
+## 二、P2 - 高级功能控件 (Medium Priority)
 
-### 已完成 ✅
-- [x] `ui/base/math_helper.h/cpp` - 插值、钳位、曲线求值
-- [x] `ui/base/color.h/cpp` - 颜色空间转换、HCT 支持
-- [x] `ui/base/color_helper.h/cpp` - 颜色混合、对比度
-- [x] `ui/base/easing.h/cpp` - Material 缓动曲线
-- [x] `ui/base/geometry_helper.h` - 圆角形状生成
-- [x] `ui/base/device_pixel.h` - DPI 单位转换
-
----
-
-## 三、Layer 2: Theme Engine Layer ✅ 已完成
-
-> 完成归档: [done/99_ui_layer1-4_and_p0_widgets_done.md](done/99_ui_layer1-4_and_p0_widgets_done.md)
-
-### Token 系统 ✅
-- [x] Reference Token → System Token → Component Token 三层结构
-- [x] 实现 `ICFColorScheme` 接口
-- [x] 实现 `MaterialColorScheme`
-  - [x] 文件: `ui/core/color_scheme.h` (接口)
-  - [x] 文件: `ui/core/material/cfmaterial_scheme.h/cpp` (实现)
-
-### 字体系统 ✅
-- [x] 实现 `IFontType` 接口
-  - [x] 文件: `ui/core/font_type.h`
-- [x] 实现 `MaterialTypography`
-  - [x] 文件: `ui/core/material/cfmaterial_fonttype.h/cpp`
-  - [x] Material Type Scale 支持
-
-### 形状系统 ✅
-- [x] 实现 `Shape` 类
-  - [x] 全局 Shape Scale 配置
-  - [x] 控件圆角查询
-
-### 动画规格 ✅
-- [x] 实现 `MotionSpec` 类
-  - [x] 动画时长配置
-  - [x] 缓动曲线配置
-  - [x] 与控件无关的可复用规格
-
-### 主题聚合 ✅
-- [x] 实现 `ICFTheme` 接口
-  - [x] 文件: `ui/core/theme.h`
-- [x] 实现 `ThemeManager`
-  - [x] 文件: `ui/core/theme_manager.h/cpp`
-  - [x] 管理当前主题实例
-  - [x] 响应切换请求
-  - [x] 广播变更信号
-- [x] 实现 `ThemeFactory`
-  - [x] 文件: `ui/core/material/material_factory.h/cpp`
-
-### Token 访问 ✅
-- [x] 实现 Token 字符串定义
-  - [x] 文件: `ui/core/token/` 目录 (5个子目录)
-  - [x] 颜色 token literals
-  - [x] 字体 token literals
-  - [x] 形状 token literals
-  - [x] 运动 token literals
-
----
-
-## 四、Layer 3: Animation Engine Layer ✅ 已完成
-
-> 完成归档: [done/99_ui_layer1-4_and_p0_widgets_done.md](done/99_ui_layer1-4_and_p0_widgets_done.md)
-
-### 动画接口 ✅
-- [x] `ICFAbstractAnimation` - 抽象动画基类
-  - [x] 文件: `ui/components/animation.h/cpp`
-  - [x] 状态管理 (Idle/Running/Paused/Finished)
-  - [x] 方向控制 (Forward/Backward)
-  - [x] 生命周期方法 (start/pause/stop/reverse/tick)
-
-### 时间动画 ✅
-- [x] `ICFTimingAnimation` - 基于时间的动画
-  - [x] 文件: `ui/components/timing_animation.h/cpp`
-  - [x] 使用 MotionSpec 获取时长和缓动
-  - [x] 支持值范围 `setRange(from, to)`
-
-### 弹簧动画 ⬜ 预留接口
-- [x] `ICFSpringAnimation` - 基于弹簧物理的动画
-  - [x] 文件: `ui/components/spring_animation.h` (接口定义)
-  - [ ] tick() 实现未完成 (预留接口，未被使用)
-
-### 动画组 ⬜ 预留接口
-- [x] `ICFAnimationGroup` - 动画组容器
-  - [x] 文件: `ui/components/animation_group.h` (完全内联)
-
-### 工厂管理 ✅
-- [x] `ICFAnimationManagerFactory` - 动画工厂管理器接口
-  - [x] 文件: `ui/components/animation_factory_manager.h/cpp`
-  - [x] Token-based 动画注册与检索
-  - [x] 类型安全创建
-  - [x] 全局/单个动画开关控制
-  - [x] 目标 FPS 设置
-
-### Material 动画工厂 ✅
-- [x] `CFMaterialAnimationFactory` - Material Design 3 动画工厂
-  - [x] 文件: `ui/components/material/cfmaterial_animation_factory.h/cpp`
-  - [x] 实现 `ICFAnimationManagerFactory`
-  - [x] Token 映射到具体动画实例
-  - [x] 策略模式支持控件级定制
-
-### 动画策略 ✅
-- [x] `AnimationStrategy` - 动画策略接口
-  - [x] 文件: `ui/components/material/cfmaterial_animation_strategy.h/cpp`
-  - [x] 允许控件类型定制动画参数
-  - [x] 支持条件性开关逻辑（如无障碍设置）
-
-### 动画 Token ✅
-- [x] `AnimationToken` - Material Design 3 动画 token
-  - [x] 文件: `ui/components/material/token/animation_token_literals.h`
-  - [x] 文件: `ui/components/material/token/animation_token_mapping.h`
-  - [x] fadeIn/fadeOut/slideUp/slideDown
-  - [x] scaleUp/scaleDown
-
-### Material 动画实现 ✅
-- [x] Fade Animation - `cfmaterial_fade_animation.h/cpp`
-- [x] Scale Animation - `cfmaterial_scale_animation.h/cpp`
-- [x] Slide Animation - `cfmaterial_slide_animation.h/cpp`
-- [x] Property Animation - `cfmaterial_property_animation.h/cpp`
-
----
-
-## 五、Layer 4: Material Behavior Layer ✅ 已完成
-
-> 完成归档: [done/99_ui_layer1-4_and_p0_widgets_done.md](done/99_ui_layer1-4_and_p0_widgets_done.md)
-
-### 目录结构
-```
-ui/widget/material/base/
-├── state_machine.h/cpp           ✅ [状态机，驱动 StateLayer opacity]
-├── painter_layer.h/cpp           ✅ [基础颜色叠加层]
-├── ripple_helper.h/cpp           ✅ [涟漪效果控制器]
-├── elevation_controller.h/cpp    ✅ [海拔阴影控制器]
-└── focus_ring.h/cpp              ✅ [焦点环指示器]
-```
-
-### StateMachine ✅
-- [x] `state_machine.h/cpp`
-  - [x] 管理控件视觉状态
-  - [x] 驱动 StateLayer 的 opacity 动画
-  - [x] 状态透明度值 (Material Design 3 规范)
-    - [x] Normal: 0.00
-    - [x] Hovered: 0.08
-    - [x] Pressed: 0.12
-    - [x] Focused: 0.12
-    - [x] Dragged: 0.16
-    - [x] Checked: 0.08
-    - [x] Disabled: 0.00
-  - [x] 优先级顺序: Disabled > Pressed > Dragged > Focused > Hovered > Normal
-
-### PainterLayer ✅
-- [x] `painter_layer.h/cpp`
-  - [x] 提供基础颜色叠加层绘制功能
-  - [x] 用于 StateLayer 等需要颜色叠加的场景
-
-### RippleHelper ✅
-- [x] `ripple_helper.h/cpp`
-  - [x] 管理涟漪效果的生命周期与绘制
-  - [x] Ripple 生命周期
-    - [x] `onPress(pos)` → 创建并开始扩散
-    - [x] `onRelease()` → 触发 fade-out
-    - [x] 动画结束 → 清除状态
-  - [x] 多 Ripple 支持（快速多次点击）
-
-### MdElevationController ✅
-- [x] `elevation_controller.h/cpp`
-  - [x] 管理控件的 Material 海拔值
-  - [x] 绘制对应阴影
-  - [x] Material Elevation Levels
-    - [x] Level 0 (0dp): 无阴影
-    - [x] Level 1 (1dp): blur=2px, offset=1px, opacity=0.15
-    - [x] Level 2 (3dp): blur=4px, offset=2px, opacity=0.20
-    - [x] Level 3 (6dp): blur=8px, offset=4px, opacity=0.25
-    - [x] Level 4 (8dp): blur=12px, offset=6px, opacity=0.30
-    - [x] Level 5 (12dp): blur=16px, offset=8px, opacity=0.35
-  - [x] Dark Theme 海拔表示
-    - [x] 向 Surface 叠加 Primary 色调
-    - [x] 使用 `tonalOverlay()` 方法
-
-### MdFocusIndicator ✅
-- [x] `focus_ring.h/cpp`
-  - [x] 绘制符合 Material 规范的焦点环
-  - [x] Material 规范
-    - [x] 环宽度: 3dp
-    - [x] 内边距: 3dp
-    - [x] 动画: 淡入淡出效果
-
----
-
-## 六、Layer 5: Material Widget Adapter Layer
-
-### 目录结构
-```
-ui/widget/material/widget/
-├── button/                       [按钮控件]
-├── checkbox/                     [复选框]
-├── textfield/                    [文本输入框]
-└── ...
-```
-
-### 已完成 ✅ (P0 核心控件)
-- [x] Button - 最基础的交互控件
-- [x] TextField - 单行文本输入
-- [x] TextArea - 多行文本编辑器
-- [x] Label - 显示文本或图像
-- [x] CheckBox - 二态选择控件
-- [x] RadioButton - 互斥选择控件
-- [x] GroupBox - 容器/分组框
-
-### P1 - 常用交互控件 (High Priority)
-- [ ] **ComboBox** - 下拉列表
-  - [ ] 文件: `ui/widget/material/widget/combobox/`
-  - [ ] 基类: QComboBox
-  - [ ] 从预定义选项中选择
-  - [ ] 支持搜索和可编辑模式
-- [ ] **Slider** - 滑块
-  - [ ] 文件: `ui/widget/material/widget/slider/`
-  - [ ] 基类: QSlider
-  - [ ] 在范围内选择数值
-  - [ ] 支持水平和垂直方向
-- [ ] **ProgressBar** - 进度条
-  - [ ] 文件: `ui/widget/material/widget/progress_bar/`
-  - [ ] 基类: QProgressBar
-  - [ ] 显示任务完成进度
-  - [ ] 支持确定和不确定状态
-- [ ] **Switch** - 开关
-  - [ ] 文件: `ui/widget/material/widget/switch/`
-  - [ ] 基类: QCheckBox（自定义）
-  - [ ] Material 风格开关控件
-  - [ ] 带动画效果
-- [ ] **ListView** - 列表视图
-  - [ ] 文件: `ui/widget/material/widget/list_view/`
-  - [ ] 基类: QListView
-  - [ ] 显示一列项目
-  - [ ] 支持单选/多选
-- [ ] **TreeView** - 树视图
-  - [ ] 文件: `ui/widget/material/widget/tree_view/`
-  - [ ] 基类: QTreeView
-  - [ ] 层级数据显示
-  - [ ] 支持展开/折叠
-- [ ] **TableView** - 表格视图
-  - [ ] 文件: `ui/widget/material/widget/table_view/`
-  - [ ] 基类: QTableView
-  - [ ] 二维数据表格
-  - [ ] 支持排序、列宽调整
-- [ ] **TabView** - 标签页
-  - [ ] 文件: `ui/widget/material/widget/tab_view/`
-  - [ ] 基类: QTabWidget
-  - [ ] 选项卡式界面
-  - [ ] 支持滚动和拖拽重排
-- [ ] **ScrollView** - 滚动区域
-  - [ ] 文件: `ui/widget/material/widget/scroll_view/`
-  - [ ] 基类: QScrollArea
-  - [ ] 可滚动的内容容器
-- [ ] **Separator** - 分隔线
-  - [ ] 文件: `ui/widget/material/widget/separator/`
-  - [ ] 基类: QFrame
-  - [ ] 水平或垂直分隔线
-- [ ] **SpinBox** - 微调框
-  - [ ] 文件: `ui/widget/material/widget/spin_box/`
-  - [ ] 基类: QSpinBox
-  - [ ] 数值输入，带增减按钮
-- [ ] **DoubleSpinBox** - 双精度微调框
-  - [ ] 文件: `ui/widget/material/widget/double_spin_box/`
-  - [ ] 基类: QDoubleSpinBox
-  - [ ] 浮点数数值输入
-
-### P2 - 高级功能控件 (Medium Priority)
 - [ ] **DatePicker** - 日期选择器
   - [ ] 文件: `ui/widget/material/widget/date_picker/`
   - [ ] 基类: QCalendarWidget（控件化）
@@ -398,7 +130,10 @@ ui/widget/material/widget/
   - [ ] 基类: QWidget（自定义）
   - [ ] 圆形进度指示器
 
-### P3 - 专业/高级控件 (Low Priority)
+---
+
+## 三、P3 - 专业/高级控件 (Low Priority)
+
 - [ ] **SplitView** - 分割窗口
 - [ ] **ChartView** - 图表视图
 - [ ] **DrawingArea** - 绘图区域
@@ -428,7 +163,7 @@ ui/widget/material/widget/
 
 ---
 
-## 七、性能与嵌入式支持
+## 四、性能与嵌入式支持
 
 ### PerformanceProfile
 - [ ] 实现性能档位枚举
@@ -445,83 +180,16 @@ ui/widget/material/widget/
 
 ### 组件降级配置
 - [ ] Desktop 模式
-  - [ ] Ripple ✅
-  - [ ] Shadow ✅
-  - [ ] StateAnim ✅
-  - [ ] FocusAnim ✅
 - [ ] Embedded 模式
-  - [ ] Ripple ❌
-  - [ ] Shadow ❌
-  - [ ] StateAnim ✅
-  - [ ] FocusAnim ✅
 - [ ] UltraLow 模式
-  - [ ] Ripple ❌
-  - [ ] Shadow ❌
-  - [ ] StateAnim ❌
-  - [ ] FocusAnim ❌
 
 ---
 
-## 八、代码生成规范
-
-### 继承规范
-- [ ] 继承时必须先调用父类方法
-- [ ] 所有 `event override` 第一行必须是 `QParentClass::xxxEvent(event)`
-
-### paintEvent 规范
-- [ ] 禁止 native 绘制
-- [ ] 不得出现 `style()->drawControl`
-- [ ] 不得出现 `initStyleOption`
-- [ ] 不得出现 `QStylePainter`
-
-### 组件组合规范
-- [ ] 组件通过构造函数创建，parent 设为 this
-  ```cpp
-  m_animationFactory = Application::animationFactory();
-  m_stateMachine = new StateMachine(m_animationFactory, this);
-  m_ripple = new RippleHelper(m_animationFactory, this);
-  m_elevation = new MdElevationController(m_animationFactory, this);
-  m_focusIndicator = new MdFocusIndicator(m_animationFactory, this);
-  ```
-
-### 颜色访问规范
-- [ ] 颜色全部来自 Theme
-- [ ] 不得出现硬编码颜色值
-- [ ] 通过 Token 字符串动态访问
-
-### 单位转换规范
-- [ ] 单位全部通过 CanvasUnitHelper 换算
-- [ ] 不得硬编码像素值
-- [ ] 间距和圆角均以 dp 为单位
-
-### 动画创建规范
-- [ ] 动画通过 CFMaterialAnimationFactory 创建
-- [ ] 不得在控件内直接 `new QPropertyAnimation`
-- [ ] 不得直接调用 `QTimer`
-
-### Theme 监听标准写法
-```cpp
-connect(&ThemeManager::instance(), &ThemeManager::themeChanged,
-        this, [this](const ICFTheme&) { update(); });
-```
-
-### sizeHint 规范
-- [ ] sizeHint 必须基于 Token 计算
-- [ ] 通过 `CanvasUnitHelper::dpToPx()` 换算
-
----
-
-## 九、相关文档
+## 五、相关文档
 
 - 架构规范: [../../ui/MaterialRules.md](../../ui/MaterialRules.md)
 - 依赖: [00_project_skeleton.md](../00_project_skeleton.md), [02_input_layer.md](02_input_layer.md)
 
 ---
 
-*最后更新: 2026-03-11*
-
----
-
-## 已完成归档
-
-**Layer 1-4 及 P0 核心控件已完成并归档**: [done/99_ui_layer1-4_and_p0_widgets_done.md](done/99_ui_layer1-4_and_p0_widgets_done.md)
+*最后更新: 2026-03-21*

@@ -4,7 +4,7 @@
 
   ### 为嵌入式设备打造的现代化 Material Design 3 桌面框架
 
-  [![License: MIT][license-badge]] [![Version: 0.10.2][version-badge]]
+  [![License: MIT][license-badge]] [![Version: 0.10.3][version-badge]]
   [![C++23][cpp-badge]] [![Qt 6.8][qt-badge]] [![CMake][cmake-badge]]
   [![Documentation][docs-badge]]
 
@@ -224,7 +224,7 @@ cd CFDesktop
 
 <!-- Badge Links -->
 [license-badge]: https://img.shields.io/badge/License-MIT-yellow.svg
-[version-badge]: https://img.shields.io/badge/version-0.10.2-blue.svg
+[version-badge]: https://img.shields.io/badge/version-0.10.3-blue.svg
 [cpp-badge]: https://img.shields.io/badge/C++-23-00599C.svg
 [qt-badge]: https://img.shields.io/badge/Qt-6.8-41CD52.svg
 [cmake-badge]: https://img.shields.io/badge/CMake-3.16+-064F8C.svg

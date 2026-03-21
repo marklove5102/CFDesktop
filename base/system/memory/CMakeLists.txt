@@ -1,6 +1,3 @@
-# Memory Module - compiled as OBJECT library for merging into cfbase.dll
-cmake_minimum_required(VERSION 3.16)
-
 add_library(cfbase_memory STATIC)
 set_target_properties(cfbase_memory PROPERTIES
     POSITION_INDEPENDENT_CODE ON
