@@ -5,6 +5,7 @@ log_info("Desktop Buildings" "Start Configuring Desktop Buildings")
 # ============================================================
 add_subdirectory(base)
 add_subdirectory(main/early_session)
+add_subdirectory(ui)
 
 # ============================================================
 # Unified CFDesktop Shared Library
@@ -45,6 +46,7 @@ set(CFDESKTOP_STATIC_LIBS
     CFDesktopLog
     CFDesktopPathSettings
     CFDesktopEarlySession
+    CFDesktopUi
 )
 
 # Link all static libraries using --whole-archive

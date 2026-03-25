@@ -6,10 +6,11 @@ set_target_properties(cfbase_cpu PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
 # Define export macro since this will be linked into cfbase shared library
-target_compile_definitions(cfbase_cpu PUBLIC CFBASE_EXPORTS)
+target_compile_definitions(cfbase_cpu PRIVATE CFBASE_EXPORTS)
 target_include_directories(cfbase_cpu
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../include>
+        $<INSTALL_INTERFACE:include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../..
 )
@@ -35,6 +36,6 @@ elseif(UNIX)
         private/linux_impl/cpu_bonus.cpp
         private/linux_impl/cpu_features.cpp
         private/linux_impl/cpu_info.cpp
-        ../../utils/linux/proc_parser.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../utils/linux/proc_parser.cpp
     )
 endif()

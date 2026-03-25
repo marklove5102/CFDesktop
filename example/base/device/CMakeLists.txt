@@ -14,4 +14,4 @@ cf_set_example_output_dir(example_console_helper "base")
 # Register for launcher generation (Windows)
 cf_register_example_launcher(example_console_helper "base")
 
-log_info("Example Base Common" "Device Example Example Created!")
+log_info("Example Base Common" "Device Example Created!")

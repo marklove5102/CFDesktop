@@ -1,3 +1,5 @@
+project(ui_widget LANGUAGES CXX)
+
 log_info("UI_Widget" "Start Configure the UI Widget")
 
 
@@ -5,12 +7,13 @@ add_library(cf_ui_application_support STATIC
     application_support/application.cpp
 )
 
-target_compile_definitions(cf_ui_application_support PUBLIC CFUI_EXPORTS)
+target_compile_definitions(cf_ui_application_support PRIVATE CFUI_EXPORTS)
 
 target_include_directories(cf_ui_application_support PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/..
-    ${CMAKE_CURRENT_SOURCE_DIR}/../..
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>
+    $<INSTALL_INTERFACE:include>
 )
 
 target_link_libraries(cf_ui_application_support PUBLIC
@@ -55,13 +58,14 @@ add_library(cf_ui_widget_material STATIC
 )
 
 # Define CFUI_EXPORTS so symbols are marked as dllexport when compiling for the DLL
-target_compile_definitions(cf_ui_widget_material PUBLIC CFUI_EXPORTS)
+target_compile_definitions(cf_ui_widget_material PRIVATE CFUI_EXPORTS)
 
 # Add include directories
 target_include_directories(cf_ui_widget_material PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/..
-    ${CMAKE_CURRENT_SOURCE_DIR}/../..
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>
+    $<INSTALL_INTERFACE:include>
 )
 
 # Link Qt libraries
@@ -84,9 +88,10 @@ target_link_libraries(cf_ui_widget_material PUBLIC
 add_library(cf_ui_widget INTERFACE)
 
 target_include_directories(cf_ui_widget INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/..
-    ${CMAKE_CURRENT_SOURCE_DIR}/../..
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>
+    $<INSTALL_INTERFACE:include>
 )
 
 target_link_libraries(cf_ui_widget INTERFACE

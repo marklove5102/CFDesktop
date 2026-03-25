@@ -15,6 +15,7 @@
 
 #include <QSettings>
 #include <QString>
+#include <memory>
 
 namespace cf::desktop::early_settings {
 /**
@@ -59,7 +60,7 @@ class EarlySettings {
      * @since N/A
      * @ingroup early_session
      */
-    bool valid() const { return early_settings.status() == QSettings::NoError; }
+    bool valid() const;
 
     /**
      * @brief Gets the file path from which settings were loaded.
@@ -71,7 +72,7 @@ class EarlySettings {
      * @since N/A
      * @ingroup early_session
      */
-    QString loadFrom() const { return early_settings.fileName(); }
+    QString loadFrom() const;
 
     /**
      * @brief Gets the boot logger directory path from settings.
@@ -87,10 +88,12 @@ class EarlySettings {
      */
     QString get_boot_logger_path() const;
 
+    std::unique_ptr<QSettings> unlock_early_settings();
+
   private:
     /// @brief Cached path to the log file for the current session. Ownership: owner.
     mutable QString this_session_logfile_path{};
     /// @brief Qt settings object for reading the INI configuration. Ownership: owner.
-    QSettings early_settings;
+    std::unique_ptr<QSettings> early_settings;
 };
 } // namespace cf::desktop::early_settings

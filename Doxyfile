@@ -17,9 +17,5 @@ XML_OUTPUT             = xml
 QUIET                  = YES
 WARNINGS               = NO
 
-PREDEFINED += Q_OBJECT=
-PREDEFINED += signals=public
-PREDEFINED += slots=
-PREDEFINED += emit=
 HIDE_UNDOC_MEMBERS = YES
 HIDE_UNDOC_CLASSES = YES

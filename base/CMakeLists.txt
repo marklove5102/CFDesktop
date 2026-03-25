@@ -33,8 +33,9 @@ target_link_libraries(cfbase PUBLIC
 # Set include directories
 # Expose both include/ (for public headers) and . (for sub-module headers like device/console)
 target_include_directories(cfbase PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include>
 )
 
 # Link dependencies

@@ -15,6 +15,7 @@
 #include "base/singleton/simple_singleton.hpp"
 #include "settings/early_settings.h"
 #include <memory>
+class QWidget;
 
 namespace cf::desktop::early_stage {
 /**
@@ -35,7 +36,6 @@ namespace cf::desktop::early_stage {
 class EarlyHandle : public SimpleSingleton<EarlyHandle> {
   public:
     EarlyHandle() = default;
-
     /**
      * @brief Registers the early settings handle with ownership transfer.
      *
@@ -49,9 +49,7 @@ class EarlyHandle : public SimpleSingleton<EarlyHandle> {
      * @since N/A
      * @ingroup early_session
      */
-    void setEarlySettingsHandle(std::unique_ptr<early_settings::EarlySettings> settings) {
-        this->settings = std::move(settings);
-    }
+    void setEarlySettingsHandle(std::unique_ptr<early_settings::EarlySettings> settings);
 
     /**
      * @brief Releases and returns ownership of early settings.
@@ -67,9 +65,7 @@ class EarlyHandle : public SimpleSingleton<EarlyHandle> {
      * @since N/A
      * @ingroup early_session
      */
-    std::unique_ptr<early_settings::EarlySettings> unlockEarlySettings() {
-        return std::move(settings);
-    }
+    std::unique_ptr<early_settings::EarlySettings> unlockEarlySettings();
 
     /**
      * @brief Gets a reference to the early settings.
@@ -83,7 +79,7 @@ class EarlyHandle : public SimpleSingleton<EarlyHandle> {
      * @since N/A
      * @ingroup early_session
      */
-    const early_settings::EarlySettings& early_settings() const { return *settings; }
+    const early_settings::EarlySettings& early_settings() const;
 
   private:
     /// @brief Unique pointer to early settings. Ownership: owner; may be nullptr.

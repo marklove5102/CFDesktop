@@ -45,4 +45,20 @@ void RunEarlyInit();
  */
 void ReleaseEarlyInit();
 
+/* Staged inits */
+
+/**
+ * @brief   Runs the staged initialization sequence for the desktop session.
+ *
+ * Executes the full initialization pipeline across multiple stages, including
+ * resource loading, subsystem initialization, and service startup.
+ *
+ * @throws  None
+ * @note    This function should be called after early initialization completes.
+ * @warning Must not be called more than once during a session.
+ * @since   N/A
+ * @ingroup desktop_main
+ */
+void RunStageInit();
+
 } // namespace cf::desktop::init_session

@@ -14,11 +14,11 @@ target_link_libraries(material_typography_gallery PRIVATE
     cfui
 )
 
-# 设置输出目录到 examples/gui/
+# Set output directory to examples/gui/
 cf_set_example_output_dir(material_typography_gallery "gui")
 cf_register_example_launcher(material_typography_gallery "gui")
 
-# Windows 下设置为 GUI 应用（不显示控制台窗口）
+# Set as GUI application on Windows (hide console window)
 if(WIN32)
     set_target_properties(material_typography_gallery PROPERTIES
         WIN32_EXECUTABLE TRUE

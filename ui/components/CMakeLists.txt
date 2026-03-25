@@ -1,13 +1,12 @@
+project(ui_components LANGUAGES CXX)
+
 log_info("UI_Components" "Start Configure the UI Components")
 
-# Include subdirectory CMakeLists (STATIC libraries)
-add_subdirectory(material)
-
 # ============================================================
-# Unified UI Components Library - STATIC library for cfui.dll
+# Base Animation Library - STATIC library for cfui.dll
+# Contains base animation interfaces and implementations
 # ============================================================
 
-# Library for animation interfaces
 add_library(cf_ui_components STATIC
     animation.cpp
     animation_factory_manager.cpp
@@ -16,14 +15,22 @@ add_library(cf_ui_components STATIC
 
 # Add include directories
 target_include_directories(cf_ui_components PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/..
-    ${CMAKE_CURRENT_SOURCE_DIR}/../..
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>
+    $<INSTALL_INTERFACE:include>
 )
 
-# Link against material sub-module
+# Link Qt libraries
 target_link_libraries(cf_ui_components PUBLIC
-    cf_ui_components_material
+    Qt6::Core
+    Qt6::Gui
+    CFDesktop::base_headers
+    cf_ui_base
 )
+
+# Include subdirectory CMakeLists (STATIC libraries)
+# Material depends on cf_ui_components, so it must come after
+add_subdirectory(material)
 
 log_info("UI_Components" "the UI Components Configuration Done")

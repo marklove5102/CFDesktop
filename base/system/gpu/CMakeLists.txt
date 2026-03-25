@@ -9,10 +9,11 @@ set_target_properties(cfbase_gpu PROPERTIES
     AUTOUIC OFF
 )
 # Define export macro since this will be linked into cfbase shared library
-target_compile_definitions(cfbase_gpu PUBLIC CFBASE_EXPORTS)
+target_compile_definitions(cfbase_gpu PRIVATE CFBASE_EXPORTS)
 target_include_directories(cfbase_gpu
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../include>
+        $<INSTALL_INTERFACE:include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../..
 )

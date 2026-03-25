@@ -2,14 +2,16 @@
 
 add_library(CFDesktopEarlySession STATIC)
 
-target_sources(CFDesktopEarlySession PRIVATE 
+# Collect impl sources from subdirectory
+add_subdirectory(impl)
+
+target_sources(CFDesktopEarlySession PRIVATE
     init_chain/init_chain.cpp
     settings/early_settings.cpp
-    impl/early_welcome_impl.cpp
-    impl/logger_stage.cpp
-    impl/early_config_stage.cpp)
+    early_handle/early_handle.cpp
+    ${IMPL_SOURCES})
 
-target_include_directories(CFDesktopEarlySession PUBLIC . ..)
+target_include_directories(CFDesktopEarlySession PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
 # Link against cfbase to access device headers and other base utilities
 # Link against cflogger to access cflog.h

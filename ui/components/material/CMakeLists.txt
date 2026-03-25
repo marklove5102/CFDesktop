@@ -1,3 +1,5 @@
+project(ui_components_material LANGUAGES CXX)
+
 log_info("UI_Components_Material" "Start Configure the UI Components Material")
 
 # STATIC library for linking into cfui.dll
@@ -11,16 +13,17 @@ add_library(cf_ui_components_material STATIC
 )
 
 # Define CFUI_EXPORTS so symbols are marked as dllexport when compiling for the DLL
-target_compile_definitions(cf_ui_components_material PUBLIC CFUI_EXPORTS)
+target_compile_definitions(cf_ui_components_material PRIVATE CFUI_EXPORTS)
 
 # Add include directories
 target_include_directories(cf_ui_components_material PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/..
-    ${CMAKE_CURRENT_SOURCE_DIR}/../..
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>
+    $<INSTALL_INTERFACE:include>
 )
 
-# Link Qt for compile dependencies
+# Link Qt for compile dependencies and base animation library
 target_link_libraries(cf_ui_components_material PUBLIC
     Qt6::Core
     Qt6::Gui

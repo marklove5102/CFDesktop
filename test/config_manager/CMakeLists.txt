@@ -1,6 +1,4 @@
 # Config manager module unit tests using GoogleTest
-cmake_minimum_required(VERSION 3.16)
-
 include(add_gtest_executable)
 
 log_info("config_manager_tests" "Configured config manager unit tests:")

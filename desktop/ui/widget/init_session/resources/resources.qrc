@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/early_gui_welcome">
+        <file>CFDesktop.logo.png</file>
+    </qresource>
+</RCC>

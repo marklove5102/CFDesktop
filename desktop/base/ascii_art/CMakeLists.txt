@@ -1,6 +1,4 @@
 # ASCII Art module
-cmake_minimum_required(VERSION 3.16)
-
 # Static library
 add_library(cfasciiart STATIC)
 

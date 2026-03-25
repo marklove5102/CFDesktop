@@ -1,6 +1,4 @@
 # Unit tests for CFLogger using GoogleTest
-cmake_minimum_required(VERSION 3.16)
-
 include(add_gtest_executable)
 
 log_info("logger_tests" "Configured CFLogger unit tests:")

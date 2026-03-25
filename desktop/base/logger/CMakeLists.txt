@@ -1,6 +1,4 @@
 # Logger module
-cmake_minimum_required(VERSION 3.16)
-
 # Static library (has .cpp sources)
 add_library(cflogger STATIC)
 

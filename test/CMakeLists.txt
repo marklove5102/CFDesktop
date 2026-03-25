@@ -22,6 +22,18 @@ message(STATUS "GoogleTest configured")
 # Enable CTest integration
 enable_testing()
 
+# =============================================================================
+# Qt6 Test for signal testing
+# =============================================================================
+find_package(Qt6 QUIET COMPONENTS Test)
+if(Qt6Test_FOUND)
+    message(STATUS "Qt6::Test found - signal tests enabled")
+    set(QT_TEST_AVAILABLE TRUE)
+else()
+    message(STATUS "Qt6::Test not found - signal tests will be disabled")
+    set(QT_TEST_AVAILABLE FALSE)
+endif()
+
 # Add base unit tests subdirectory
 add_subdirectory(base)
 
@@ -36,6 +48,9 @@ add_subdirectory(system)
 
 # Add ui tests
 add_subdirectory(ui)
+
+# Add desktop tests
+add_subdirectory(desktop)
 
 # Add boot_test subdirectory (legacy tests)
 add_subdirectory(boot_test)

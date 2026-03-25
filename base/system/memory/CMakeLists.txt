@@ -3,10 +3,11 @@ set_target_properties(cfbase_memory PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
 # Define export macro since this will be linked into cfbase shared library
-target_compile_definitions(cfbase_memory PUBLIC CFBASE_EXPORTS)
+target_compile_definitions(cfbase_memory PRIVATE CFBASE_EXPORTS)
 target_include_directories(cfbase_memory
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../include>
+        $<INSTALL_INTERFACE:include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../..
 )

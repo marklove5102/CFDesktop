@@ -1,3 +1,5 @@
+project(UI DESCRIPTION "CFDesktop UI Components" LANGUAGES CXX)
+
 log_info("UI" "Start UI Components Configurations")
 
 # Base Supports the UI Components Needs
@@ -23,19 +25,22 @@ add_subdirectory(models)
 add_library(cfui STATIC)
 
 # Link against STATIC libraries from sub-modules
-# Order: dependent libraries first, then their dependencies
+# Order: dependencies first (left), then dependents (right)
+# Static libraries are linked left-to-right, so dependents must come after their dependencies
 target_link_libraries(cfui PUBLIC
-    cf_ui_core
     cf_ui_base
-    cf_ui_components
+    cf_ui_core
     cf_ui_widget
+    cf_ui_components_material
+    cf_ui_components
 )
 
 # Set include directories
 target_include_directories(cfui PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/core
-    ${CMAKE_CURRENT_SOURCE_DIR}/..
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/core>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+    $<INSTALL_INTERFACE:include>
 )
 
 # Link Qt libraries and base library (SHARED cfbase.dll)

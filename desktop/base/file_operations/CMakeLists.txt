@@ -8,7 +8,7 @@ target_sources(cffilesystem PRIVATE
 
 # Include directories
 target_include_directories(cffilesystem PUBLIC
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # Link dependencies

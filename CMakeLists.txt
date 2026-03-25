@@ -10,12 +10,13 @@ message("Including Requested CMake Dependencies OK")
 #   cmake -DCMAKE_TOOLCHAIN_FILE=/path/to/toolchain.cmake -S . -B out/build
 #   cmake -DUSE_TOOLCHAIN=windows/llvm -S . -B out/build
 include(cmake/check_toolchain.cmake)
-project(CFDesktop VERSION 0.10.3 LANGUAGES CXX C)
+project(CFDesktop VERSION 0.11.0 LANGUAGES CXX C)
 
 # ------ Build Type Configuration ------
 # Validate and set build type
 if(NOT CMAKE_BUILD_TYPE)
-    message(FATAL_ERROR "CMAKE_BUILD_TYPE is not set. Please specify build_type in build_*.config.ini")
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type (Debug Release RelWithDebInfo)" FORCE)
+    message(STATUS "CMAKE_BUILD_TYPE not set, defaulting to: ${CMAKE_BUILD_TYPE}")
 endif()
 
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
