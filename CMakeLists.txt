@@ -25,7 +25,8 @@ set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithD
 # Debug: No optimization (-O0), full debug info (-g)
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -D_CFDESKTOPDEBUG" CACHE STRING "Flags used by the C++ compiler during Debug builds" FORCE)
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG "" CACHE STRING "Linker flags used during Debug builds" FORCE)
-
+# For Static Library Relocatable
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # Release: Maximum optimization (-O3), no debug info
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" CACHE STRING "Flags used by the C++ compiler during Release builds" FORCE)
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-s" CACHE STRING "Linker flags used during Release builds" FORCE)
