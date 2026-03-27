@@ -2,8 +2,8 @@
 
 > **模块ID**: Phase 1
 > **状态**: 🚧 部分完成
-> **总体进度**: ~65%
-> **最后更新**: 2026-03-21
+> **总体进度**: ~90%
+> **最后更新**: 2026-03-27
 
 ---
 
@@ -32,10 +32,13 @@
 
 | 模块 | 完成度 | 状态 |
 |------|--------|------|
-| CPUDetector | 80% | ✅ 核心功能已完成 |
-| MemoryDetector | 80% | ✅ 核心功能已完成 |
-| GPUDetector | 100% | ✅ 已完成 |
-| NetworkDetector | 100% | ✅ 已完成 |
+| CPUDetector | 100% | ✅ 完成 |
+| MemoryDetector | 95% | ✅ 完成 |
+| GPUDetector | 90% | ✅ 核心功能已完成 |
+| NetworkDetector | 85% | ✅ 核心功能已完成 |
+| HWTier 系统 | 0% | ❌ 待实现 |
+| CapabilityPolicy | 0% | ❌ 待实现 |
+| HardwareProbe 主类 | 0% | ❌ 待实现 |
 
 ---
 

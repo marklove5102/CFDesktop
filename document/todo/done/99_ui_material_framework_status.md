@@ -1,9 +1,9 @@
 # Phase 6: UI Material 框架 - 状态文档
 
 > **模块ID**: Phase 6
-> **状态**: 🚧 P1 控件完成，P2/P3 待开发
-> **总体进度**: 81%
-> **最后更新**: 2026-03-19
+> **状态**: 🚧 P1 控件完成，核心架构缺失
+> **总体进度**: 75%
+> **最后更新**: 2026-03-27
 
 ---
 
@@ -15,9 +15,10 @@
 Layer 6: Performance Profile (0%)
 Layer 5: Material Widget Adapter (P0: 100%, P1: 100%, P2: 0%, P3: 0%)
 Layer 4: Material Behavior Layer (100%)
-Layer 3: Animation Engine Layer (100%)
+Layer 3: Animation Engine Layer (90%) - 缺Rotate/Path动画
 Layer 2: Theme Engine Layer (100%)
 Layer 1: Core Math & Utility Layer (100%)
+Layer 0: Layout System (0%) - **新增：布局系统完全缺失**
 ```
 
 ### 1.2 设计规则 (RULE-01 to RULE-09)
@@ -51,13 +52,14 @@ ui/base             -> QtCore only (no QtWidgets/QtGui)
 |-------|------|--------|
 | Layer 1: Core Math & Utility | ✅ | 100% |
 | Layer 2: Theme Engine | ✅ | 100% |
-| Layer 3: Animation Engine | ✅ | 100% |
+| Layer 3: Animation Engine | ⚠️ | 90% |
 | Layer 4: Material Behavior | ✅ | 100% |
 | Layer 5: P0 核心控件 | ✅ | 100% (7/7) |
 | Layer 5: P1 常用控件 | ✅ | 100% (12/12) |
 | Layer 5: P2 高级控件 | ⬜ | 0% (0/27) |
 | Layer 5: P3 专业控件 | ⬜ | 0% (0/25) |
 | Layer 6: Performance Profile | ⬜ | 0% |
+| Layer 0: Layout System | ❌ | 0% (新增) |
 
 ---
 
@@ -423,6 +425,24 @@ void Widget::paintEvent(QPaintEvent* event) {
 
 **ui/core 测试:**
 - [token_test.cpp](../../../test/ui/core/token_test.cpp)
+
+### 关键缺口: UI控件测试
+
+| 测试类型 | 状态 | 覆盖率 |
+|---------|------|-------|
+| UI Base 测试 | ✅ | 60% |
+| UI Components 测试 | ✅ | 60% |
+| UI Widgets 测试 | ❌ | **0%** |
+| Widget 单元测试 | ❌ | **0%** |
+
+**急需补充**: 为19个P0/P1控件添加单元测试
+- button_test.cpp, textfield_test.cpp, textarea_test.cpp
+- checkbox_test.cpp, radiobutton_test.cpp, groupbox_test.cpp
+- label_test.cpp, slider_test.cpp, progressbar_test.cpp
+- switch_test.cpp, combobox_test.cpp, spinbox_test.cpp
+- doublespinbox_test.cpp, listview_test.cpp, treeview_test.cpp
+- tableview_test.cpp, tabview_test.cpp, scrollview_test.cpp
+- separator_test.cpp
 
 ---
 

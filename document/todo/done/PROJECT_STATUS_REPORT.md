@@ -1,9 +1,9 @@
 # CFDesktop 项目状态报告
 
-> **报告日期**: 2026-03-20
-> **报告版本**: v2.0
-> **项目版本**: 0.9.6
-> **扫描方式**: 12个并发Agent全面扫描
+> **报告日期**: 2026-03-27
+> **报告版本**: v3.0
+> **项目版本**: 0.12.0
+> **扫描方式**: 7个并发Agent全面扫描
 
 ---
 
@@ -11,7 +11,7 @@
 
 CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material Design 3 设计规范。项目使用 C++23 开发，旨在为嵌入式 Linux 设备提供完整的 UI 框架和开发工具链。
 
-### 整体完成度: 约 65%
+### 整体完成度: 约 70%
 
 | 模块 | 完成度 | 状态 | 优先级 |
 |------|--------|------|--------|
@@ -85,17 +85,22 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
   - 工厂函数和构建器API
   - 完整的测试覆盖
 
+#### ✅ 已完成 (新增)
+- **GPU 检测器** (90%) - `base/system/gpu/` 模块
+  - GPU设备信息、显示信息、环境评分
+  - Linux DRM/WSL2检测、Windows DXGI检测
+- **网络检测器** (85%) - `base/system/network/` 模块
+  - 网卡枚举、IP地址、可达性检测
+
 #### ❌ 待完成
 - HWTier 枚举定义 (Low/Mid/High 三档)
-- GPUDetector - GPU 检测器
-- NetworkDetector - 网络检测器
 - HardwareProbe 主类整合
 - CapabilityPolicy 策略引擎
 - DeviceConfig 配置文件系统
 
 ---
 
-### 1.2 Base库核心 (Phase 2) - 85% 🚧 进行中
+### 1.2 Base库核心 (Phase 2) - 80% 🚧 进行中
 
 #### ✅ 已完成
 - **基础工具类** (100%)
@@ -123,7 +128,13 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
   - 多种输出目标 (console sink, file sink)
   - 线程安全的日志实现
 
+- **DPI基础转换** (60%) - `ui/base/device_pixel.h`
+  - CanvasUnitHelper (dp/sp/px转换)
+  - BreakPoint响应式断点 (Compact/Medium/Expanded)
+
 #### ❌ 待完成
+- **DPI自动检测** (0%) - 自动获取显示器DPI
+- **DPI自适应缩放** (0%) - 根据设备DPI自动调整UI
 - 配置版本控制
 - 配置迁移机制
 - 配置验证功能
@@ -160,50 +171,47 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
 
 ---
 
-### 1.5 测试体系 (Phase 5) - 30% 🚧 进行中
+### 1.5 测试体系 (Phase 5) - 55% 🚧 进行中
 
-#### ✅ 已完成 (测试覆盖率约12%)
+#### ✅ 已完成 (测试覆盖率约55%)
 - **测试框架** (100%)
   - Google Test 集成
   - CMake 辅助函数
   - 跨平台测试脚本
 
-- **base 模块测试** (42.8%)
+- **base 模块测试** (90%)
   - expected, scope_guard, hash, weak_ptr
   - policy_chain
   - mpsc_queue
 
-- **ui 模块测试** (26%)
+- **ui 模块测试** (60%)
   - 基础工具 (color, math_helper, easing, geometry, device_pixel)
   - Material组件 (state_machine, ripple, elevation, focus_ring, painter_layer)
   - token_test
 
-- **system 模块测试**
+- **system 模块测试** (70%)
   - CPU信息查询测试
   - 内存信息查询测试
 
-- **logger 模块测试** (部分)
+- **logger 模块测试** (85%)
   - benchmark_test, error_handling_test, concurrency_test, formatter_test
 
-- **config_manager 模块测试** (部分)
+- **config_manager 模块测试** (80%)
   - config_store_test
 
-#### ❌ 待完成 (覆盖率缺口约70%)
-- **desktop 模块** - 完全没有测试 (0%)
+#### ❌ 待完成 (覆盖率缺口约45%)
+- **UI控件测试** (0%) - **关键缺口**
+  - 19个P0/P1控件全部无单元测试
+  - button_test.cpp, textfield_test.cpp, checkbox_test.cpp, etc.
+
+- **desktop 模块** (5%)
+  - ASCII Art测试 (0%)
+  - 文件操作测试 (0%)
   - desktop/base/ascii_art
   - desktop/base/file_operations
-  - desktop/base/config_manager
-  - desktop/base/logger
-  - desktop/main
-
-- **base 模块缺口**
-  - CPU相关功能测试
-  - 内存管理功能测试
 
 - **ui 模块缺口**
   - UI核心功能 (theme, theme_manager)
-  - Material设计相关
-  - Widget实现
 
 - **example 模块**
   - GUI示例程序测试
@@ -211,7 +219,7 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
 
 ---
 
-### 1.6 UI Material Framework (Phase 6) - 95% 🚧 进行中
+### 1.6 UI Material Framework (Phase 6) - 75% 🚧 进行中
 
 #### ✅ Layer 1-4 完成 100%
 - **Layer 1**: Core Math & Utility (100%)
@@ -223,17 +231,21 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
   - ColorScheme, FontType, MaterialScheme
   - MaterialFactory, MaterialMotion, RadiusScale
 
-- **Layer 3**: Animation Engine Layer (95%)
+- **Layer 3**: Animation Engine Layer (90%)
   - AnimationFactory, AnimationFactoryManager
   - TimingAnimation, AnimationGroup
   - Material动画策略
   - Material动画工厂
   - Fade/Slide/Scale动画
-  - ⚠️ SpringAnimation实现缺失
+  - ⚠️ Rotate/Path动画缺失
 
 - **Layer 4**: Material Behavior Layer (100%)
   - StateMachine, RippleHelper, ElevationController
   - FocusRing, PainterLayer
+
+#### ⚠️ 缺失部分
+- **布局管理系统** (0%) - Grid、Stack、ConstraintLayout
+- **手势识别系统** (0%) - 触摸/手势统一接口
 
 #### ✅ Layer 5 控件层 (P0-P1 完成 100%)
 - **P0 核心控件** (7/7 完成 ✅)
@@ -397,9 +409,10 @@ CFDesktop 是一个基于 Qt6 的嵌入式桌面框架项目，采用 Material D
 
 | 风险 | 级别 | 影响 | 缓解措施 |
 |------|------|------|----------|
-| desktop模块测试覆盖率为0% | 高 | 质量风险 | 优先为核心功能添加测试 |
+| UI控件测试覆盖率为0% | 高 | 质量风险 | 为P0/P1控件添加测试 |
+| DPI自动检测缺失 | 中 | 用户体验 | 实现DPI自动检测和自适应 |
 | ReleaseEarlyInit()未实现 | 中 | 启动流程不完整 | 实现完整初始化链 |
-| SpringAnimation实现缺失 | 低 | 动画功能不完整 | 补充实现 |
+| 布局系统缺失 | 中 | UI功能受限 | 实现Grid/Stack布局 |
 | P2/P3 UI控件未实现 | 中 | 功能完整性 | 按需实现 |
 | 文档更新滞后 | 中 | 维护困难 | 同步更新文档 |
 
@@ -413,27 +426,30 @@ CFDesktop/
 ├── base/                           # 基础库模块
 │   ├── system/cpu/                 # ✅ CPU检测 (100%)
 │   ├── system/memory/              # ✅ 内存检测 (95%)
+│   ├── system/gpu/                 # ✅ GPU检测 (90%)
+│   ├── system/network/             # ✅ 网络检测 (85%)
 │   ├── device/console/             # ✅ 控制台设备 (85%)
 │   └── include/base/policy_chain/  # ✅ 策略链 (80%)
-├── ui/                             # UI框架 (95%)
+├── ui/                             # UI框架 (75%)
 │   ├── base/                       # ✅ 基础工具 (100%)
+│   │   └── device_pixel.h/cpp      # ✅ DPI基础转换 (60%)
 │   ├── core/                       # ✅ 主题核心 (100%)
-│   ├── components/                 # ⚠️ 动画组件 (95%)
+│   ├── components/                 # ⚠️ 动画组件 (90%)
 │   └── widget/material/            # ✅ P0/P1控件 (100%)
-├── desktop/                        # 桌面环境 (80%)
+├── desktop/                        # 桌面环境 (85%)
 │   ├── main/                       # 🚧 主程序入口 (80%)
 │   ├── base/logger/                # ✅ 日志系统 (90%)
 │   ├── base/config_manager/        # ✅ 配置管理 (85%)
 │   ├── base/ascii_art/             # ✅ ASCII艺术 (100%)
 │   └── base/file_operations/       # ⚠️ 文件操作 (70%)
-├── test/                           # 测试代码 (30%覆盖率)
+├── test/                           # 测试代码 (55%覆盖率)
 ├── example/                        # 示例程序 (50%覆盖)
 └── document/                       # 文档 (60%覆盖)
 ```
 
 ---
 
-*报告生成时间: 2026-03-20*
-*报告版本: v2.0*
-*扫描方式: 12个并发Agent全面扫描*
+*报告生成时间: 2026-03-27*
+*报告版本: v3.0*
+*扫描方式: 7个并发Agent全面扫描*
 *项目路径: /home/charliechen/CFDesktop*

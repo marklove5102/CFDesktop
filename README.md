@@ -4,7 +4,7 @@
 
   ### 为嵌入式设备打造的现代化 Material Design 3 桌面框架
 
-  [![License: MIT][license-badge]] [![Version: 0.11.0][version-badge]]
+  [![License: MIT][license-badge]] [![Version: 0.12.0][version-badge]]
   [![C++23][cpp-badge]] [![Qt 6.8][qt-badge]] [![CMake][cmake-badge]]
   [![Documentation][docs-badge]]
 
@@ -40,10 +40,10 @@
 | 阶段 | 模块 | 完成度 | 说明 |
 |:---|:---|:---:|:---|
 | Phase 0 | 工程骨架 | 100% | CMake 构建系统、代码规范、CI/CD、Docker 多架构构建 |
-| Phase 1 | 硬件探针 | 100% | CPU/Memory/GPU/网络检测 完成|
-| Phase 2 | Base 库核心 | 85% | ConfigStore、Logger、DPI、ASCII Art、File Operations |
-| Phase 5 | 测试体系 | 30% | Google Test 集成，base/ui 有覆盖，desktop 待补充 |
-| Phase 6 | UI 框架核心 | 95% | Material Design 3 分层架构 (Layer 1-5) |
+| Phase 1 | 硬件探针 | 90% | CPU/Memory/GPU/网络检测完成，缺HWTier/Policy |
+| Phase 2 | Base 库核心 | 80% | ConfigStore、Logger、DPI基础转换(ui/base)、ASCII Art、File Operations |
+| Phase 5 | 测试体系 | 55% | Google Test 集成，base/logger/ui基础有覆盖 |
+| Phase 6 | UI 框架核心 | 75% | Material Design 3 分层架构 (Layer 1-4)，缺布局/手势 |
 | Phase 6 | P0 核心控件 | 100% | Button, TextField, TextArea, Label, CheckBox, RadioButton, GroupBox |
 | Phase 6 | P1 控件 | 100% | Slider, ProgressBar, Switch, ToggleButton, etc. (12个) |
 | Desktop | 桌面基础 | 80% | 配置中心、日志系统、启动初始化、文件操作 |
@@ -52,14 +52,17 @@
 
 | 阶段 | 模块 | 完成度 | 说明 |
 |:---|:---|:---:|:---|
-| Phase 2 | 配置日志增强 | 80% | 缺版本控制、迁移、验证、网络日志 |
-| Desktop | 桌面的基础组件 | 0% | 目前只有Console的欢迎 |
+| Phase 2 | 配置日志增强 | 80% | DPI基础转换已有(ui/base)，缺自动检测/版本控制/迁移/验证/网络日志 |
+| Phase 5 | UI控件测试 | 0% | 19个P0/P1控件无单元测试 |
+| Desktop | 桌面的基础组件 | 10% | Console欢迎完成，PanelManager/ShellLayer空缺 |
 
 ### 待开始 ⬜
 
 | 阶段 | 模块 | 说明 |
 |:---|:---|:---|
 | Phase 1 | 硬件探针完善 | HWTier 档位、CapabilityPolicy |
+| Phase 6 | 布局系统 | Grid、Stack、ConstraintLayout |
+| Phase 6 | 手势识别 | 触摸/手势统一接口 |
 | Phase 3 | 输入抽象层 | 触摸/按键/旋钮/手势统一接口 |
 | Phase 4 | 多平台模拟器 | 开发调试用模拟器、设备配置、DPI 注入 |
 | Phase 6 | P2 控件 | 27个高级控件 (DatePicker, MenuBar, Dialog, etc.) |
@@ -67,15 +70,16 @@
 | Phase 5 | 测试完善 | desktop 模块、性能基准、UI 自动化 |
 | 文档 | API/示例补充 | 约40%文档缺失，50%示例缺失 |
 
-### 快速统计
+### 快速统计 (2026-03-27 更新)
 
-| 类别 | 完成度 |
-|:---|:---:|
-| UI 控件 (P0+P1) | 100% (19个) |
-| UI 控件 (P2+P3) | 0% (52个) |
-| 文档覆盖 | 60% |
-| 示例覆盖 | 50% |
-| 测试覆盖 | 30% |
+| 类别 | 完成度 | 说明 |
+|:---|:---:|:---|
+| UI 控件 (P0+P1) | 100% (19个) | 完整实现 |
+| UI 控件 (P2+P3) | 0% (52个) | 待开发 |
+| UI 控件测试 | 0% | **关键缺口** |
+| 文档覆盖 | 60% | ~268个文档 |
+| 示例覆盖 | 50% | ~80个示例 |
+| 测试覆盖 | 55% | Base/Logger良好，UI控件缺失 |
 
 📋 **完整待办清单**: [TODO.md](TODO.md)
 📊 **详细状态报告**: [document/todo/done/PROJECT_STATUS_REPORT.md](document/todo/done/PROJECT_STATUS_REPORT.md)
@@ -224,7 +228,7 @@ cd CFDesktop
 
 <!-- Badge Links -->
 [license-badge]: https://img.shields.io/badge/License-MIT-yellow.svg
-[version-badge]: https://img.shields.io/badge/version-0.11.0-blue.svg
+[version-badge]: https://img.shields.io/badge/version-0.12.0-blue.svg
 [cpp-badge]: https://img.shields.io/badge/C++-23-00599C.svg
 [qt-badge]: https://img.shields.io/badge/Qt-6.8-41CD52.svg
 [cmake-badge]: https://img.shields.io/badge/CMake-3.16+-064F8C.svg

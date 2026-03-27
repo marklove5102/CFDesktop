@@ -1,9 +1,9 @@
 # Phase 5: 测试系统 - 状态文档
 
 > **模块ID**: Phase 5
-> **状态**: 🚧 基础框架完成
-> **总体进度**: ~60%
-> **最后更新**: 2026-03-11
+> **状态**: 🚧 基础框架完成，UI控件测试缺失
+> **总体进度**: ~55%
+> **最后更新**: 2026-03-27
 
 ---
 
@@ -23,14 +23,16 @@
 
 | 模块 | 测试文件数 | 覆盖率 | 状态 |
 |------|-----------:|-------:|------|
-| Base Utilities | 4 | 90% | ✅ Good |
-| UI Base | 6 | 85% | ✅ Good |
+| Base Utilities | 6 | 90% | ✅ Good |
+| UI Base | 6 | 60% | ⚠️ Fair |
 | UI Components | 5 | 60% | ⚠️ Fair |
 | UI Core | 1 | 30% | ❌ Poor |
-| UI Widgets | 0 | 0% | ❌ Missing |
+| UI Widgets | 0 | **0%** | ❌ **Critical** |
 | System Queries | 2 | 70% | ⚠️ Fair |
-| Boot Tests | 3 | 80% | ✅ Good |
-| **Overall** | **21** | **60%** | ⚠️ **Fair** |
+| Logger | 4 | 85% | ✅ Good |
+| ConfigManager | 1 | 80% | ✅ Good |
+| Desktop | 1 | 5% | ❌ Poor |
+| **Overall** | **26** | **55%** | ⚠️ **Fair** |
 
 ---
 
@@ -143,11 +145,13 @@ test/
 
 ## 四、待完成模块
 
-### 4.1 Widget 测试 (P0)
+### 4.1 Widget 测试 (P0 - Critical)
 
-**状态**: 未实现
+**状态**: 完全未实现 (0%)
 
-必需的 Material 控件测试：
+**关键缺口**: 19个P0/P1控件全部无单元测试
+
+**P0 核心控件** (7个):
 - `button_test.cpp` - Button 控件测试
 - `textfield_test.cpp` - TextField 控件测试
 - `textarea_test.cpp` - TextArea 控件测试
@@ -155,6 +159,20 @@ test/
 - `radiobutton_test.cpp` - RadioButton 控件测试
 - `label_test.cpp` - Label 控件测试
 - `groupbox_test.cpp` - GroupBox 控件测试
+
+**P1 常用控件** (12个):
+- `slider_test.cpp` - Slider 控件测试
+- `progressbar_test.cpp` - ProgressBar 控件测试
+- `switch_test.cpp` - Switch 控件测试
+- `combobox_test.cpp` - ComboBox 控件测试
+- `spinbox_test.cpp` - SpinBox 控件测试
+- `doublespinbox_test.cpp` - DoubleSpinBox 控件测试
+- `listview_test.cpp` - ListView 控件测试
+- `treeview_test.cpp` - TreeView 控件测试
+- `tableview_test.cpp` - TableView 控件测试
+- `tabview_test.cpp` - TabView 控件测试
+- `scrollview_test.cpp` - ScrollView 控件测试
+- `separator_test.cpp` - Separator 控件测试
 
 **目标路径**: `test/ui/widgets/`
 
