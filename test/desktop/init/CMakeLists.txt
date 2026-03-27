@@ -57,3 +57,6 @@ set_tests_properties(init_session_chain_test PROPERTIES
 )
 
 log_info("desktop_init_tests" "  - init_session_chain_test")
+
+# Windows Qt auto-deploy support
+qt_add_windows_deploy(init_session_chain_test AUTO_DEPLOY INSTALL_DEPLOY)
