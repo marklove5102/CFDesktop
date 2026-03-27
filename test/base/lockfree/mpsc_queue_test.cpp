@@ -320,7 +320,7 @@ TEST(MpscQueueTest, MultiProducerSingleConsumer) {
 }
 
 TEST(MpscQueueTest, StressTestMultiProducer) {
-    MpscQueue<int, 65536> queue;
+    auto queue = std::make_unique<MpscQueue<int, 65536>>();
     constexpr int numProducers = 8;
     constexpr int itemsPerProducer = 5000;
     constexpr int totalItems = numProducers * itemsPerProducer;
@@ -332,7 +332,7 @@ TEST(MpscQueueTest, StressTestMultiProducer) {
     for (int p = 0; p < numProducers; ++p) {
         producers.emplace_back([&, p]() {
             for (int i = 0; i < itemsPerProducer; ++i) {
-                while (!queue.tryPush(p * itemsPerProducer + i)) {
+                while (!queue->tryPush(p * itemsPerProducer + i)) {
                     std::this_thread::yield();
                 }
             }
@@ -343,7 +343,7 @@ TEST(MpscQueueTest, StressTestMultiProducer) {
     std::thread consumer([&]() {
         int value;
         while (receivedCount.load() < totalItems) {
-            if (queue.tryPop(value)) {
+            if (queue->tryPop(value)) {
                 receivedCount.fetch_add(1);
             } else {
                 std::this_thread::yield();
@@ -357,7 +357,7 @@ TEST(MpscQueueTest, StressTestMultiProducer) {
     consumer.join();
 
     EXPECT_EQ(receivedCount.load(), totalItems);
-    EXPECT_TRUE(queue.empty());
+    EXPECT_TRUE(queue->empty());
 }
 
 // =============================================================================
@@ -365,41 +365,42 @@ TEST(MpscQueueTest, StressTestMultiProducer) {
 // =============================================================================
 
 TEST(MpscQueueTest, CapacityIsPowerOfTwo) {
-    MpscQueue<int, 1> q1;         // 2^0
-    MpscQueue<int, 2> q2;         // 2^1
-    MpscQueue<int, 4> q4;         // 2^2
-    MpscQueue<int, 8> q8;         // 2^3
-    MpscQueue<int, 16> q16;       // 2^4
-    MpscQueue<int, 1024> q1024;   // 2^10
-    MpscQueue<int, 65536> q65536; // 2^16
+    MpscQueue<int, 1> q1;   // 2^0
+    MpscQueue<int, 2> q2;   // 2^1
+    MpscQueue<int, 4> q4;   // 2^2
+    MpscQueue<int, 8> q8;   // 2^3
+    MpscQueue<int, 16> q16; // 2^4
+    auto q1024 = std::make_unique<MpscQueue<int, 1024>>();
+    auto q65536 = std::make_unique<MpscQueue<int, 65536>>();
 
     EXPECT_EQ(q1.capacity(), 1);
     EXPECT_EQ(q2.capacity(), 2);
     EXPECT_EQ(q4.capacity(), 4);
     EXPECT_EQ(q8.capacity(), 8);
     EXPECT_EQ(q16.capacity(), 16);
-    EXPECT_EQ(q1024.capacity(), 1024);
-    EXPECT_EQ(q65536.capacity(), 65536);
+    EXPECT_EQ(q1024->capacity(), 1024);
+    EXPECT_EQ(q65536->capacity(), 65536);
 }
 
 TEST(MpscQueueTest, LargeQueue) {
-    MpscQueue<int, 65536> largeQueue;
+    auto largeQueue = std::make_unique<MpscQueue<int, 65536>>();
+    ;
 
     // Fill partially
     for (int i = 0; i < 1000; ++i) {
-        EXPECT_TRUE(largeQueue.tryPush(int{i}));
+        EXPECT_TRUE(largeQueue->tryPush(int{i}));
     }
 
-    EXPECT_EQ(largeQueue.size(), 1000);
+    EXPECT_EQ(largeQueue->size(), 1000);
 
     // Drain
     int value;
     for (int i = 0; i < 1000; ++i) {
-        EXPECT_TRUE(largeQueue.tryPop(value));
+        EXPECT_TRUE(largeQueue->tryPop(value));
         EXPECT_EQ(value, i);
     }
 
-    EXPECT_TRUE(largeQueue.empty());
+    EXPECT_TRUE(largeQueue->empty());
 }
 
 TEST(MpscQueueTest, AlternatingPushPop) {
