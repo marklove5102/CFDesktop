@@ -1,7 +1,8 @@
 #include "CFDesktop.h"
-namespace cf::desktop {
-CFDesktopProxy::CFDesktopProxy(WeakPtr<CFDesktop> desktop) : desktop_(desktop) {}
+#include "CFDesktopEntity.h"
 
-CFDesktopProxy::~CFDesktopProxy() {}
+namespace cf::desktop {
+
+CFDesktopProxy::CFDesktopProxy(WeakPtr<CFDesktop> desktop) : desktop_(desktop) {}
 
 } // namespace cf::desktop

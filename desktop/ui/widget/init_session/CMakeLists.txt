@@ -25,11 +25,14 @@ add_library(cf_desktop_ui_widget_init_session STATIC
 target_include_directories(cf_desktop_ui_widget_init_session PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../../..  # For desktop/ includes (boot_stage_info.h, init_stage.h)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../main/init  # For boot_stage_info.h, init_stage.h
 )
 
 target_link_libraries(cf_desktop_ui_widget_init_session PUBLIC
+    cfbase
+    cflogger
+    cf_desktop_ui_base
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
-    CFDesktopInit  # For boot_stage_info.h, init_stage.h
 )

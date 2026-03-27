@@ -9,7 +9,7 @@
  *
  */
 #pragma once
-#include "init_chain/init_stage.h"
+#include "../init_chain/init_stage.h"
 
 namespace cf::desktop::early_stage {
 

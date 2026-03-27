@@ -1,0 +1,92 @@
+/**
+ * @file    linux_wsl_factory.h
+ * @brief   WSL-specific factory for creating desktop property strategies.
+ *
+ * Implements a singleton factory pattern for creating and managing desktop
+ * property strategies on Windows Subsystem for Linux.
+ *
+ * @author  N/A
+ * @date    N/A
+ * @version N/A
+ * @since   N/A
+ * @ingroup none
+ */
+
+#pragma once
+#include "IDesktopPropertyStrategy.h"
+#include "base/singleton/simple_singleton.hpp"
+#include <memory>
+
+namespace cf::desktop::platform_strategy::wsl {
+
+/// @brief Forward declaration of the display size policy maker.
+class DisplaySizePolicyMaker;
+
+/**
+ * @brief  WSL-specific singleton factory for desktop property strategies.
+ *
+ * Creates and manages the lifecycle of desktop property strategy instances
+ * specifically for WSL environments.
+ *
+ * @note   Inherits singleton semantics from SimpleSingleton base.
+ *
+ * @ingroup none
+ *
+ * @code
+ * auto& factory = WSLDeskProStrategyFactory::instance();
+ * auto* strategy = factory.create(StrategyType::WSL);
+ * @endcode
+ */
+class WSLDeskProStrategyFactory : public SimpleSingleton<WSLDeskProStrategyFactory> {
+  public:
+    /**
+     * @brief  Constructs a new WSLDeskProStrategyFactory instance.
+     * @throws None
+     * @note   None
+     * @warning None
+     * @since  N/A
+     * @ingroup none
+     */
+    WSLDeskProStrategyFactory();
+
+    /**
+     * @brief  Destroys the WSLDeskProStrategyFactory instance.
+     * @throws None
+     * @note   None
+     * @warning None
+     * @since  N/A
+     * @ingroup none
+     */
+    ~WSLDeskProStrategyFactory();
+
+    /**
+     * @brief  Creates a desktop property strategy of the specified type.
+     *
+     * @param[in] t The strategy type to create.
+     * @return      Pointer to the created strategy, or nullptr on failure.
+     * @throws      None
+     * @note        Caller owns the returned pointer and must call release().
+     * @warning     None
+     * @since       N/A
+     * @ingroup     none
+     */
+    IDesktopPropertyStrategy* create(IDesktopPropertyStrategy::StrategyType t);
+
+    /**
+     * @brief  Releases a previously created strategy.
+     *
+     * @param[in] policy Pointer to the strategy to release. May be nullptr.
+     * @throws           None
+     * @note             Safe to call with nullptr.
+     * @warning          None
+     * @since            N/A
+     * @ingroup          none
+     */
+    void release(IDesktopPropertyStrategy* policy);
+
+  private:
+    /// @brief Display size policy maker. Ownership: unique.
+    std::unique_ptr<DisplaySizePolicyMaker> sz_policy;
+};
+
+} // namespace cf::desktop::platform_strategy::wsl

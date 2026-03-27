@@ -13,3 +13,5 @@
  */
 
 #pragma once
+
+namespace cf::desktop::path {}

@@ -11,6 +11,7 @@
 #pragma once
 #include "boot_stage_info.h"
 #include "init_stage.h"
+#include <QRect>
 #include <QWidget>
 
 namespace cf::desktop::init_session {
@@ -66,6 +67,17 @@ class BootProgressWidget : public QWidget {
      * @ingroup       desktop_ui_widget_init_session
      */
     void setTotalStage(size_t stage_tol) { stage_to_ = stage_tol; }
+
+    /**
+     * @brief  Sets the window size to half of the screen size and centers it.
+     *
+     * @throws        None
+     * @note          Default: Uses the primary screen geometry to calculate half size.
+     * @warning       None
+     * @since         0.1
+     * @ingroup       desktop_ui_widget_init_session
+     */
+    virtual void setInitialDisplayStatus();
 
   public slots:
     /**

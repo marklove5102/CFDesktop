@@ -4,9 +4,8 @@ log_info("Desktop Buildings" "Start Configuring Desktop Buildings")
 # Add static library modules first
 # ============================================================
 add_subdirectory(base)
-add_subdirectory(main/early_session)
 add_subdirectory(ui)
-
+add_subdirectory(main)
 # ============================================================
 # Unified CFDesktop Shared Library
 # ============================================================
@@ -30,9 +29,7 @@ endif()
 target_include_directories(CFDesktop_shared PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/base
-    ${CMAKE_CURRENT_SOURCE_DIR}/main/early_session
-    ${CMAKE_SOURCE_DIR}/base
-    ${CMAKE_SOURCE_DIR}/base/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/main
 )
 
 # Collect all static libraries to be linked into the shared library
@@ -43,9 +40,7 @@ set(CFDESKTOP_STATIC_LIBS
     cffilesystem
     cfconfig
     cfasciiart
-    CFDesktopLog
-    CFDesktopPathSettings
-    CFDesktopEarlySession
+    CFDesktopMain
     CFDesktopUi
 )
 
@@ -91,6 +86,12 @@ add_library(CFDesktop::lib ALIAS CFDesktop_shared)
 # ============================================================
 # Main executable (links against the shared library)
 # ============================================================
-add_subdirectory(main)
+add_executable(CFDesktop main.cpp desktop_entry.cpp)
+
+# Link against the unified CFDesktop shared library
+# Also link CFDesktopEarlySession directly for symbols not exported from DLL
+target_link_libraries(CFDesktop PRIVATE
+    CFDesktop_shared CFDesktopMain cflogger cfbase
+)
 
 log_info("Desktop Buildings" "Configuring Desktop Buildings Done")

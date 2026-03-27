@@ -10,9 +10,10 @@
  */
 
 #include "simple_boot_widget.h"
+#include "autogen/metainfo/project_info.h"
+#include "meta_adapts.h"
 #include "step_dot_widget.h"
 #include "ui_simple_boot_widget.h"
-
 #include <QColor>
 #include <QDebug>
 #include <QHBoxLayout>
@@ -57,12 +58,9 @@ SimpleBootWidget::SimpleBootWidget(QWidget* parent)
     setup_ui();
     load_logo();
 
-    ui->versionLabel->setText("0.11.0");
-    ui->copyrightLabel->setText("CFDesktop ©");
-    ui->appNameLabel->setText("CFDesktop");
-
-    setFixedSize(800, 600);
-    move(QGuiApplication::primaryScreen()->geometry().center() - rect().center());
+    ui->versionLabel->setText(autogen::metainfo::project_version);
+    ui->copyrightLabel->setText(autogen::metainfo::project_copyright);
+    ui->appNameLabel->setText(autogen::metainfo::project_name);
 
     // Start background animation timer
     m_animationTimer = new QTimer(this);

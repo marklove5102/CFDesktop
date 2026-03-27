@@ -9,12 +9,12 @@
  *
  */
 #include "CFDesktop.h"
+#include "CFDesktopEntity.h"
 #include "cflog.h"
-#include <memory>
 
 namespace cf::desktop {
 
-CFDesktop::CFDesktop() : weak_ptr_factory_(this) {
+CFDesktop::CFDesktop(CFDesktopEntity* entity) : weak_ptr_factory_(this) {
     log::traceftag("CFDesktop Self", "Creating CFDesktop...");
 };
 
@@ -22,10 +22,6 @@ void CFDesktop::register_desktop_resources(InitResources& resources) {
     log::traceftag("CFDesktop Self", "Register Desktop Resources from remote");
     panel_manager_ = resources.panel_manager_;
     shell_layer_ = resources.shell_layer_;
-}
-
-std::unique_ptr<CFDesktopProxy> CFDesktop::GetProxy() {
-    return std::make_unique<CFDesktopProxy>(weak_ptr_factory_.GetWeakPtr());
 }
 
 CFDesktop::~CFDesktop() {

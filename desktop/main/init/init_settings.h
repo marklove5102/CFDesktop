@@ -79,11 +79,9 @@ class InitInfoHandle : public SimpleSingleton<InitInfoHandle> {
      * @since N/A
      * @ingroup init_session
      */
-    QWidget* unlockBootWidget() {
-        QWidget* p = boot_widget_;
-        boot_widget_ = nullptr;
-        return p;
-    }
+    QWidget* unlockBootWidget();
+
+    QWidget* getBootWidget() { return boot_widget_; }
 
   private:
     /// @brief Pointer to the boot widget. Ownership: owner; may be nullptr.

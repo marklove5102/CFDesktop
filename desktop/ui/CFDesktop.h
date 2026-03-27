@@ -10,15 +10,14 @@
  */
 #pragma once
 #include "CFDesktopProxy.h"
+#include "base/weak_ptr/weak_ptr.h"
 #include "base/weak_ptr/weak_ptr_factory.h"
 
 #include <QWidget>
-#include <memory>
-
 namespace cf::desktop {
 class PanelManager;
 class ShellLayer;
-class CFDesktopIniter;
+class CFDesktopEntity;
 
 /**
  * @brief Main desktop class representing the CFDesktop application.
@@ -32,27 +31,15 @@ class CFDesktopIniter;
  * @since         0.1
  * @ingroup       desktop_ui
  */
-class CFDesktop : public QWidget {
+class CFDesktop final : public QWidget {
     Q_OBJECT
   public:
     friend class CFDesktopProxy; // Proxy Friendly
     // init with initers
     // like, register panel manager
     // shell layers... and so on!
-    friend class CFDesktopIniter;
-
-    /**
-     * @brief Gets the proxy for controlled external access to the desktop.
-     *
-     * @return        Unique pointer to the desktop proxy.
-     *
-     * @throws        None
-     * @note          External classes must use the proxy to access desktop
-     * @warning       None
-     * @since         0.1
-     * @ingroup       desktop_ui
-     */
-    std::unique_ptr<CFDesktopProxy> GetProxy();
+    // And also hold the Widget itself!
+    friend class CFDesktopEntity;
 
     /**
      * @brief Desktop component identifiers for availability checking.
@@ -82,6 +69,9 @@ class CFDesktop : public QWidget {
      */
     bool component_available(const DesktopComponent d = DesktopComponent::Common) const noexcept;
 
+    // Make Weak Reference
+    WeakPtr<CFDesktop> GetWeak() const { return weak_ptr_factory_.GetWeakPtr(); }
+
   private:
     /* Managed by Resources */
     struct InitResources {
@@ -93,7 +83,7 @@ class CFDesktop : public QWidget {
     ShellLayer* shell_layer_{nullptr};
 
   private:
-    CFDesktop(/* nullptr, actually always stand alone */);
+    CFDesktop(CFDesktopEntity* entity_object); /* pass the entity objects */
     ~CFDesktop();
 
     // register the desktop sources

@@ -1,8 +1,8 @@
 # Collect early_gain sources
-# Note: paths are prefixed with 'early_gain/' for parent usage
+# Paths relative to desktop/main (parent scope)
 
 set(EARLY_GAIN_SOURCES
-    early_gain/early_pass_stage.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/early_pass_stage.cpp
 )
 
 # Return to parent via PARENT_SCOPE
