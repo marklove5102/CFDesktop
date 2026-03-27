@@ -27,7 +27,7 @@ target_include_directories(init_session_chain_test PRIVATE ${INIT_INCLUDE_DIRS})
 # Link libraries
 target_link_libraries(init_session_chain_test PRIVATE
     CFDesktop::lib
-    CFDesktopInit
+    CFDesktopMain
     GTest::gtest
     GTest::gtest_main
     Qt6::Core

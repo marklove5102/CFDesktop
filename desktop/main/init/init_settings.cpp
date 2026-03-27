@@ -8,4 +8,15 @@ void InitInfoHandle::passedEarlyBootInfo(early_stage::EarlyHandle& early_handle)
     early_settings_ = earlies->unlock_early_settings();
     /* Releases the Early settings... */
 }
+
+void InitInfoHandle::setBootWidget(QWidget* widget) {
+    boot_widget_ = widget;
+}
+
+QWidget* InitInfoHandle::unlockBootWidget() {
+    QWidget* p = boot_widget_;
+    boot_widget_ = nullptr;
+    return p;
+}
+
 } // namespace cf::desktop::init_session

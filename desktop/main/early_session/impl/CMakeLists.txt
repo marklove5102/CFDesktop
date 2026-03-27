@@ -1,10 +1,10 @@
 # Collect impl directory sources
-# Note: paths are prefixed with 'impl/' for parent usage
+# Paths relative to desktop/main (parent scope)
 
 set(IMPL_SOURCES
-    impl/early_welcome_impl.cpp
-    impl/logger_stage.cpp
-    impl/early_config_stage.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/early_welcome_impl.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/logger_stage.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/early_config_stage.cpp
 )
 
 # Return to parent via PARENT_SCOPE

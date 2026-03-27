@@ -61,4 +61,18 @@ void ReleaseEarlyInit();
  */
 void RunStageInit();
 
+/**
+ * @brief   Releases resources allocated during staged initialization.
+ *
+ * Unlocks and deletes the boot widget to free memory after the staged
+ * initialization phase completes.
+ *
+ * @throws  None
+ * @note    The boot widget pointer retrieved from InitInfoHandle is deleted
+ *          after being unlocked.
+ * @warning Must only be called after the staged initialization completes.
+ * @since   N/A
+ * @ingroup desktop_main
+ */
+void ReleaseStageInitOldResources();
 } // namespace cf::desktop::init_session

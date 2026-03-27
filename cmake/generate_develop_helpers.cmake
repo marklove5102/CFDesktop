@@ -141,7 +141,7 @@ function(generate_vscode_clangd)
     file(MAKE_DIRECTORY "${VSCODE_DIR}")
 
     configure_file(
-        "${CMAKE_CURRENT_LIST_DIR}/cmake/generate_develop_helpers/templates/vscode_settings.json.in"
+        "${CMAKE_CURRENT_LIST_DIR}/generate_develop_helpers/templates/vscode_settings.json.in"
         "${SETTINGS_JSON}"
         @ONLY
     )
@@ -151,7 +151,7 @@ function(generate_vscode_clangd)
     message(STATUS "  query-driver: ${QUERY_DRIVER_GLOB_JSON}")
 
     configure_file(
-        "${CMAKE_CURRENT_LIST_DIR}/cmake/generate_develop_helpers/templates/extensions.json.in"
+        "${CMAKE_CURRENT_LIST_DIR}/generate_develop_helpers/templates/extensions.json.in"
         "${EXTENSION_JSON}"
         @ONLY
     )
@@ -248,7 +248,7 @@ function(generate_vscode_debug_config)
     file(MAKE_DIRECTORY "${VSCODE_DIR}")
 
     configure_file(
-        "${CMAKE_CURRENT_LIST_DIR}/cmake/generate_develop_helpers/templates/vscode_tasks.json.in"
+        "${CMAKE_CURRENT_LIST_DIR}/generate_develop_helpers/templates/vscode_tasks.json.in"
         "${TASKS_JSON}"
         @ONLY
     )
@@ -256,7 +256,7 @@ function(generate_vscode_debug_config)
     message(STATUS "Generated VSCode tasks.json: ${TASKS_JSON}")
 
     configure_file(
-        "${CMAKE_CURRENT_LIST_DIR}/cmake/generate_develop_helpers/templates/vscode_launch.json.in"
+        "${CMAKE_CURRENT_LIST_DIR}/generate_develop_helpers/templates/vscode_launch.json.in"
         "${LAUNCH_JSON}"
         @ONLY
     )

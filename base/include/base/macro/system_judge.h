@@ -25,6 +25,11 @@
 #    define CFDESKTOP_OS_LINUX
 #endif
 
+// WSL Specific (set by CMake when WSL is detected)
+#ifdef CFDESKTOP_OS_WSL
+#    define CFDESKTOP_OS_WSL_ENABLED
+#endif
+
 /* ==================== Architecture Detection ==================== */
 
 // x86_64 (AMD64) detection
