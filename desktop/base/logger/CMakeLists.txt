@@ -15,7 +15,10 @@ target_sources(cflogger PRIVATE
 
 # Include directories
 target_include_directories(cflogger PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_include_directories(cflogger PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 

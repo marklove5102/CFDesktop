@@ -3,8 +3,7 @@ include(add_gtest_executable)
 
 log_info("logger_tests" "Configured CFLogger unit tests:")
 
-# Common include directory for logger headers
-set(LOGGER_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../desktop/base/logger/include")
+# Common include directory for mock headers
 set(MOCK_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mock")
 
 # =============================================================================
@@ -16,7 +15,7 @@ add_gtest_executable(
     LINK_LIBRARIES Qt6::Core;GTest::gtest;GTest::gtest_main;CFDesktop::logger
     LABELS         "logger;benchmark;performance"
     LOG_MODULE     logger_tests
-    INCLUDE_DIRS   ${LOGGER_INCLUDE_DIR};${MOCK_INCLUDE_DIR}
+    INCLUDE_DIRS   ${MOCK_INCLUDE_DIR}
 )
 
 # =============================================================================
@@ -28,7 +27,7 @@ add_gtest_executable(
     LINK_LIBRARIES Qt6::Core;GTest::gtest;GTest::gtest_main;CFDesktop::logger
     LABELS         "logger;concurrency;threading"
     LOG_MODULE     logger_tests
-    INCLUDE_DIRS   ${LOGGER_INCLUDE_DIR};${MOCK_INCLUDE_DIR}
+    INCLUDE_DIRS   ${MOCK_INCLUDE_DIR}
 )
 
 # =============================================================================
@@ -40,7 +39,7 @@ add_gtest_executable(
     LINK_LIBRARIES Qt6::Core;GTest::gtest;GTest::gtest_main;CFDesktop::logger
     LABELS         "logger;error_handling;robustness"
     LOG_MODULE     logger_tests
-    INCLUDE_DIRS   ${LOGGER_INCLUDE_DIR};${MOCK_INCLUDE_DIR}
+    INCLUDE_DIRS   ${MOCK_INCLUDE_DIR}
 )
 
 # =============================================================================
@@ -52,5 +51,5 @@ add_gtest_executable(
     LINK_LIBRARIES Qt6::Core;GTest::gtest;GTest::gtest_main;CFDesktop::logger
     LABELS         "logger;formatter;unit"
     LOG_MODULE     logger_tests
-    INCLUDE_DIRS   ${LOGGER_INCLUDE_DIR};${MOCK_INCLUDE_DIR}
+    INCLUDE_DIRS   ${MOCK_INCLUDE_DIR}
 )

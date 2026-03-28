@@ -16,10 +16,7 @@ target_sources(CFDesktopInit PRIVATE
 
 target_include_directories(CFDesktopInit
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/..
-        ${CMAKE_CURRENT_SOURCE_DIR}/../..
-        ${CMAKE_CURRENT_SOURCE_DIR}/../early_session  # For early_handle/early_handle.h
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
 target_link_libraries(CFDesktopInit PUBLIC

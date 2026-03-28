@@ -19,8 +19,6 @@ target_compile_definitions(cf_ui_components PUBLIC CFUI_STATIC_BUILD)
 # Add include directories
 target_include_directories(cf_ui_components PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>
     $<INSTALL_INTERFACE:include>
 )
 

@@ -18,7 +18,7 @@ target_sources(cf_desktop_ui_widget INTERFACE
     ${CFDESKTOP_UI_WIDGET_HEADERS}
 )
 target_include_directories(cf_desktop_ui_widget INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 target_link_libraries(cf_desktop_ui_widget INTERFACE
     Qt6::Core Qt6::Gui Qt6::Widgets

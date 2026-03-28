@@ -11,7 +11,9 @@ target_sources(CFDesktopEarlySession PRIVATE
     early_handle/early_handle.cpp
     ${IMPL_SOURCES})
 
-target_include_directories(CFDesktopEarlySession PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/..)
+target_include_directories(CFDesktopEarlySession PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+)
 
 # Link against cfbase to access device headers and other base utilities
 # Link against cflogger to access cflog.h
