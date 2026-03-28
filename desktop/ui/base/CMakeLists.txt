@@ -10,8 +10,8 @@ target_sources(cf_desktop_ui_base PRIVATE
 )
 
 target_include_directories(cf_desktop_ui_base PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_BINARY_DIR}
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
 )
 
 target_link_libraries(cf_desktop_ui_base 

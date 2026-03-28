@@ -20,7 +20,8 @@ target_sources(CFDesktopUi PRIVATE
 )
 
 target_include_directories(
-    CFDesktopUi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+    CFDesktopUi PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
 target_link_libraries(CFDesktopUi

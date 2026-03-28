@@ -1,18 +1,6 @@
 # Init session chain unit tests using GoogleTest
 log_info("desktop_init_tests" "Configured desktop init unit tests:")
 
-# Common include directories for headers
-# Need to include: desktop, desktop/main, desktop/main/init for the init headers
-# And base/include for base headers
-# Also need logger for cflog.h
-set(INIT_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../desktop
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../desktop/main
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../desktop/main/init
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../desktop/base/logger/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../base/include
-)
-
 # =============================================================================
 # Init session chain unit tests - init_session_chain_test
 # =============================================================================
@@ -21,10 +9,7 @@ add_executable(init_session_chain_test
     init_session_chain_test.cpp
 )
 
-# Add include directories
-target_include_directories(init_session_chain_test PRIVATE ${INIT_INCLUDE_DIRS})
-
-# Link libraries
+# Link libraries (transitive include dirs provided by linked targets)
 target_link_libraries(init_session_chain_test PRIVATE
     CFDesktop::lib
     CFDesktopMain

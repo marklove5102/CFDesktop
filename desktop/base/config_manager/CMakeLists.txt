@@ -12,7 +12,10 @@ target_sources(cfconfig PRIVATE
 
 # Include directories
 target_include_directories(cfconfig PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_include_directories(cfconfig PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 

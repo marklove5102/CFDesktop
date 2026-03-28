@@ -11,8 +11,6 @@ target_compile_definitions(cf_ui_application_support PUBLIC CFUI_STATIC_BUILD)
 
 target_include_directories(cf_ui_application_support PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>
     $<INSTALL_INTERFACE:include>
 )
 
@@ -63,8 +61,6 @@ target_compile_definitions(cf_ui_widget_material PUBLIC CFUI_STATIC_BUILD)
 # Add include directories
 target_include_directories(cf_ui_widget_material PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>
     $<INSTALL_INTERFACE:include>
 )
 
@@ -89,8 +85,6 @@ add_library(cf_ui_widget INTERFACE)
 
 target_include_directories(cf_ui_widget INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>
     $<INSTALL_INTERFACE:include>
 )
 

@@ -1,6 +1,3 @@
-# Include the custom helper function from parent directory
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../cmake")
-
 # =============================================================================
 # ui/base tests - math_helper_test
 # =============================================================================

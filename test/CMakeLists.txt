@@ -1,5 +1,6 @@
 # Include custom CMake helper functions
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(add_gtest_executable)
 
 # Include third party helper from root cmake directory
 include(${CMAKE_SOURCE_DIR}/cmake/third_party_helper.cmake)

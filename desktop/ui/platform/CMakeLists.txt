@@ -42,20 +42,20 @@ endif()
 
 # Include current directory and platform-specific subdirectories
 target_include_directories(cf_desktop_ui_platform PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
 # Add platform-specific subdirectory includes
 if(UNIX AND NOT APPLE)
     if(IS_WSL OR EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/linux_wsl")
         target_include_directories(cf_desktop_ui_platform PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/linux_wsl
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/linux_wsl>
         )
     endif()
 elseif(WIN32)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/windows")
         target_include_directories(cf_desktop_ui_platform PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/windows
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/windows>
         )
     endif()
 endif()

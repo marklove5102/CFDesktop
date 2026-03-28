@@ -34,8 +34,10 @@ target_sources(CFDesktopMain PRIVATE
 
 # Include directories (merged from CFDesktopEarlySession and CFDesktopInit)
 target_include_directories(CFDesktopMain PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/early_session  # For early_session headers
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/early_session>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/init>
 )
 
 target_link_libraries(CFDesktopMain PUBLIC

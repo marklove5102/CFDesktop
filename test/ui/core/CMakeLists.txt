@@ -1,6 +1,3 @@
-# Include the custom helper function from parent directory
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../cmake")
-
 log_info("UI_Core_Tests" "Configured ui/core tests")
 
 # =============================================================================
