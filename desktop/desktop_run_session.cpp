@@ -8,8 +8,8 @@
  */
 
 #include "cflog.h"
-#include "desktop_entry.h"
 #include "init/init.h"
+#include "main/desktop_entry.h"
 #include "ui/CFDesktopEntity.h"
 #include <QApplication>
 #include <QDebug>

@@ -28,7 +28,7 @@ add_library(CFDesktopMain STATIC)
 target_sources(CFDesktopMain PRIVATE
     path/desktop_main_path_resolvers.cpp
     path/desktop_self_path_resolvers.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../desktop_entry.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/desktop_entry.cpp
     ${EARLY_SESSION_SOURCES}
     ${INIT_SOURCES}
 )
