@@ -3,16 +3,13 @@
 #include "CFDesktopWindowProxy.h"
 #include "IDesktopDisplaySizeStrategy.h"
 #include "IDesktopPropertyStrategy.h"
-#include "base/macro/system_judge.h"
 #include "base/weak_ptr/weak_ptr.h"
 #include "cflog.h"
+#include "components/DisplayServerBackendFactory.h"
 #include "components/IDisplayServerBackend.h"
 #include "platform/DesktopPropertyStrategyFactory.h"
+#include "platform/display_backend_helper.h"
 #include <memory>
-
-#ifdef CFDESKTOP_OS_WINDOWS
-#    include "platform/windows/windows_display_server_backend.h"
-#endif
 
 namespace cf::desktop {
 
@@ -28,6 +25,12 @@ CFDesktopEntity& CFDesktopEntity::instance() {
 CFDesktopEntity::CFDesktopEntity()
     : QObject(nullptr), desktop_entity_(new CFDesktop(this)),
       platform_factory_(std::make_unique<platform_strategy::PlatformFactory>()) {
+    // Register the platform display backend creator into the factory
+    auto api = platform::native_display();
+    if (api.creator_func) {
+        DisplayServerBackendFactory::instance().register_creator(std::move(api.creator_func),
+                                                                 std::move(api.release_func));
+    }
     log::tracef("Desktop Entity is created");
 }
 
@@ -53,27 +56,28 @@ CFDesktopEntity::RunsSetupResult CFDesktopEntity::run_init(RunsSetupMethod m) {
     proxy.activate_window_display_strategy();
 
     // ── Windows: start display server backend for third-party window tracking ──
-#ifdef CFDESKTOP_OS_WINDOWS
-    display_backend_ = std::make_unique<backend::windows::WindowsDisplayServerBackend>();
+    display_backend_ = DisplayServerBackendFactory::instance().make_unique();
 
-    if (display_backend_->initialize(0, nullptr)) {
-        auto wb = display_backend_->windowBackend();
-        if (wb) {
-            auto* raw = wb.Get();
-            QObject::connect(raw, &IWindowBackend::window_came, this, [](WeakPtr<IWindow> win) {
-                if (win) {
-                    cf::log::traceftag("CFDesktopEntity", "External window detected: %s",
-                                       win->title().toStdString().c_str());
-                }
-            });
-            QObject::connect(raw, &IWindowBackend::window_gone, this, [](WeakPtr<IWindow> /*win*/) {
-                cf::log::traceftag("CFDesktopEntity", "External window gone");
-            });
+    if (display_backend_) {
+        if (display_backend_->initialize(0, nullptr)) {
+            auto wb = display_backend_->windowBackend();
+            if (wb) {
+                auto* raw = wb.Get();
+                QObject::connect(raw, &IWindowBackend::window_came, this, [](WeakPtr<IWindow> win) {
+                    if (win) {
+                        cf::log::traceftag("CFDesktopEntity", "External window detected: %s",
+                                           win->title().toStdString().c_str());
+                    }
+                });
+                QObject::connect(raw, &IWindowBackend::window_gone, this,
+                                 [](WeakPtr<IWindow> /*win*/) {
+                                     cf::log::traceftag("CFDesktopEntity", "External window gone");
+                                 });
+            }
+        } else {
+            log::errorftag("CFDesktopEntity", "Display server backend init failed");
         }
-    } else {
-        log::errorftag("CFDesktopEntity", "Windows display server backend init failed");
     }
-#endif
 
     log::trace("Entity Init");
     return RunsSetupResult::OK;

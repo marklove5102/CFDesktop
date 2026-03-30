@@ -29,12 +29,12 @@ int run_desktop_session() {
     cf::log::traceftag("Main", "Boot Finished, Ready to launch everything!");
     auto quit_code = QApplication::exec();
 
-    /* After our quit, we may need to do some deinits */
-    qDebug() << "Desktop Dismissed with code: " << quit_code << ", Goodbye!";
-
     /* Explicit cleanup BEFORE QApplication dies — QWidgets must not outlive it */
     CFDesktopEntity::release(); // destroy entity (and its QWidgets) while QApplication is alive
     cf::log::Logger::instance().flush_sync(); // flush all pending logs before static destruction
+
+    /* After our quit, we may need to do some deinits */
+    qDebug() << "Desktop Dismissed with code: " << quit_code << ", Goodbye!";
 
     return quit_code;
 }

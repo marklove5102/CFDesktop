@@ -8,6 +8,8 @@
 
 | 文档 | 阶段 | 内容概要 |
 |------|------|----------|
+| [system_architecture_overview.md](system_architecture_overview.md) | 总览 | 系统架构总览 — 模块层次、核心接口、平台抽象层、显示后端、UI 分层、初始化流程 |
+| [multi_display_backend_architecture.md](multi_display_backend_architecture.md) | 架构 | 多显示后端架构 — 运行时后端选择、组件复用矩阵、各后端实现指导 |
 | [00_phase0_project_skeleton.md](00_phase0_project_skeleton.md) | Phase 0 | 工程骨架搭建 - CMake 构建系统、目录结构、CI/CD 配置 |
 | [01_phase1_hardware_probe.md](01_phase1_hardware_probe.md) | Phase 1 | 硬件探针与能力分级 - CPU/GPU/内存检测、HWTier 档位判定 |
 | [02_phase2_base_library.md](02_phase2_base_library.md) | Phase 2 | Base 库核心 - 主题引擎、动画管理、DPI 适配、配置中心、日志系统 |
@@ -39,6 +41,8 @@
 
 | 模块 | 文档 |
 |------|------|
+| 系统架构 | [系统架构总览](system_architecture_overview.md) |
+| 多显示后端 | [多显示后端架构](multi_display_backend_architecture.md) |
 | 目录结构 | [Phase 0 - 二、目录结构设计](00_phase0_project_skeleton.md#二目录结构设计) |
 | 构建系统 | [Phase 0 - 三、CMake 构建系统设计](00_phase0_project_skeleton.md#三cmake-构建系统设计) |
 | 硬件检测 | [Phase 1 - 五、检测逻辑详细设计](01_phase1_hardware_probe.md#五检测逻辑详细设计) |
@@ -97,4 +101,4 @@
 
 ---
 
-*最后更新: 2026-02-20*
+*最后更新: 2026-03-30*

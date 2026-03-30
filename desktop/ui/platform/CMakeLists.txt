@@ -7,12 +7,14 @@ set(PLATFORM_SOURCES
     DesktopPropertyStrategyFactory.cpp
     IDesktopPropertyStrategy.cpp
     IDesktopDisplaySizeStrategy.cpp
+    display_backend_helper.cpp
 )
 
 set(PLATFORM_HEADERS
     platform_helper.h
     DesktopPropertyStrategyFactory.h
     IDesktopPropertyStrategy.h
+    display_backend_helper.h
 )
 
 # Add platform-specific subdirectories
@@ -21,6 +23,10 @@ if(UNIX AND NOT APPLE)
     if(IS_WSL OR EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/linux_wsl")
         file(GLOB linux_wsl_sources "${CMAKE_CURRENT_SOURCE_DIR}/linux_wsl/*.cpp")
         list(APPEND PLATFORM_SOURCES ${linux_wsl_sources})
+
+        # XCB dependency for X11 window tracking on WSL
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(XCB IMPORTED_TARGET xcb)
     endif()
 elseif(WIN32)
     # Windows platform
@@ -74,4 +80,11 @@ PRIVATE
 
 if(WIN32)
     target_compile_definitions(cf_desktop_ui_platform PRIVATE CFLOG_STATIC_BUILD)
+endif()
+
+if(UNIX AND NOT APPLE)
+    if(XCB_FOUND)
+        target_link_libraries(cf_desktop_ui_platform PRIVATE PkgConfig::XCB)
+        target_compile_definitions(cf_desktop_ui_platform PRIVATE CFDESKTOP_HAS_XCB)
+    endif()
 endif()
