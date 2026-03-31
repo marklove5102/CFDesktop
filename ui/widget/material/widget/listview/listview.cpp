@@ -294,7 +294,10 @@ QSize ListView::sizeHint() const {
     // Default width: 200dp
     float defaultWidth = helper.dpToPx(200.0f);
 
-    return QSize(static_cast<int>(defaultWidth), static_cast<int>(itemHeightPx * itemCount));
+    // Minimum height: at least one item row
+    float totalHeight = itemHeightPx * (itemCount > 0 ? itemCount : 1);
+
+    return QSize(static_cast<int>(defaultWidth), static_cast<int>(totalHeight));
 }
 
 // ============================================================================

@@ -29,6 +29,47 @@ using namespace cf::ui::core::token::literals;
 using namespace cf::ui::widget::application_support;
 
 namespace {
+// Fallback pixel sizes matching Material Design 3 Type Scale
+inline int fallbackPixelSize(TypographyStyle style) {
+    switch (style) {
+        case TypographyStyle::DisplayLarge:
+            return 57;
+        case TypographyStyle::DisplayMedium:
+            return 45;
+        case TypographyStyle::DisplaySmall:
+            return 36;
+
+        case TypographyStyle::HeadlineLarge:
+            return 32;
+        case TypographyStyle::HeadlineMedium:
+            return 28;
+        case TypographyStyle::HeadlineSmall:
+            return 24;
+
+        case TypographyStyle::TitleLarge:
+            return 22;
+        case TypographyStyle::TitleMedium:
+            return 16;
+        case TypographyStyle::TitleSmall:
+            return 14;
+
+        case TypographyStyle::BodyLarge:
+            return 16;
+        case TypographyStyle::BodyMedium:
+            return 14;
+        case TypographyStyle::BodySmall:
+            return 12;
+
+        case TypographyStyle::LabelLarge:
+            return 14;
+        case TypographyStyle::LabelMedium:
+            return 12;
+        case TypographyStyle::LabelSmall:
+            return 11;
+    }
+    return 14;
+}
+
 // Fallback colors when theme is not available
 inline CFColor fallbackOnSurface() {
     return CFColor(27, 27, 31);
@@ -85,7 +126,7 @@ TypographyStyle Label::typographyStyle() const {
 void Label::setTypographyStyle(TypographyStyle style) {
     if (typographyStyle_ != style) {
         typographyStyle_ = style;
-        colorCacheValid_ = false;  // Invalidate color cache
+        colorCacheValid_ = false; // Invalidate color cache
         updateAppearance();
         updateGeometry();
     }
@@ -98,7 +139,7 @@ LabelColorVariant Label::colorVariant() const {
 void Label::setColorVariant(LabelColorVariant variant) {
     if (colorVariant_ != variant) {
         colorVariant_ = variant;
-        colorCacheValid_ = false;  // Invalidate color cache
+        colorCacheValid_ = false; // Invalidate color cache
         updateAppearance();
     }
 }
@@ -186,7 +227,7 @@ void Label::changeEvent(QEvent* event) {
 
     if (event->type() == QEvent::EnabledChange) {
         // Update appearance when enabled state changes
-        colorCacheValid_ = false;  // Invalidate color cache
+        colorCacheValid_ = false; // Invalidate color cache
         updateAppearance();
     }
 }
@@ -329,9 +370,9 @@ CFColor Label::textColor() const {
 QFont Label::typographyFont() const {
     auto* app = Application::instance();
     if (!app) {
-        // Fallback to system font with reasonable size
+        // Fallback to system font with size based on typography style
         QFont font = QLabel::font();
-        font.setPixelSize(14);
+        font.setPixelSize(fallbackPixelSize(typographyStyle_));
         font.setWeight(QFont::Normal);
         return font;
     }
@@ -343,7 +384,7 @@ QFont Label::typographyFont() const {
         return fontType.queryTargetFont(tokenName);
     } catch (...) {
         QFont font = QLabel::font();
-        font.setPixelSize(14);
+        font.setPixelSize(fallbackPixelSize(typographyStyle_));
         font.setWeight(QFont::Normal);
         return font;
     }
