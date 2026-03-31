@@ -4,7 +4,7 @@
 
   ### 为嵌入式设备打造的现代化 Material Design 3 桌面框架
 
-  [![License: MIT][license-badge]] [![Version: 0.13.1][version-badge]]
+  [![License: MIT][license-badge]] [![Version: 0.14.0][version-badge]]
   [![C++23][cpp-badge]] [![Qt 6.8][qt-badge]] [![CMake][cmake-badge]]
   [![Documentation][docs-badge]]
 
@@ -54,7 +54,6 @@
 | 阶段 | 模块 | 完成度 | 说明 |
 |:---|:---|:---:|:---|
 | Phase 2 | 配置日志增强 | 80% | DPI基础转换已有(ui/base)，缺自动检测/版本控制/迁移/验证/网络日志 |
-| Phase 5 | UI控件测试 | 0% | 19个P0/P1控件无单元测试 |
 | Desktop | 渲染后端实现 | 30% | RenderBackend 接口设计完成，具体实现待开发 |
 
 ### 待开始 ⬜
@@ -78,7 +77,6 @@
 |:---|:---:|:---|
 | UI 控件 (P0+P1) | 100% (19个) | 完整实现 |
 | UI 控件 (P2+P3) | 0% (52个) | 待开发 |
-| UI 控件测试 | 0% | **关键缺口** |
 | 文档覆盖 | 60% | ~268个文档 |
 | 示例覆盖 | 50% | ~80个示例 |
 | 测试覆盖 | 55% | Base/Logger良好，UI控件缺失 |
@@ -247,7 +245,7 @@ cd CFDesktop
 
 <!-- Badge Links -->
 [license-badge]: https://img.shields.io/badge/License-MIT-yellow.svg
-[version-badge]: https://img.shields.io/badge/version-0.13.1-blue.svg
+[version-badge]: https://img.shields.io/badge/version-0.14.0-blue.svg
 [cpp-badge]: https://img.shields.io/badge/C++-23-00599C.svg
 [qt-badge]: https://img.shields.io/badge/Qt-6.8-41CD52.svg
 [cmake-badge]: https://img.shields.io/badge/CMake-3.16+-064F8C.svg
