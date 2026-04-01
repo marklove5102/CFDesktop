@@ -47,7 +47,6 @@ class IShellLayerStrategy {
      */
     virtual void deactivate() = 0;
 
-  private:
     /**
      * @brief  Called when the available geometry changes.
      *

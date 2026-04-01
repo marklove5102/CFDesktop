@@ -83,6 +83,10 @@ class PanelManager : public QObject {
      */
     virtual const QRect availableGeometry() const;
 
+    /**
+     * @brief  Recomputes the layout of all registered panels.
+     */
+    virtual void relayout();
   signals:
 
     /**
@@ -91,12 +95,6 @@ class PanelManager : public QObject {
      * @param[in]  rect  The new available geometry.
      */
     void availableGeometryChanged(const QRect& rect);
-
-  protected:
-    /**
-     * @brief  Recomputes the layout of all registered panels.
-     */
-    virtual void relayout();
 
   protected:
     /// Host widget for panel positioning. Ownership: external.

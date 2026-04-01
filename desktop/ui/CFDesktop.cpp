@@ -11,6 +11,9 @@
 #include "CFDesktop.h"
 #include "CFDesktopEntity.h"
 #include "cflog.h"
+#include "components/PanelManager.h"
+
+#include <QResizeEvent>
 
 namespace cf::desktop {
 
@@ -28,14 +31,22 @@ CFDesktop::~CFDesktop() {
     log::traceftag("CFDesktop Self", "Destroying Self");
 };
 
+void CFDesktop::resizeEvent(QResizeEvent* event) {
+    QWidget::resizeEvent(event);
+    if (panel_manager_) {
+        log::trace("CFDesktop Resized, Panel Manager handle the layouts, calling relayout...");
+        panel_manager_->relayout();
+    }
+}
+
 bool CFDesktop::component_available(const DesktopComponent d) const noexcept {
     switch (d) {
         case DesktopComponent::Common:
-            return !panel_manager_ && !shell_layer_;
+            return panel_manager_ != nullptr && shell_layer_ != nullptr;
         case DesktopComponent::PanelManager:
-            return !panel_manager_;
+            return panel_manager_ != nullptr;
         case DesktopComponent::ShellLayer:
-            return !shell_layer_;
+            return shell_layer_ != nullptr;
     }
     return false;
 }

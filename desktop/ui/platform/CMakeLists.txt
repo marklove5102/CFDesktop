@@ -84,6 +84,7 @@ endif()
 
 if(UNIX AND NOT APPLE)
     if(XCB_FOUND)
+        log_info("UI Backend" "Using XCB Backend as the Desktop UI Render Backend.")
         target_link_libraries(cf_desktop_ui_platform PRIVATE PkgConfig::XCB)
         target_compile_definitions(cf_desktop_ui_platform PRIVATE CFDESKTOP_HAS_XCB)
     endif()

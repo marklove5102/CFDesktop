@@ -1,7 +1,9 @@
 # Desktop UI Components
 # Core component interfaces: IWindow, IWindowBackend, IDisplayServerBackend,
 # PanelManager, ShellLayer, etc.
+log_info("Dekstop UI" "Start UI Components Configurations")
 
+add_subdirectory(shell_layer_impl)
 add_subdirectory(statusbar)
 
 # Create interface library for convenience
@@ -26,5 +28,6 @@ PUBLIC
     cfbase
     cf_desktop_render
 PRIVATE
+    cfdesktop_shell_layer_impl
     Qt6::Core Qt6::Gui Qt6::Widgets
 )

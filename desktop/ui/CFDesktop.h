@@ -17,7 +17,7 @@
 #include <QWidget>
 namespace cf::desktop {
 class PanelManager;
-class ShellLayer;
+class WidgetShellLayer;
 class CFDesktopEntity;
 
 /**
@@ -77,11 +77,11 @@ class CF_DESKTOP_EXPORT CFDesktop final : public QWidget {
     /* Managed by Resources */
     struct InitResources {
         PanelManager* panel_manager_{nullptr};
-        ShellLayer* shell_layer_{nullptr};
+        WidgetShellLayer* shell_layer_{nullptr};
     };
 
     PanelManager* panel_manager_{nullptr};
-    ShellLayer* shell_layer_{nullptr};
+    WidgetShellLayer* shell_layer_{nullptr};
 
   private:
     CFDesktop(CFDesktopEntity* entity_object); /* pass the entity objects */
@@ -89,6 +89,9 @@ class CF_DESKTOP_EXPORT CFDesktop final : public QWidget {
 
     // register the desktop sources
     void register_desktop_resources(InitResources& resources);
+
+  protected:
+    void resizeEvent(QResizeEvent* event) override;
 
   private:
     cf::WeakPtrFactory<CFDesktop> weak_ptr_factory_;

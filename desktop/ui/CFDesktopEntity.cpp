@@ -7,6 +7,9 @@
 #include "cflog.h"
 #include "components/DisplayServerBackendFactory.h"
 #include "components/IDisplayServerBackend.h"
+#include "components/PanelManager.h"
+#include "components/shell_layer_impl/DefaultShellLayerStrategy.h"
+#include "components/shell_layer_impl/WidgetShellLayer.h"
 #include "platform/DesktopPropertyStrategyFactory.h"
 #include "platform/display_backend_helper.h"
 #include <memory>
@@ -78,6 +81,26 @@ CFDesktopEntity::RunsSetupResult CFDesktopEntity::run_init(RunsSetupMethod m) {
             log::errorftag("CFDesktopEntity", "Display server backend init failed");
         }
     }
+
+    // ── Create PanelManager and ShellLayer ──
+    auto* panel_mgr = new PanelManager(desktop_entity_, desktop_entity_);
+    auto* shell = new WidgetShellLayer(desktop_entity_);
+
+    // Inject into CFDesktop
+    CFDesktop::InitResources res;
+    res.panel_manager_ = panel_mgr;
+    res.shell_layer_ = shell;
+    desktop_entity_->register_desktop_resources(res);
+
+    // Set shell strategy (solid background fallback)
+    shell->setStrategy(std::make_unique<DefaultShellLayerStrategy>());
+
+    // Connect PanelManager geometry changes to ShellLayer
+    QObject::connect(panel_mgr, &PanelManager::availableGeometryChanged, shell,
+                     &WidgetShellLayer::onAvailableGeometryChanged);
+
+    // Show the desktop full-screen
+    desktop_entity_->showFullScreen();
 
     log::trace("Entity Init");
     return RunsSetupResult::OK;
