@@ -32,6 +32,13 @@ include(cmake/generate_meta_info.cmake)
 # Generate meta info headers after Qt6 is found
 cf_generate_meta_info()
 
+# Generate desktop_settings.h
+include(cmake/generate_desktop_settings.cmake)
+cf_generate_desktop_settings()
+
+# Apply desktop root overlay (needs CFDESKTOP_DEFAULT_ROOT from above)
+cf_apply_desktop_root_overlay()
+
 # Log base module start
 log_module_start("base")
 add_subdirectory(base)

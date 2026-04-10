@@ -1,4 +1,5 @@
 #include "early_session/impl/console_signal_stage.h"
+#include "early_session/impl/desktop_backbone_setup.h"
 #include "early_session/impl/early_config_stage.h"
 #include "early_session/impl/early_welcome_impl.h"
 #include "early_session/impl/logger_stage.h"
@@ -21,6 +22,10 @@ void RunEarlyInit() {
     /* Stage 2: Logger Boots */
     early_runner.register_stage_execute_before(
         []() { return std::make_unique<early_stage::LoggerStage>(); });
+
+    /* Stage 3: Check the Desktop Backbones, if failed, we sucks */
+    early_runner.register_stage_execute_before(
+        []() { return std::make_unique<early_stage::DesktopBackboneEarlySetup>(); });
 
     /* Finalize: Welcome Boots */
     early_runner.register_stage_back(

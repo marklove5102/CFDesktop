@@ -1,7 +1,7 @@
 /**
  * @file init_session_chain.h
  * @author Charliechen114514 (chengh1922@mails.jlu.edu.cn)
- * @brief Init Session Chains - 基于DAG依赖图的初始化阶段执行链
+ * @brief Init Session Chains - DAG-based initialization stage execution chain
  * @version 0.1
  * @date 2026-03-25
  *
@@ -21,13 +21,13 @@
 namespace cf::desktop::init_session {
 
 /**
- * @brief 初始化会话链，管理多个IInitStage的执行
+ * @brief Initialization session chain that manages multiple IInitStage executions
  *
- * 功能特性：
- * - 基于DAG自动解析依赖关系并拓扑排序
- * - 检测循环依赖并报错
- * - OK/PartialFailed继续执行，CriticalFailed立即停止
- * - 提供详细的执行调试信息
+ * Features:
+ * - Automatic DAG-based dependency resolution with topological sorting
+ * - Circular dependency detection and error reporting
+ * - OK/PartialFailed continues execution, CriticalFailed stops immediately
+ * - Detailed execution debug information
  */
 class InitSessionChain : public QObject {
     Q_OBJECT
@@ -36,117 +36,124 @@ class InitSessionChain : public QObject {
     ~InitSessionChain();
 
     /**
-     * @brief 获取全局Chain的WeakPtr引用（单例模式）
+     * @brief Gets the global Chain's WeakPtr reference (singleton pattern)
      */
     static cf::WeakPtr<InitSessionChain> GetChainRef();
 
     /**
-     * @brief 添加一个初始化阶段到链尾部
-     * @param[in] stage 唯一指针管理的Stage对象
+     * @brief Adds an initialization stage to the end of the chain
+     * @param[in] stage Unique pointer to the Stage object
      */
     void add_stage_back(std::unique_ptr<IInitStage> stage);
 
     /**
-     * @brief 执行初始化链
-     * @return 最终执行结果（OK/PartialFailed/CriticalFailed）
+     * @brief Executes the initialization chain
+     * @return Final execution result (OK/PartialFailed/CriticalFailed)
      *
-     * 执行逻辑：
-     * 1. 解析依赖图并生成拓扑排序
-     * 2. 按顺序执行各Stage
-     * 3. 遇到CriticalFailed立即停止并返回
-     * 4. PartialFailed记录但继续执行
+     * Execution logic:
+     * 1. Resolve dependency graph and generate topological sort
+     * 2. Execute stages in order
+     * 3. Stop immediately on CriticalFailed
+     * 4. Log PartialFailed but continue execution
      */
     IInitStage::StageResult execute();
 
     /**
-     * @brief 获取依赖图的调试字符串（用于调试和日志）
-     * @return 描述依赖关系的可读字符串
+     * @brief Gets the dependency graph debug string (for debugging and logging)
+     * @return Human-readable string describing dependency relationships
      */
     QString get_dependency_graph_debug_string() const;
 
     /**
-     * @brief 重置链状态，允许重新执行
+     * @brief Resets the chain state, allowing re-execution
      */
     void reset();
 
     /**
-     * @brief 获取链中的Stage数量
-     * @return Stage数量
+     * @brief Finds a Stage by name and returns its WeakPtr
+     * @param[in] stage_name Stage name
+     * @return Valid WeakPtr<IInitStage> if found, invalid WeakPtr otherwise
+     */
+    cf::WeakPtr<IInitStage> find_stage(std::string_view stage_name) const;
+
+    /**
+     * @brief Gets the number of stages in the chain
+     * @return Number of stages
      */
     size_t size() const { return execution_order.size(); }
 
   signals:
     /**
-     * @brief Stage开始执行信号
+     * @brief Signal emitted when a stage starts execution
      */
     void stage_start(const BootStageInfo& bs_info);
 
     /**
-     * @brief Stage完成执行信号
-     * @param[in] stage_name Stage名称
-     * @param[in] success 是否成功（包括部分成功）
+     * @brief Signal emitted when a stage completes execution
+     * @param[in] stage_name Stage name
+     * @param[in] success Whether the stage succeeded (including partial success)
      */
     void stage_completed(const QString& stage_name, bool success);
 
     /**
-     * @brief Stage部分失败信号
-     * @param[in] stage_name Stage名称
-     * @param[in] message 失败消息
-     * @param[in] detail 错误详情
+     * @brief Signal emitted when a stage partially fails
+     * @param[in] stage_name Stage name
+     * @param[in] message Failure message
+     * @param[in] detail Error detail
      */
     void stage_partial_failed(const QString& stage_name, const QString& message,
                               const QString& detail);
 
     /**
-     * @brief Chain执行完成信号
-     * @param[in] final_result 最终结果
+     * @brief Signal emitted when the chain execution finishes
+     * @param[in] final_result Final result
      */
     void chain_finished(const IInitStage::StageResult& final_result);
 
   private:
     /**
-     * @brief 依赖图节点，用于拓扑排序
+     * @brief Dependency graph node for topological sorting
      */
     struct GraphNode {
-        IInitStage* stage;                     // Stage指针
-        std::vector<IInitStage*> dependencies; // 依赖的Stage列表
-        std::string stage_name;                // Stage名称（用于调试）
-        int in_degree;                         // 入度（用于Kahn算法）
+        IInitStage* stage;                     // Stage pointer
+        std::vector<IInitStage*> dependencies; // List of dependent stages
+        std::string stage_name;                // Stage name (for debugging)
+        int in_degree;                         // In-degree (for Kahn's algorithm)
     };
 
     /**
-     * @brief 构建依赖图
-     * @return 成功返回排序后的Stage列表，失败返回空（循环依赖）
+     * @brief Builds the dependency graph
+     * @return Sorted stage list on success, empty on failure (circular dependency)
      */
     std::vector<GraphNode> build_dependency_graph();
 
     /**
-     * @brief 拓扑排序（Kahn算法）
-     * @param graph 依赖图
-     * @return 排序后的Stage指针列表
+     * @brief Topological sort using Kahn's algorithm
+     * @param graph Dependency graph
+     * @return Sorted list of stage pointers
      */
     std::vector<IInitStage*> topological_sort(std::vector<GraphNode>& graph);
 
     /**
-     * @brief 检测循环依赖
-     * @param graph 依赖图
-     * @return 存在循环依赖返回true
+     * @brief Detects circular dependencies
+     * @param graph Dependency graph
+     * @return true if circular dependency exists
      */
     bool has_circular_dependency(const std::vector<GraphNode>& graph) const;
 
     /**
-     * @brief 生成依赖图调试字符串
-     * @param graph 依赖图
-     * @return 格式化的调试信息字符串
+     * @brief Generates dependency graph debug string
+     * @param graph Dependency graph
+     * @return Formatted debug information string
      */
     QString generate_debug_string(const std::vector<GraphNode>& graph) const;
 
   private:
     std::list<std::unique_ptr<IInitStage>> stages;
-    std::vector<IInitStage*> execution_order; // 拓扑排序后的执行顺序
-    QString last_debug_string;                // 上次的依赖图调试字符串
+    std::vector<IInitStage*> execution_order; // Topologically sorted execution order
+    QString last_debug_string;                // Last dependency graph debug string
     bool has_run{false};
-    bool is_valid{true}; // 依赖图是否有效（无循环依赖）
+    bool is_valid{true}; // Whether the dependency graph is valid (no circular dependencies)
 
     cf::WeakPtrFactory<InitSessionChain> weak_ptr_factory_;
 };

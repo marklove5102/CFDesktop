@@ -1,8 +1,5 @@
 log_info("Desktop Init Module" "Start Configuring Desktop Init")
 
-# Note: gui_progress subdirectory removed - UI components migrated to desktop/ui/widget/init_session/
-add_subdirectory(early_gain)
-
 add_library(CFDesktopInit STATIC)
 
 target_sources(CFDesktopInit PRIVATE
@@ -11,7 +8,8 @@ target_sources(CFDesktopInit PRIVATE
     init_session.cpp
     init_settings.cpp
     gui_progress/gui_init_stage.cpp
-    ${EARLY_GAIN_SOURCES}
+    early_gain/early_pass_stage.cpp
+    desktop_backbone_init/desktop_backbone_init.cpp
 )
 
 target_include_directories(CFDesktopInit

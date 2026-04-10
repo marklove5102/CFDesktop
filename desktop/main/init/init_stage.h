@@ -1,5 +1,6 @@
 #pragma once
 #include "base/weak_ptr/weak_ptr.h"
+#include "base/weak_ptr/weak_ptr_factory.h"
 #include <QObject>
 #include <QString>
 #include <string_view>
@@ -128,7 +129,7 @@ class IInitStage {
     };
 
   public:
-    IInitStage() = default;
+    IInitStage() : weak_ptr_factory(this) {}
     virtual ~IInitStage() = default;
 
     /**
@@ -163,6 +164,21 @@ class IInitStage {
      * @ingroup        desktop_init
      */
     virtual StageResult run_session() = 0;
+
+    /**
+     * @brief  Gets a weak pointer to this stage.
+     * @return         WeakPtr<IInitStage> pointing to this stage, or invalid if unsupported.
+     * @throws         None
+     * @note           Default returns an invalid WeakPtr. Concrete stages with a
+     *                 WeakPtrFactory should override this method.
+     * @warning        None
+     * @since          N/A
+     * @ingroup        desktop_init
+     */
+    virtual WeakPtr<IInitStage> get_weak_ptr() const { return nullptr; }
+
+  private:
+    WeakPtrFactory<IInitStage> weak_ptr_factory;
 };
 
 } // namespace cf::desktop::init_session

@@ -81,6 +81,13 @@ class EarlyHandle : public SimpleSingleton<EarlyHandle> {
      */
     const early_settings::EarlySettings& early_settings() const;
 
+    /**
+     * @brief Get the desktop Boot Position
+     *
+     * @return QString
+     */
+    QString desktop_root_position() const;
+
   private:
     /// @brief Unique pointer to early settings. Ownership: owner; may be nullptr.
     std::unique_ptr<early_settings::EarlySettings> settings;

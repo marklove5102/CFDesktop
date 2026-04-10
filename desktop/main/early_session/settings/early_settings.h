@@ -88,11 +88,27 @@ class EarlySettings {
      */
     QString get_boot_logger_path() const;
 
+    /**
+     * @brief Gets the Desktop Root, creating it if the target does not exist.
+     *
+     * @return QString
+     */
+    QString get_desktop_root() const;
+
+    /**
+     * @brief Unlock the Early Settings, using in release the sessions
+     *
+     * @return std::unique_ptr<QSettings>
+     */
     std::unique_ptr<QSettings> unlock_early_settings();
 
   private:
     /// @brief Cached path to the log file for the current session. Ownership: owner.
     mutable QString this_session_logfile_path{};
+
+    /// @brief Cached Desktop Root; only changes when the desktop path is switched
+    mutable QString desktop_root{};
+
     /// @brief Qt settings object for reading the INI configuration. Ownership: owner.
     std::unique_ptr<QSettings> early_settings;
 };

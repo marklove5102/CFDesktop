@@ -1,0 +1,8 @@
+# Ignore user-customized overlay files
+# Only directory structure (.gitkeep placeholders) is tracked
+# User can place custom early.ini, configs, wallpapers, etc. without git noise
+**
+
+!.gitignore
+!**/
+!**/.gitkeep

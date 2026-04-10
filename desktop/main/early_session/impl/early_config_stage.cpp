@@ -1,9 +1,9 @@
 #include "early_config_stage.h"
+#include "desktop_settings.h"
 #include "early_handle/early_handle.h"
 #include "file_op.h"
 #include "init_chain/init_stage.h"
 #include "settings/early_settings.h"
-#include "settings/path.h"
 #include <QDebug>
 #include <QFile>
 #include <QString>

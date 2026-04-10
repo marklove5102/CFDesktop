@@ -14,6 +14,7 @@
 
 #pragma once
 #include "init_stage.h"
+#include "init_stage_name.h"
 
 namespace cf::desktop::init_session {
 
@@ -46,7 +47,7 @@ class EarlyTransferStage : public IInitStage {
      * @since  N/A
      * @ingroup none
      */
-    std::string_view name() const noexcept override { return "Early Transform"; }
+    std::string_view name() const noexcept override { return CONFIG_PASS_STAGE; }
 
     /**
      * @brief  Requests stages that should execute before this stage.

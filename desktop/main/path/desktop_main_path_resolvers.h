@@ -13,12 +13,11 @@
  */
 
 #pragma once
-#include "base/singleton/simple_singleton.hpp"
+#include "base/singleton/singleton.hpp"
 #include <QString>
 #include <cstdint>
 
 namespace cf::desktop::path {
-
 /**
  * @brief  Provider for desktop main directory paths.
  *
@@ -27,19 +26,24 @@ namespace cf::desktop::path {
  *
  * @ingroup desktop_main
  */
-class DesktopMainPathProvider : public cf::SimpleSingleton<DesktopMainPathProvider> {
+class DesktopMainPathProvider : public cf::Singleton<DesktopMainPathProvider> {
   public:
     /**
-     * @brief  Constructs the path provider with a desktop root directory.
-     *
-     * @param[in] desktop_active_root Pointer to the desktop active root path.
-     * @throws     None
-     * @note       None
-     * @warning    None
-     * @since      N/A
-     * @ingroup    desktop_main
+     * @brief Allows Singleton base to access private constructor.
      */
-    DesktopMainPathProvider(const char* desktop_active_root);
+    friend class cf::Singleton<DesktopMainPathProvider>;
+    /// @brief Single source of truth for all path types.
+    /// Add new entries here — enum, string table, and count are derived automatically.
+#define CF_PATH_TYPES \
+    X(Home)           \
+    X(Desktop)        \
+    X(Documents)      \
+    X(Downloads)      \
+    X(Music)          \
+    X(Pictures)       \
+    X(Videos)         \
+    X(Apps)           \
+    X(Runtime)
 
     /**
      * @brief  Standard desktop path types.
@@ -49,37 +53,21 @@ class DesktopMainPathProvider : public cf::SimpleSingleton<DesktopMainPathProvid
      * @ingroup desktop_main
      */
     enum class PathType {
-        Home,      ///< User home directory.
-        Desktop,   ///< Desktop folder.
-        Documents, ///< Documents folder.
-        Downloads, ///< Downloads folder.
-        Music,     ///< Music folder.
-        Pictures,  ///< Pictures folder.
-        Videos,    ///< Videos folder.
-        Apps,      ///< Applications folder.
-        Runtime    ///< Runtime directory.
+#define X(name) name,
+        CF_PATH_TYPES
+#undef X
     };
 
-    static constexpr const uint8_t PathTypeCnt = static_cast<uint8_t>(PathType::Runtime) + 1;
-
-    /**
-     * @brief  String constants for path component names.
-     *
-     * Provides static string representations of path type names.
-     *
-     * @ingroup desktop_main
-     */
-    struct PathComponents {
-        static constexpr const char* Home = "Home";
-        static constexpr const char* Desktop = "Desktop";
-        static constexpr const char* Documents = "Documents";
-        static constexpr const char* Downloads = "Downloads";
-        static constexpr const char* Music = "Music";
-        static constexpr const char* Pictures = "Pictures";
-        static constexpr const char* Videos = "Videos";
-        static constexpr const char* Apps = "Apps";
-        static constexpr const char* Runtime = "Runtime";
+    /// @brief String names indexed by PathType enum value.
+    static constexpr const char* kPathNames[] = {
+#define X(name) #name,
+        CF_PATH_TYPES
+#undef X
     };
+
+    static constexpr uint8_t PathTypeCnt = sizeof(kPathNames) / sizeof(kPathNames[0]);
+
+#undef CF_PATH_TYPES
 
     /**
      * @brief   Checks and creates missing path directories.
@@ -95,7 +83,7 @@ class DesktopMainPathProvider : public cf::SimpleSingleton<DesktopMainPathProvid
      * @since   N/A
      * @ingroup desktop_main
      */
-    bool init();
+    bool setup();
 
     /**
      * @brief   Resolves the absolute path for a given path type.
@@ -112,8 +100,37 @@ class DesktopMainPathProvider : public cf::SimpleSingleton<DesktopMainPathProvid
      */
     QString absolutePath(const PathType p);
 
+    /**
+     * @brief Checks if the directory for a given path type exists.
+     *
+     * @param[in] p The path type to check.
+     * @return true if the directory exists, false otherwise.
+     */
+    bool component_exsited(const PathType p);
+
+    /**
+     * @brief Creates the directory for a given path type.
+     *
+     * Should be called when component_exsited() returns false.
+     *
+     * @param[in] p The path type to create.
+     * @return true if creation succeeded, false otherwise.
+     */
+    bool request_created(const PathType p);
+
   private:
+    /**
+     * @brief  Constructs the path provider with a desktop root directory.
+     *
+     * @param[in] desktop_active_root Pointer to the desktop active root path.
+     * @throws     None
+     * @note       None
+     * @warning    None
+     * @since      N/A
+     * @ingroup    desktop_main
+     */
+    DesktopMainPathProvider(const QString& desktop_active_root);
     /// @brief View of the root directory path. Ownership: observer.
-    std::string_view root{};
+    QString root{};
 };
 } // namespace cf::desktop::path

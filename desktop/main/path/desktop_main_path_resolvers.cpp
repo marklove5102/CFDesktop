@@ -1,50 +1,47 @@
 #include "desktop_main_path_resolvers.h"
+#include "cflog.h"
 #include <QDir>
 
 namespace {
-QString make(const char* root, const char* components) {
-    QDir rootDir(QString::fromUtf8(root));
+QString make(const QString& root, const char* components) {
+    QDir rootDir(root);
     return rootDir.absoluteFilePath(QString::fromUtf8(components));
 }
 } // namespace
 
 namespace cf::desktop::path {
 
-DesktopMainPathProvider::DesktopMainPathProvider(const char* desktop_active_root)
+DesktopMainPathProvider::DesktopMainPathProvider(const QString& desktop_active_root)
     : root{desktop_active_root} {}
 
-QString DesktopMainPathProvider::absolutePath(const PathType p) {
-    const char* component = nullptr;
-    switch (p) {
-        case PathType::Home:
-            component = PathComponents::Home;
-            break;
-        case PathType::Desktop:
-            component = PathComponents::Desktop;
-            break;
-        case PathType::Documents:
-            component = PathComponents::Documents;
-            break;
-        case PathType::Downloads:
-            component = PathComponents::Downloads;
-            break;
-        case PathType::Music:
-            component = PathComponents::Music;
-            break;
-        case PathType::Pictures:
-            component = PathComponents::Pictures;
-            break;
-        case PathType::Videos:
-            component = PathComponents::Videos;
-            break;
-        case PathType::Apps:
-            component = PathComponents::Apps;
-            break;
-        case PathType::Runtime:
-            component = PathComponents::Runtime;
-            break;
+bool DesktopMainPathProvider::setup() {
+    for (int i = 0; i < PathTypeCnt; ++i) {
+        const auto p = static_cast<PathType>(i);
+        if (component_exsited(p)) {
+            log::tracef("Component [{}] existed at: {}", DesktopMainPathProvider::kPathNames[i],
+                        absolutePath(p).toStdString());
+            continue;
+        }
+        if (!QDir(absolutePath(p)).mkpath(QStringLiteral("."))) {
+            return false;
+        }
     }
-    return make(root.data(), component);
+    return true;
+}
+
+bool DesktopMainPathProvider::component_exsited(const PathType p) {
+    return QDir(absolutePath(p)).exists();
+}
+
+bool DesktopMainPathProvider::request_created(const PathType p) {
+    if (component_exsited(p)) {
+        return true;
+    }
+    return QDir(absolutePath(p)).mkpath(QStringLiteral("."));
+}
+
+QString DesktopMainPathProvider::absolutePath(const PathType p) {
+    return make(root, DesktopMainPathProvider::kPathNames[static_cast<size_t>(p)]);
 }
 
 } // namespace cf::desktop::path

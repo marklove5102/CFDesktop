@@ -3,8 +3,6 @@ log_info("Desktop Main" "Creating unified CFDesktopMain library")
 # Collect source variables from subdirectories
 add_subdirectory(log)
 add_subdirectory(early_session/impl)
-add_subdirectory(init/early_gain)
-
 # CFDesktopEarlySession sources (merged from early_session/CMakeLists.txt)
 set(EARLY_SESSION_SOURCES
     early_session/init_chain/init_chain.cpp
@@ -20,7 +18,8 @@ set(INIT_SOURCES
     init/init_session.cpp
     init/init_settings.cpp
     init/gui_progress/gui_init_stage.cpp
-    ${EARLY_GAIN_SOURCES}
+    init/early_gain/early_pass_stage.cpp
+    init/desktop_backbone_init/desktop_backbone_init.cpp
 )
 
 add_library(CFDesktopMain STATIC)
@@ -39,6 +38,7 @@ target_include_directories(CFDesktopMain PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/early_session>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/init>
+    $<BUILD_INTERFACE:${CFDESKTOP_SETTINGS_OUTPUT_DIR}>
 )
 
 target_link_libraries(CFDesktopMain PUBLIC

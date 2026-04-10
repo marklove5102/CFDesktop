@@ -19,4 +19,8 @@ QWidget* InitInfoHandle::unlockBootWidget() {
     return p;
 }
 
+QString InitInfoHandle::root_position() const {
+    return early_settings_->value("desktop/root").value<QString>();
+}
+
 } // namespace cf::desktop::init_session

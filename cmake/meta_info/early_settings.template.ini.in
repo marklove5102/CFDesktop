@@ -1,0 +1,8 @@
+[logger]
+# Dirent Should be relatives at CFDesktop Itself
+dirent="logger/"
+
+[desktop]
+# Desktop Root Places, that place will be the place where desktop
+# Scan and, maybe created the subdirectories
+root="@CFDESKTOP_DEFAULT_ROOT@"

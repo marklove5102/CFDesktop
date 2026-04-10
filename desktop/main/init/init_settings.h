@@ -81,7 +81,19 @@ class InitInfoHandle : public SimpleSingleton<InitInfoHandle> {
      */
     QWidget* unlockBootWidget();
 
+    /**
+     * @brief Get the Boot Widget object
+     *
+     * @return QWidget*
+     */
     QWidget* getBootWidget() { return boot_widget_; }
+
+    /**
+     * @brief Get the root position indicated
+     *
+     * @return QString
+     */
+    QString root_position() const;
 
   private:
     /// @brief Pointer to the boot widget. Ownership: owner; may be nullptr.

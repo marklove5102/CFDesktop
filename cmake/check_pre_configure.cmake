@@ -30,6 +30,14 @@ log_info("OutputConfig" "Configuring output directories")
 include(cmake/OutputDirectoryConfig.cmake)
 
 # ============================================================
+# Desktop Overlay
+# ============================================================
+# 将 cmake/desktop_overlay/ 中的预配置文件拷贝到构建输出目录
+log_info("DesktopOverlay" "Checking for overlay files")
+include(cmake/desktop_overlay.cmake)
+cf_apply_desktop_overlay()
+
+# ============================================================
 # Example Launcher Generator (Windows)
 # ============================================================
 # 为每个 example 生成 Windows 启动脚本

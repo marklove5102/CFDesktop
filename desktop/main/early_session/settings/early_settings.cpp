@@ -38,6 +38,19 @@ QString EarlySettings::get_boot_logger_path() const {
     return log_file;
 }
 
+QString EarlySettings::get_desktop_root() const {
+    if (!valid()) {
+        return {};
+    }
+
+    if (!desktop_root.isEmpty()) {
+        return desktop_root;
+    }
+
+    desktop_root = early_settings->value("desktop/root", "").value<QString>();
+    return desktop_root;
+}
+
 std::unique_ptr<QSettings> EarlySettings::unlock_early_settings() {
     return std::move(early_settings);
 }

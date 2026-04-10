@@ -83,6 +83,15 @@ void InitSessionChain::reset() {
     last_debug_string.clear();
 }
 
+cf::WeakPtr<IInitStage> InitSessionChain::find_stage(std::string_view stage_name) const {
+    for (const auto& stage : stages) {
+        if (stage->name() == stage_name) {
+            return stage->get_weak_ptr();
+        }
+    }
+    return nullptr;
+}
+
 QString InitSessionChain::get_dependency_graph_debug_string() const {
     if (!last_debug_string.isEmpty()) {
         return last_debug_string;
