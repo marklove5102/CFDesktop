@@ -3,6 +3,7 @@ add_library(cfdesktop_shell_layer_impl STATIC
     WidgetShellLayer.cpp
     DefaultShellLayerStrategy.cpp
     WallpaperShellLayerStrategy.cpp
+    ../wallpaper/wallpaper_setup.cpp
 )
 
 target_include_directories(cfdesktop_shell_layer_impl PUBLIC

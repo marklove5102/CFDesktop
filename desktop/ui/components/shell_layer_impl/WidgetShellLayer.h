@@ -84,7 +84,7 @@ class WidgetShellLayer : public QWidget, public IShellLayer {
      *
      * @param[in] rect  The new available geometry rectangle.
      */
-    void onAvailableGeometryChanged(const QRect& rect);
+    void onAvailableGeometryChanged(const QRect& rect) override;
 
   protected:
     /**

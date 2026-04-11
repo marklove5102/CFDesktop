@@ -60,6 +60,16 @@ class IShellLayer {
      * Wayland compositor layers commit the surface.
      */
     virtual void requestRepaint() = 0;
+
+    /**
+     * @brief  Handles changes to the available screen geometry.
+     *
+     * Called when the available geometry changes (e.g., after panel layout).
+     * Implementations should update their geometry and notify the active strategy.
+     *
+     * @param[in]  available  The new available geometry rectangle.
+     */
+    virtual void onAvailableGeometryChanged(const QRect& available) = 0;
 };
 
 } // namespace cf::desktop

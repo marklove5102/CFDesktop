@@ -1,7 +1,11 @@
 #include "windows_platform.h"
 #include "IDesktopPropertyStrategy.h"
+#include "components/IShellLayerStrategy.h"
+#include "components/shell_layer_impl/WidgetShellLayer.h"
+#include "components/wallpaper/wallpaper_setup.h"
 #include "display_backend_helper.h"
 #include "platform_helper.h"
+#include "shell_layer_helper.h"
 #include "windows_display_server_backend.h"
 #include "windows_factory.h"
 
@@ -28,6 +32,18 @@ DisplayBackendFactoryAPI native_display_impl() {
         return new backend::windows::WindowsDisplayServerBackend();
     };
     api.release_func = [](IDisplayServerBackend* p) { delete p; };
+    return api;
+}
+
+ShellLayerFactoryAPI native_shell_layer_impl() {
+    ShellLayerFactoryAPI api;
+    api.shell_creator = [](QWidget* parent) -> IShellLayer* {
+        return new WidgetShellLayer(parent);
+    };
+    api.shell_releaser = [](IShellLayer* p) { delete p; };
+    api.strategy_creator = []() -> std::unique_ptr<IShellLayerStrategy> {
+        return wallpaper::create_wallpaper_strategy();
+    };
     return api;
 }
 

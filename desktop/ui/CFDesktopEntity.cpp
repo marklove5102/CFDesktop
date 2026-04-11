@@ -8,11 +8,9 @@
 #include "components/DisplayServerBackendFactory.h"
 #include "components/IDisplayServerBackend.h"
 #include "components/PanelManager.h"
-#include "components/shell_layer_impl/WallpaperShellLayerStrategy.h"
-#include "components/shell_layer_impl/WidgetShellLayer.h"
-#include "components/wallpaper/ImageWallPaperLayer.h"
 #include "platform/DesktopPropertyStrategyFactory.h"
 #include "platform/display_backend_helper.h"
+#include "platform/shell_layer_helper.h"
 #include "qt_format.h"
 #include <memory>
 
@@ -86,7 +84,11 @@ CFDesktopEntity::RunsSetupResult CFDesktopEntity::run_init(RunsSetupMethod m) {
 
     // ── Create PanelManager and ShellLayer ──
     auto* panel_mgr = new PanelManager(desktop_entity_, desktop_entity_);
-    auto* shell = new WidgetShellLayer(desktop_entity_);
+
+    auto shell_api = platform::native_shell_layer();
+    auto* shell = shell_api.shell_creator(desktop_entity_);
+    auto strategy = shell_api.strategy_creator();
+    shell->setStrategy(std::move(strategy));
 
     // Inject into CFDesktop
     CFDesktop::InitResources res;
@@ -94,15 +96,9 @@ CFDesktopEntity::RunsSetupResult CFDesktopEntity::run_init(RunsSetupMethod m) {
     res.shell_layer_ = shell;
     desktop_entity_->register_desktop_resources(res);
 
-    // Set shell strategy with wallpaper support
-    auto wallpaper_layer = std::make_unique<wallpaper::ImageWallPaperLayer>();
-    auto wallpaper_strategy =
-        std::make_unique<WallpaperShellLayerStrategy>(std::move(wallpaper_layer));
-    shell->setStrategy(std::move(wallpaper_strategy));
-
     // Connect PanelManager geometry changes to ShellLayer
-    QObject::connect(panel_mgr, &PanelManager::availableGeometryChanged, shell,
-                     &WidgetShellLayer::onAvailableGeometryChanged);
+    QObject::connect(panel_mgr, &PanelManager::availableGeometryChanged, desktop_entity_,
+                     [shell](const QRect& r) { shell->onAvailableGeometryChanged(r); });
 
     // Show the desktop full-screen
     desktop_entity_->showFullScreen();

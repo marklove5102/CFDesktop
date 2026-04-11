@@ -8,6 +8,7 @@ set(PLATFORM_SOURCES
     IDesktopPropertyStrategy.cpp
     IDesktopDisplaySizeStrategy.cpp
     display_backend_helper.cpp
+    shell_layer_helper.cpp
 )
 
 set(PLATFORM_HEADERS
@@ -15,6 +16,7 @@ set(PLATFORM_HEADERS
     DesktopPropertyStrategyFactory.h
     IDesktopPropertyStrategy.h
     display_backend_helper.h
+    shell_layer_helper.h
 )
 
 # Add platform-specific subdirectories

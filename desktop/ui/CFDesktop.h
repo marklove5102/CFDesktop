@@ -17,7 +17,7 @@
 #include <QWidget>
 namespace cf::desktop {
 class PanelManager;
-class WidgetShellLayer;
+class IShellLayer;
 class CFDesktopEntity;
 
 /**
@@ -77,11 +77,11 @@ class CF_DESKTOP_EXPORT CFDesktop final : public QWidget {
     /* Managed by Resources */
     struct InitResources {
         PanelManager* panel_manager_{nullptr};
-        WidgetShellLayer* shell_layer_{nullptr};
+        IShellLayer* shell_layer_{nullptr};
     };
 
     PanelManager* panel_manager_{nullptr};
-    WidgetShellLayer* shell_layer_{nullptr};
+    IShellLayer* shell_layer_{nullptr};
 
   private:
     CFDesktop(CFDesktopEntity* entity_object); /* pass the entity objects */
