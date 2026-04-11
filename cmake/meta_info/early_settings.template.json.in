@@ -1,0 +1,8 @@
+{
+    "logger": {
+        "dirent": "logger/"
+    },
+    "desktop": {
+        "root": "@CFDESKTOP_DEFAULT_ROOT@"
+    }
+}

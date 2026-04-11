@@ -1,11 +1,17 @@
 #include "init_settings.h"
 #include "early_handle/early_handle.h"
+#include <QJsonObject>
 
 namespace cf::desktop::init_session {
 
+InitInfoHandle::~InitInfoHandle() {
+    delete early_settings_;
+    early_settings_ = nullptr;
+}
+
 void InitInfoHandle::passedEarlyBootInfo(early_stage::EarlyHandle& early_handle) {
     auto earlies = early_handle.unlockEarlySettings();
-    early_settings_ = earlies->unlock_early_settings();
+    early_settings_ = earlies->unlock_early_settings().release();
     /* Releases the Early settings... */
 }
 
@@ -20,7 +26,10 @@ QWidget* InitInfoHandle::unlockBootWidget() {
 }
 
 QString InitInfoHandle::root_position() const {
-    return early_settings_->value("desktop/root").value<QString>();
+    if (!early_settings_) {
+        return {};
+    }
+    return (*early_settings_)["desktop"].toObject()["root"].toString();
 }
 
 } // namespace cf::desktop::init_session

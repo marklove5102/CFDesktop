@@ -3,11 +3,11 @@
 # ============================================================
 # This module generates:
 #   1. desktop_settings.h - compile-time header with default paths
-#   2. settings/early.ini - pre-configured settings for overlay
+#   2. settings/early.json - pre-configured settings for overlay
 #
 # Output directories:
 #   ${CMAKE_BINARY_DIR}/autogen/desktop_settings/  (header)
-#   ${CMAKE_BINARY_DIR}/bin/settings/              (early.ini)
+#   ${CMAKE_BINARY_DIR}/bin/settings/              (early.json)
 #
 # Cross-compilation:
 #   Set -DCFDESKTOP_DEFAULT_ROOT=<path> to override the default
@@ -42,7 +42,9 @@ function(cf_generate_desktop_settings)
     else()
         # Native build: use host environment variables
         if(WIN32)
-            set(CFDESKTOP_DEFAULT_ROOT "$ENV{USERPROFILE}/cfdesktop/")
+            # Normalize to forward slashes to avoid Qt6 QSettings treating
+            # backslashes as escape sequences in the INI file
+            file(TO_CMAKE_PATH "$ENV{USERPROFILE}/cfdesktop/" CFDESKTOP_DEFAULT_ROOT)
         else()
             set(CFDESKTOP_DEFAULT_ROOT "$ENV{HOME}/desktop")
         endif()
@@ -67,23 +69,23 @@ function(cf_generate_desktop_settings)
     log_info("DesktopSettings" "Desktop root default: ${CFDESKTOP_DEFAULT_ROOT}")
 
     # ----------------------------------------------------------
-    # 2. Generate settings/early.ini (pre-configured for overlay)
+    # 2. Generate settings/early.json (pre-configured for overlay)
     # ----------------------------------------------------------
-    set(EARLY_INI_OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin/settings)
-    file(MAKE_DIRECTORY ${EARLY_INI_OUTPUT_DIR})
+    set(EARLY_JSON_OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin/settings)
+    file(MAKE_DIRECTORY ${EARLY_JSON_OUTPUT_DIR})
 
     # Only generate if not already present (preserve developer customizations)
-    set(EARLY_INI_PATH ${EARLY_INI_OUTPUT_DIR}/early.ini)
+    set(EARLY_JSON_PATH ${EARLY_JSON_OUTPUT_DIR}/early.json)
 
-    if(NOT EXISTS "${EARLY_INI_PATH}" OR CFDESKTOP_OVERLAY_FORCE)
+    if(NOT EXISTS "${EARLY_JSON_PATH}" OR CFDESKTOP_OVERLAY_FORCE)
         configure_file(
-            ${CMAKE_SOURCE_DIR}/cmake/meta_info/early_settings.template.ini.in
-            ${EARLY_INI_PATH}
+            ${CMAKE_SOURCE_DIR}/cmake/meta_info/early_settings.template.json.in
+            ${EARLY_JSON_PATH}
             @ONLY
         )
-        log_info("DesktopSettings" "Generated settings/early.ini in: ${EARLY_INI_OUTPUT_DIR}")
+        log_info("DesktopSettings" "Generated settings/early.json in: ${EARLY_JSON_OUTPUT_DIR}")
     else()
-        log_info("DesktopSettings" "settings/early.ini already exists, skipping generation")
+        log_info("DesktopSettings" "settings/early.json already exists, skipping generation")
     endif()
 
     # ----------------------------------------------------------

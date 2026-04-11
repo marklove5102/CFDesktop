@@ -3,32 +3,33 @@
  * @brief Early settings configuration loader and manager.
  *
  * Handles loading and accessing early desktop initialization configuration
- * from INI files using Qt's QSettings mechanism.
+ * from JSON files using Qt's JSON parsing.
  *
  * @author CFDesktop Team
  * @date 2026-03-16
- * @version 0.13.1
+ * @version 0.14.0
  * @since 0.13.0
  * @ingroup early_session
  */
 #pragma once
 
-#include <QSettings>
 #include <QString>
 #include <memory>
+
+class QJsonObject;
 
 namespace cf::desktop::early_settings {
 /**
  * @brief Manages early desktop configuration settings.
  *
- * Loads and provides access to early initialization configuration from an
- * INI-format configuration file. Uses Qt's QSettings for parsing.
+ * Loads and provides access to early initialization configuration from a
+ * JSON-format configuration file.
  *
  * @note Not thread-safe unless externally synchronized.
  * @ingroup early_session
  *
  * @code
- * EarlySettings settings("settings/early.ini");
+ * EarlySettings settings("settings/early.json");
  * if (settings.valid()) {
  *     QString logPath = settings.get_boot_logger_path();
  * }
@@ -39,26 +40,16 @@ class EarlySettings {
     /**
      * @brief Constructs EarlySettings and loads from the specified config path.
      *
-     * @param[in] early_config_path Path to the early configuration INI file.
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 0.13.0
-     * @ingroup early_session
+     * @param[in] early_config_path Path to the early configuration JSON file.
      */
     EarlySettings(const QString& early_config_path);
 
-    ~EarlySettings() = default;
+    ~EarlySettings();
 
     /**
      * @brief Checks if the settings were loaded successfully.
      *
      * @return True if settings are valid and loaded without error, false otherwise.
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 0.13.0
-     * @ingroup early_session
      */
     bool valid() const;
 
@@ -66,25 +57,14 @@ class EarlySettings {
      * @brief Gets the file path from which settings were loaded.
      *
      * @return Absolute path to the configuration file.
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 0.13.0
-     * @ingroup early_session
      */
     QString loadFrom() const;
 
     /**
      * @brief Gets the boot logger directory path from settings.
      *
-     * Reads the logger directory configuration from the early settings file.
-     *
      * @return Path to the boot logger directory.
-     * @throws None
      * @note The result is cached after the first call.
-     * @warning None
-     * @since 0.13.0
-     * @ingroup early_session
      */
     QString get_boot_logger_path() const;
 
@@ -96,20 +76,27 @@ class EarlySettings {
     QString get_desktop_root() const;
 
     /**
-     * @brief Unlock the Early Settings, using in release the sessions
+     * @brief Unlock the Early Settings, used in releasing the sessions.
      *
-     * @return std::unique_ptr<QSettings>
+     * @return std::unique_ptr<QJsonObject> containing the early settings data.
+     *         Returns nullptr if settings are invalid.
      */
-    std::unique_ptr<QSettings> unlock_early_settings();
+    std::unique_ptr<QJsonObject> unlock_early_settings();
 
   private:
-    /// @brief Cached path to the log file for the current session. Ownership: owner.
+    /// @brief Cached path to the log file for the current session.
     mutable QString this_session_logfile_path{};
 
-    /// @brief Cached Desktop Root; only changes when the desktop path is switched
+    /// @brief Cached Desktop Root; only changes when the desktop path is switched.
     mutable QString desktop_root{};
 
-    /// @brief Qt settings object for reading the INI configuration. Ownership: owner.
-    std::unique_ptr<QSettings> early_settings;
+    /// @brief Parsed JSON object containing the configuration data. Ownership: owner.
+    std::unique_ptr<QJsonObject> early_settings_obj_;
+
+    /// @brief Whether the JSON file was loaded successfully.
+    bool valid_ = false;
+
+    /// @brief Path to the configuration file.
+    QString filepath_{};
 };
 } // namespace cf::desktop::early_settings

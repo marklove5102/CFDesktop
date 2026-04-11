@@ -14,8 +14,10 @@
  */
 #pragma once
 #include "base/singleton/simple_singleton.hpp"
-#include <QSettings>
+#include <QString>
 #include <memory>
+
+class QJsonObject;
 
 class QWidget;
 namespace cf::desktop::early_stage {
@@ -41,6 +43,7 @@ namespace cf::desktop::init_session {
  */
 class InitInfoHandle : public SimpleSingleton<InitInfoHandle> {
   public:
+    ~InitInfoHandle();
     /**
      * @brief Transfers early boot information from the early stage.
      *
@@ -100,8 +103,8 @@ class InitInfoHandle : public SimpleSingleton<InitInfoHandle> {
     QWidget* boot_widget_{nullptr};
     /// @brief Path to load early settings from. Ownership: owner.
     QString load_early_settings_from;
-    /// @brief Qt settings object for early configuration. Ownership: owner.
-    std::unique_ptr<QSettings> early_settings_;
+    /// @brief JSON object containing early configuration. Ownership: owner.
+    QJsonObject* early_settings_ = nullptr;
 };
 
 } // namespace cf::desktop::init_session

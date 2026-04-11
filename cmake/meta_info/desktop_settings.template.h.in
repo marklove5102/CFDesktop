@@ -12,16 +12,16 @@
 
 namespace cf::desktop::early_stage {
 /// @brief Default relative path to the early settings configuration file.
-static constexpr const char* EARLY_SETTINGS = "settings/early.ini";
+static constexpr const char* EARLY_SETTINGS = "settings/early.json";
 
-/// @brief Template content for generating the early settings INI file.
-static constexpr const char* EARLY_SETTINGS_TEMPLATE = R"([logger]
-# Dirent Should be relatives at CFDesktop Itself
-dirent="logger/"
-
-[desktop]
-# Desktop Root Places, that place will be the place where desktop
-# Scan and, maybe created the subdirectories
-root="@CFDESKTOP_DEFAULT_ROOT@"
+/// @brief Template content for generating the early settings JSON file.
+static constexpr const char* EARLY_SETTINGS_TEMPLATE = R"({
+    "logger": {
+        "dirent": "logger/"
+    },
+    "desktop": {
+        "root": "@CFDESKTOP_DEFAULT_ROOT@"
+    }
+}
 )";
 } // namespace cf::desktop::early_stage

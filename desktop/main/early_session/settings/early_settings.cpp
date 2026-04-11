@@ -1,27 +1,46 @@
 #include "settings/early_settings.h"
 #include "file_op.h"
 #include "log/log_helper.h"
-#include <memory>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 namespace cf::desktop::early_settings {
 
-EarlySettings::EarlySettings(const QString& early_config_path)
-    : early_settings(std::make_unique<QSettings>(early_config_path, QSettings::IniFormat)) {}
+EarlySettings::~EarlySettings() {}
+
+EarlySettings::EarlySettings(const QString& early_config_path) : filepath_(early_config_path) {
+    QFile file(early_config_path);
+    if (!file.open(QIODevice::ReadOnly)) {
+        valid_ = false;
+        return;
+    }
+
+    QByteArray data = file.readAll();
+    file.close();
+
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
+
+    if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+        valid_ = false;
+        return;
+    }
+
+    early_settings_obj_ = std::make_unique<QJsonObject>(doc.object());
+    valid_ = true;
+}
 
 bool EarlySettings::valid() const {
-    if (!early_settings)
-        return false;
-    return early_settings->status() == QSettings::NoError;
+    return valid_;
 }
 
 QString EarlySettings::loadFrom() const {
-    if (!early_settings)
-        return "invalid settings";
-    return early_settings->fileName();
+    return filepath_;
 }
 
 QString EarlySettings::get_boot_logger_path() const {
-    if (!valid()) {
+    if (!valid() || !early_settings_obj_) {
         return {};
     }
 
@@ -30,7 +49,8 @@ QString EarlySettings::get_boot_logger_path() const {
     }
 
     const auto log_file_rev = base::filesystem::concat_filepath(
-        early_settings->value("logger/dirent", "").value<QString>(), logger_helper::log_filename());
+        (*early_settings_obj_)["logger"].toObject()["dirent"].toString(),
+        logger_helper::log_filename());
     const auto log_file =
         base::filesystem::concat_filepath(base::filesystem::app_runtime_dir(), log_file_rev);
 
@@ -39,7 +59,7 @@ QString EarlySettings::get_boot_logger_path() const {
 }
 
 QString EarlySettings::get_desktop_root() const {
-    if (!valid()) {
+    if (!valid() || !early_settings_obj_) {
         return {};
     }
 
@@ -47,12 +67,12 @@ QString EarlySettings::get_desktop_root() const {
         return desktop_root;
     }
 
-    desktop_root = early_settings->value("desktop/root", "").value<QString>();
+    desktop_root = (*early_settings_obj_)["desktop"].toObject()["root"].toString();
     return desktop_root;
 }
 
-std::unique_ptr<QSettings> EarlySettings::unlock_early_settings() {
-    return std::move(early_settings);
+std::unique_ptr<QJsonObject> EarlySettings::unlock_early_settings() {
+    return std::move(early_settings_obj_);
 }
 
 } // namespace cf::desktop::early_settings

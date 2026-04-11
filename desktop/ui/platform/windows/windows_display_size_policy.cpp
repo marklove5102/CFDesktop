@@ -78,7 +78,12 @@ void WindowsDisplaySizePolicy::applyWindowsNativeBehavior(QWidget* widget_data) 
                      SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER);
     }
 
-    widget_data->show();
+    // NOTE: Do NOT call show() here. The window is shown later by
+    // CFDesktopEntity::run_init() via showFullScreen(), after all
+    // shell-layer components (WallpaperShellLayerStrategy, PanelManager)
+    // have been initialized. Calling show() early causes the CFDesktop
+    // widget to appear with its default white background before the
+    // shell layer has received its geometry from PanelManager::relayout().
 }
 
 DesktopBehaviors WindowsDisplaySizePolicy::query() const {
