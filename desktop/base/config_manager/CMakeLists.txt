@@ -8,6 +8,9 @@ target_sources(cfconfig PRIVATE
     src/cfconfig_path_provider.cpp
     src/impl/config_impl.cpp
     src/impl/config_key.cpp
+    src/impl/config_backend_factory.cpp
+    src/impl/qsettings_backend.cpp
+    src/impl/json_backend.cpp
 )
 
 # Include directories

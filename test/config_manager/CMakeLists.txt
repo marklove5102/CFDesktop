@@ -13,3 +13,12 @@ add_gtest_executable(
     LABELS         "config_manager;unit;functional"
     LOG_MODULE     config_manager_tests
 )
+
+add_gtest_executable(
+    TEST_NAME      config_json_backend_test
+    SOURCE_FILE    config_json_backend_test.cpp
+    LINK_LIBRARIES CFDesktop::config;Qt6::Core;GTest::gtest;GTest::gtest_main
+    LABELS         "config_manager;unit;functional"
+    LOG_MODULE     config_manager_json_tests
+    INCLUDE_DIRS   ${CMAKE_SOURCE_DIR}/desktop/base/config_manager/src
+)

@@ -12,8 +12,7 @@ target_include_directories(cfdesktop_wallpaper PUBLIC
 
 target_link_libraries(cfdesktop_wallpaper PRIVATE
     Qt6::Gui
-    cflogger_headers
+    cflogger
     cfbase
     cf_ui_base
 )
-target_compile_definitions(cfdesktop_wallpaper PRIVATE CFLOG_STATIC_BUILD)

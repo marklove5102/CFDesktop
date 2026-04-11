@@ -12,9 +12,6 @@ add_library(cf_ui_core_material STATIC
     material_factory.cpp
 )
 
-# Define CFUI_STATIC_BUILD so symbols are NOT marked as dllexport when compiling for static library
-target_compile_definitions(cf_ui_core_material PUBLIC CFUI_STATIC_BUILD)
-
 # Add include directories
 target_include_directories(cf_ui_core_material PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

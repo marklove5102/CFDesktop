@@ -15,9 +15,6 @@ add_library(cf_ui_core STATIC
     theme_manager.cpp
 )
 
-# Define CFUI_STATIC_BUILD so symbols are NOT marked as dllexport when compiling for static library
-target_compile_definitions(cf_ui_core PUBLIC CFUI_STATIC_BUILD)
-
 # Link against material sub-module and base
 target_link_libraries(cf_ui_core PUBLIC
     cf_ui_core_material

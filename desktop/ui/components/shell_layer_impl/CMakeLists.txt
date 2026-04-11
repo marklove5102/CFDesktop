@@ -13,9 +13,8 @@ target_include_directories(cfdesktop_shell_layer_impl PUBLIC
 target_link_libraries(
     cfdesktop_shell_layer_impl PRIVATE
     Qt6::Widgets
-    cflogger_headers
+    cflogger
     cfbase
     cf_ui_base
     cfdesktop_wallpaper
 )
-target_compile_definitions(cfdesktop_shell_layer_impl PRIVATE CFLOG_STATIC_BUILD)

@@ -22,10 +22,7 @@ add_subdirectory(models)
 # Unified UI Library - Static Library
 # ============================================================
 
-add_library(cfui STATIC)
-
-# Define that we are building a static library (disables dllimport/dllexport)
-target_compile_definitions(cfui PUBLIC CFUI_STATIC_BUILD)
+add_library(cfui SHARED)
 
 # Link against STATIC libraries from sub-modules
 # Order: dependencies first (left), then dependents (right)

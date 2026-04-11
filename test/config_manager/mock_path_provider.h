@@ -111,4 +111,39 @@ class LayerControlMockProvider : public MockPathProvider {
     int disabled_layers_;
 };
 
+/**
+ * @brief Mock path provider that returns JSON filenames.
+ *
+ * Used to test JSON backend integration through ConfigStore.
+ */
+class JsonMockPathProvider : public IConfigStorePathProvider {
+  public:
+    explicit JsonMockPathProvider(const QString& temp_dir = "/tmp/cfconfig_json_test")
+        : temp_dir_(temp_dir) {
+        // Auto-create system.json for testing
+        QString systemPath = temp_dir_ + "/system_test.json";
+        QDir().mkpath(QFileInfo(systemPath).absolutePath());
+        QFile file(systemPath);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            file.write("{}");
+            file.close();
+        }
+    }
+
+    QString system_path() const override { return temp_dir_ + "/system_test.json"; }
+    QString user_dir() const override { return temp_dir_ + "/user"; }
+    QString user_filename() const override { return "user_test.json"; }
+    QString app_dir() const override { return temp_dir_ + "/app"; }
+    QString app_filename() const override { return "app_test.json"; }
+    bool is_layer_enabled(int layer_index) const override {
+        (void)layer_index;
+        return true;
+    }
+
+    const QString& temp_dir() const { return temp_dir_; }
+
+  private:
+    QString temp_dir_;
+};
+
 } // namespace cf::config::test

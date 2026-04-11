@@ -69,7 +69,7 @@ endif()
 target_link_libraries(cf_desktop_ui_platform
 PUBLIC
     cfbase
-    cflogger_headers
+    cflogger
     cf_desktop_ui_base
     cf_desktop_components
 PRIVATE
@@ -78,10 +78,6 @@ PRIVATE
     Qt6::Widgets
     cf_ui_base            # For qt_format.h (std::formatter<QString>)
 )
-
-if(WIN32)
-    target_compile_definitions(cf_desktop_ui_platform PRIVATE CFLOG_STATIC_BUILD)
-endif()
 
 if(UNIX AND NOT APPLE)
     if(XCB_FOUND)

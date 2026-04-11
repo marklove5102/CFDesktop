@@ -42,17 +42,16 @@ target_include_directories(CFDesktopMain PUBLIC
 )
 
 target_link_libraries(CFDesktopMain PUBLIC
-    cfbase cflogger_headers cfasciiart cffilesystem CFDesktopLog
+    cfbase cflogger cfasciiart cffilesystem CFDesktopLog
     cf_desktop_ui_widget_init_session
     Qt6::Core Qt6::Gui Qt6::Widgets
 )
 # CFDesktopMain lives entirely inside CFDesktop_shared.dll (via --whole-archive).
-# Both CFLOG_STATIC_BUILD and CFDESKTOP_STATIC_BUILD must be set so that
-# CFLOG_API and CF_DESKTOP_EXPORT expand to nothing — code inside the DLL
-# must use regular (non-dllimport) references to its own symbols.
+# CFDESKTOP_STATIC_BUILD must be set so that CF_DESKTOP_EXPORT expands to
+# nothing — code inside the DLL must use regular (non-dllimport) references
+# to its own symbols.
 if(WIN32)
     target_compile_definitions(CFDesktopMain PRIVATE
-        CFLOG_STATIC_BUILD
         CFDESKTOP_STATIC_BUILD
     )
 endif()

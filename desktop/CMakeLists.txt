@@ -16,13 +16,9 @@ log_info("Desktop" "Creating unified CFDesktop shared library")
 add_library(CFDesktop_shared SHARED)
 
 # Export symbols for Windows DLL
-# CFLOG_STATIC_BUILD: cflogger symbols resolve as regular refs within the DLL
-# CFDESKTOP_STATIC_BUILD: NOT set here — desktop_run_session.cpp needs
-#   CF_DESKTOP_EXPORT = dllexport (CFDESKTOP_EXPORTS is defined on this target)
 if(WIN32)
     target_compile_definitions(CFDesktop_shared PRIVATE
         CFDESKTOP_EXPORTS
-        CFLOG_STATIC_BUILD
     )
 endif()
 
@@ -40,9 +36,6 @@ target_include_directories(CFDesktop_shared PUBLIC
 
 # Collect all static libraries to be linked into the shared library
 set(CFDESKTOP_STATIC_LIBS
-    cfbase
-    cfui
-    cflogger
     cffilesystem
     cfconfig
     cfasciiart
@@ -78,11 +71,18 @@ else()
     )
 endif()
 
-# Link Qt libraries
+# Link Qt libraries and shared library dependencies
 target_link_libraries(CFDesktop_shared PUBLIC
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
+)
+
+# Link shared library dependencies (NOT in whole-archive)
+target_link_libraries(CFDesktop_shared PRIVATE
+    cfbase
+    cflogger
+    cfui
 )
 
 # Platform-specific link libraries (from base)

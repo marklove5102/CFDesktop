@@ -10,9 +10,9 @@
 #include "cfconfig/cfconfig_path_provider.h"
 #include "cfconfig/cfconfig_result.h"
 #include "cfconfig_key.h"
+#include "impl/config_backend_factory.h"
 #include <QDir>
 #include <QFileInfo>
-#include <QSettings>
 #include <QString>
 #include <array>
 #include <memory>
@@ -22,15 +22,6 @@
 namespace cf::config {
 
 namespace detail {
-
-/**
- * @brief Convert dot-separated key to QSettings path.
- * "app.theme.name" → "app/theme/name"
- */
-QString to_qsettings_path(const std::string& key) {
-    QString qkey = QString::fromStdString(key);
-    return qkey.replace('.', '/');
-}
 
 /**
  * @brief Match a key pattern against a key.
@@ -76,23 +67,23 @@ ConfigStoreImpl::ConfigStoreImpl(std::shared_ptr<IConfigStorePathProvider> path_
     // System layer: use path provider
     QString systemPath = path_provider_->system_path();
     if (!systemPath.isEmpty() && QFileInfo::exists(systemPath)) {
-        settings_system_ = std::make_unique<QSettings>(systemPath, QSettings::IniFormat);
+        settings_system_ = createBackend(systemPath);
     }
 
     // User layer: use path provider
     QString userDir = path_provider_->user_dir();
     if (!userDir.isEmpty()) {
         QDir().mkpath(userDir);
-        settings_user_ = std::make_unique<QSettings>(
-            userDir + "/" + path_provider_->user_filename(), QSettings::IniFormat);
+        QString userFilePath = userDir + "/" + path_provider_->user_filename();
+        settings_user_ = createBackend(userFilePath);
     }
 
     // App layer: use path provider
     QString appDir = path_provider_->app_dir();
     if (!appDir.isEmpty()) {
         QDir().mkpath(appDir);
-        settings_app_ = std::make_unique<QSettings>(appDir + "/" + path_provider_->app_filename(),
-                                                    QSettings::IniFormat);
+        QString appFilePath = appDir + "/" + path_provider_->app_filename();
+        settings_app_ = createBackend(appFilePath);
     }
 }
 
@@ -114,9 +105,10 @@ std::any ConfigStoreImpl::query(const std::string& key, const std::any& default_
         return it->second;
     }
 
+    QString qkey = QString::fromStdString(key);
+
     // Query App layer
     if (settings_app_) {
-        QString qkey = detail::to_qsettings_path(key);
         QVariant value = settings_app_->value(qkey);
         if (!value.isNull()) {
             cache_[key] = value;
@@ -126,7 +118,6 @@ std::any ConfigStoreImpl::query(const std::string& key, const std::any& default_
 
     // Query User layer
     if (settings_user_) {
-        QString qkey = detail::to_qsettings_path(key);
         QVariant value = settings_user_->value(qkey);
         if (!value.isNull()) {
             cache_[key] = value;
@@ -136,7 +127,6 @@ std::any ConfigStoreImpl::query(const std::string& key, const std::any& default_
 
     // Query System layer
     if (settings_system_) {
-        QString qkey = detail::to_qsettings_path(key);
         QVariant value = settings_system_->value(qkey);
         if (!value.isNull()) {
             cache_[key] = value;
@@ -159,13 +149,13 @@ std::any ConfigStoreImpl::query(const std::string& key, Layer layer) {
         return std::any();
     }
 
-    QSettings* settings = get_settings(layer);
-    if (!settings) {
+    IConfigBackend* backend = get_backend(layer);
+    if (!backend) {
         return std::any();
     }
 
-    QString qkey = detail::to_qsettings_path(key);
-    QVariant value = settings->value(qkey);
+    QString qkey = QString::fromStdString(key);
+    QVariant value = backend->value(qkey);
 
     if (value.isNull()) {
         return std::any();
@@ -182,9 +172,10 @@ bool ConfigStoreImpl::has_key(const std::string& key) {
         return true;
     }
 
+    QString qkey = QString::fromStdString(key);
+
     // Check App layer
     if (settings_app_) {
-        QString qkey = detail::to_qsettings_path(key);
         if (settings_app_->contains(qkey)) {
             return true;
         }
@@ -192,7 +183,6 @@ bool ConfigStoreImpl::has_key(const std::string& key) {
 
     // Check User layer
     if (settings_user_) {
-        QString qkey = detail::to_qsettings_path(key);
         if (settings_user_->contains(qkey)) {
             return true;
         }
@@ -200,7 +190,6 @@ bool ConfigStoreImpl::has_key(const std::string& key) {
 
     // Check System layer
     if (settings_system_) {
-        QString qkey = detail::to_qsettings_path(key);
         if (settings_system_->contains(qkey)) {
             return true;
         }
@@ -216,13 +205,13 @@ bool ConfigStoreImpl::has_key(const std::string& key, Layer layer) {
         return cache_.find(key) != cache_.end();
     }
 
-    QSettings* settings = get_settings(layer);
-    if (!settings) {
+    IConfigBackend* backend = get_backend(layer);
+    if (!backend) {
         return false;
     }
 
-    QString qkey = detail::to_qsettings_path(key);
-    return settings->contains(qkey);
+    QString qkey = QString::fromStdString(key);
+    return backend->contains(qkey);
 }
 
 // ============================================================================
@@ -301,40 +290,24 @@ bool ConfigStoreImpl::set_impl(const std::string& key, const std::any& value, La
         return true;
     }
 
-    // Other layers - update QSettings
-    QSettings* settings = get_settings(layer);
-    if (!settings) {
+    // Other layers - update backend
+    IConfigBackend* backend = get_backend(layer);
+    if (!backend) {
         return false;
     }
 
-    QString qkey = detail::to_qsettings_path(key);
+    QString qkey = QString::fromStdString(key);
 
-    // Get old value from QSettings if not in cache
-    if (!had_old && settings->contains(qkey)) {
-        old_value = settings->value(qkey);
+    // Get old value from backend if not in cache
+    if (!had_old && backend->contains(qkey)) {
+        old_value = backend->value(qkey);
         had_old = true;
     }
 
-    // Update QSettings
-    QVariant qvalue;
-    if (value.type() == typeid(int)) {
-        qvalue = QVariant::fromValue(std::any_cast<int>(value));
-    } else if (value.type() == typeid(double)) {
-        qvalue = QVariant::fromValue(std::any_cast<double>(value));
-    } else if (value.type() == typeid(bool)) {
-        qvalue = QVariant::fromValue(std::any_cast<bool>(value));
-    } else if (value.type() == typeid(std::string)) {
-        qvalue = QString::fromStdString(std::any_cast<std::string>(value));
-    } else {
-        // Try QVariant directly
-        try {
-            qvalue = std::any_cast<QVariant>(value);
-        } catch (const std::bad_any_cast&) {
-            return false;
-        }
-    }
+    // Convert std::any to QVariant and store
+    QVariant qvalue = anyToQVariant(value);
 
-    settings->setValue(qkey, qvalue);
+    backend->setValue(qkey, qvalue);
     cache_[key] = value;
     mark_dirty(layer);
 
@@ -357,12 +330,12 @@ RegisterResult ConfigStoreImpl::register_key_impl(const Key& key, const std::any
         return RegisterResult::KeyAlreadyIn;
     }
 
-    // Check QSettings for non-Temp layers
+    // Check backend for non-Temp layers
     if (layer != Layer::Temp) {
-        QSettings* settings = get_settings(layer);
-        if (settings) {
-            QString qkey = detail::to_qsettings_path(key.full_key);
-            if (settings->contains(qkey)) {
+        IConfigBackend* backend = get_backend(layer);
+        if (backend) {
+            QString qkey = QString::fromStdString(key.full_key);
+            if (backend->contains(qkey)) {
                 return RegisterResult::KeyAlreadyIn;
             }
         }
@@ -386,16 +359,16 @@ UnRegisterResult ConfigStoreImpl::unregister_key_impl(const Key& key, Layer laye
         existed = true;
     }
 
-    // Remove from QSettings for non-Temp layers
+    // Remove from backend for non-Temp layers
     if (layer != Layer::Temp) {
-        QSettings* settings = get_settings(layer);
-        if (settings) {
-            QString qkey = detail::to_qsettings_path(key.full_key);
-            if (settings->contains(qkey)) {
+        IConfigBackend* backend = get_backend(layer);
+        if (backend) {
+            QString qkey = QString::fromStdString(key.full_key);
+            if (backend->contains(qkey)) {
                 if (!existed) {
-                    old_value = settings->value(qkey);
+                    old_value = backend->value(qkey);
                 }
-                settings->remove(qkey);
+                backend->remove(qkey);
                 existed = true;
                 mark_dirty(layer);
             }
@@ -439,9 +412,9 @@ void ConfigStoreImpl::clear_layer_impl(Layer layer) {
         return;
     }
 
-    QSettings* settings = get_settings(layer);
-    if (settings) {
-        settings->clear();
+    IConfigBackend* backend = get_backend(layer);
+    if (backend) {
+        backend->clear();
         mark_dirty(layer);
     }
 }
@@ -524,23 +497,27 @@ void ConfigStoreImpl::reload() {
     cache_.clear();
     pending_changes_.clear();
 
-    // Reload QSettings (they automatically reload on next access)
-    // No explicit reload needed for QSettings
+    // Reload backends from disk
+    if (settings_system_) {
+        settings_system_->reload();
+    }
+    if (settings_user_) {
+        settings_user_->reload();
+    }
+    if (settings_app_) {
+        settings_app_->reload();
+    }
 }
 
 // ============================================================================
 // Private helpers
 // ============================================================================
 
-QString ConfigStoreImpl::to_qsettings_path(const std::string& key) {
-    return detail::to_qsettings_path(key);
-}
-
 bool ConfigStoreImpl::match_pattern(const std::string& pattern, const std::string& key) {
     return detail::match_pattern(pattern, key);
 }
 
-QSettings* ConfigStoreImpl::get_settings(Layer layer) {
+IConfigBackend* ConfigStoreImpl::get_backend(Layer layer) {
     switch (layer) {
         case Layer::System:
             return settings_system_.get();
@@ -552,6 +529,25 @@ QSettings* ConfigStoreImpl::get_settings(Layer layer) {
             return nullptr; // Temp layer is memory only
     }
     return nullptr;
+}
+
+QVariant ConfigStoreImpl::anyToQVariant(const std::any& value) {
+    if (value.type() == typeid(int)) {
+        return QVariant::fromValue(std::any_cast<int>(value));
+    } else if (value.type() == typeid(double)) {
+        return QVariant::fromValue(std::any_cast<double>(value));
+    } else if (value.type() == typeid(bool)) {
+        return QVariant::fromValue(std::any_cast<bool>(value));
+    } else if (value.type() == typeid(std::string)) {
+        return QString::fromStdString(std::any_cast<std::string>(value));
+    } else {
+        // Try QVariant directly
+        try {
+            return std::any_cast<QVariant>(value);
+        } catch (const std::bad_any_cast&) {
+            return QVariant();
+        }
+    }
 }
 
 void ConfigStoreImpl::trigger_watchers(const Key& key, const std::any* old_value,

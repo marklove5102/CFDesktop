@@ -17,6 +17,7 @@
 #include "cfconfig_key.h"
 #include "cfconfig_layer.h"
 #include "cfconfig_notify_policy.h"
+#include "impl/config_backend.h"
 #include <QString>
 #include <any>
 #include <atomic>
@@ -25,9 +26,6 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-// Forward declarations for QSettings
-class QSettings;
 
 namespace cf::config {
 
@@ -78,7 +76,7 @@ class ConfigStoreImpl {
     /**
      * @brief Constructs a new ConfigStoreImpl with default path provider.
      *
-     * Initializes QSettings for each layer using DesktopConfigStorePathProvider:
+     * Initializes backends for each layer using DesktopConfigStorePathProvider:
      * - System: /etc/cfdesktop/system.ini (read-write, may not exist)
      * - User: ~/.config/cfdesktop/user.ini (read-write, created if needed)
      * - App: config/app.ini (read-write, relative path)
@@ -91,12 +89,6 @@ class ConfigStoreImpl {
      *
      * @param[in] path_provider Custom path provider for config file locations.
      *                           Allows tests and other projects to customize paths.
-     * @return None
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 1.0
-     * @ingroup config
      */
     explicit ConfigStoreImpl(std::shared_ptr<IConfigStorePathProvider> path_provider);
 
@@ -116,183 +108,145 @@ class ConfigStoreImpl {
     /* ========== Query operations ========== */
 
     /**
-     * @brief Query a configuration value by priority.
+     * @brief Query a configuration value with a fallback default.
      *
-     * Searches layers in order: Temp → App → User → System
+     * Searches all layers (merged view) for the given key and returns
+     * the first match found. If the key does not exist in any layer,
+     * @p default_value is returned instead.
      *
-     * @param[in] key The full key to query
-     * @param[in] default_value Value to return if key not found
-     * @return The found value or default_value
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 1.0
-     * @ingroup config
+     * @param[in] key           The configuration key to look up.
+     * @param[in] default_value The value to return if the key is not found.
+     *
+     * @return The queried value, or @p default_value if the key is absent.
      */
     std::any query(const std::string& key, const std::any& default_value);
 
     /**
      * @brief Query a configuration value from a specific layer.
      *
-     * @param[in] key The full key to query
-     * @param[in] layer The specific layer to query
-     * @return std::any with the value, or std::any() if not found
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 1.0
-     * @ingroup config
+     * @param[in] key   The configuration key to look up.
+     * @param[in] layer The layer to search.
+     *
+     * @return The value stored in the specified layer.
      */
     std::any query(const std::string& key, Layer layer);
 
     /**
-     * @brief Check if a key exists (searches all layers by priority).
+     * @brief Check whether a key exists in any layer.
      *
-     * @param[in] key The full key to check
-     * @return true if the key exists in any layer, false otherwise
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 1.0
-     * @ingroup config
+     * @param[in] key The configuration key to check.
+     *
+     * @return True if the key exists in at least one layer, false otherwise.
      */
     bool has_key(const std::string& key);
 
     /**
-     * @brief Check if a key exists in a specific layer.
+     * @brief Check whether a key exists in a specific layer.
      *
-     * @param[in] key The full key to check
-     * @param[in] layer The specific layer to check
-     * @return true if the key exists in the specified layer, false otherwise
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 1.0
-     * @ingroup config
+     * @param[in] key   The configuration key to check.
+     * @param[in] layer The layer to search.
+     *
+     * @return True if the key exists in the specified layer, false otherwise.
      */
     bool has_key(const std::string& key, Layer layer);
 
     /* ========== Write operations ========== */
 
     /**
-     * @brief Set a configuration value.
+     * @brief Set a key-value pair in the specified layer.
      *
-     * @param[in] key The full key to set
-     * @param[in] value The value to set
-     * @param[in] layer The target layer
-     * @param[in] notify_policy Whether to notify immediately
-     * @return true if successful, false otherwise
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 1.0
-     * @ingroup config
+     * @param[in] key            The configuration key to set.
+     * @param[in] value          The value to store.
+     * @param[in] layer          The target layer.
+     * @param[in] notify_policy  Controls when watchers are notified.
+     *
+     * @return True if the value was set successfully, false otherwise.
      */
     bool set(const std::string& key, const std::any& value, Layer layer,
              NotifyPolicy notify_policy);
 
     /**
-     * @brief Register a key with an initial value.
+     * @brief Register a new key with an initial value in a layer.
      *
-     * @param[in] key The key to register
-     * @param[in] init_value The initial value for the key
-     * @param[in] layer The target layer
-     * @param[in] notify_policy Whether to notify immediately
-     * @return RegisterResult indicating success or failure
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 1.0
-     * @ingroup config
+     * @param[in] key            The key descriptor to register.
+     * @param[in] init_value     The initial value for the key.
+     * @param[in] layer          The target layer.
+     * @param[in] notify_policy  Controls when watchers are notified.
+     *
+     * @return The result of the registration attempt.
      */
     RegisterResult register_key(const Key& key, const std::any& init_value, Layer layer,
                                 NotifyPolicy notify_policy);
 
     /**
-     * @brief Unregister (remove) a key.
+     * @brief Unregister a key from a layer.
      *
-     * @param[in] key The key to unregister
-     * @param[in] layer The target layer
-     * @param[in] notify_policy Whether to notify immediately
-     * @return UnRegisterResult indicating success or failure
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 1.0
-     * @ingroup config
+     * @param[in] key            The key descriptor to unregister.
+     * @param[in] layer          The layer to remove the key from.
+     * @param[in] notify_policy  Controls when watchers are notified.
+     *
+     * @return The result of the unregistration attempt.
      */
     UnRegisterResult unregister_key(const Key& key, Layer layer, NotifyPolicy notify_policy);
 
     /**
-     * @brief Clear all layers (including Temp).
+     * @brief Clear all layers and cache.
      */
     void clear();
 
     /**
      * @brief Clear a specific layer.
+     *
+     * @param[in] layer The layer to clear.
      */
     void clear_layer(Layer layer);
 
     /* ========== Watcher operations ========== */
 
     /**
-     * @brief Add a watcher for a key pattern.
+     * @brief Register a watcher callback for keys matching a pattern.
      *
-     * @param[in] pattern Key pattern (supports * wildcard)
-     * @param[in] callback Callback function
-     * @param[in] policy When to trigger
-     * @return Watcher handle for removal
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 1.0
-     * @ingroup config
+     * @param[in] pattern  The key pattern to watch (supports * wildcard).
+     * @param[in] callback The function to call when a matching key changes.
+     * @param[in] policy   When to trigger this watcher.
+     *
+     * @return A handle that can be used to remove the watcher later.
      */
     WatcherHandle watch(const std::string& pattern, Watcher callback, NotifyPolicy policy);
 
     /**
-     * @brief Remove a watcher.
+     * @brief Remove a previously registered watcher.
+     *
+     * @param[in] handle The watcher handle returned by watch().
      */
     void unwatch(WatcherHandle handle);
 
     /**
-     * @brief Trigger all Manual watchers.
+     * @brief Manually trigger all pending watcher notifications.
      *
-     * @return NotifyResult indicating success/failure
+     * @return The result of the notification dispatch.
      */
     NotifyResult notify();
 
     /**
-     * @brief Get count of pending changes.
+     * @brief Get the number of pending changes awaiting notification.
      *
-     * @return The number of pending changes
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 1.0
-     * @ingroup config
+     * @return The count of pending changes.
      */
     std::size_t pending_changes() const;
 
     /* ========== Persistence operations ========== */
 
     /**
-     * @brief Sync dirty layers to disk.
+     * @brief Persist all dirty layers to disk.
      *
-     * @param[in] async If true, sync asynchronously (not implemented, always sync)
-     * @return None
-     * @throws None
-     * @note None
-     * @warning None
-     * @since 1.0
-     * @ingroup config
+     * @param[in] async If true, perform the write asynchronously; otherwise
+     *                  block until complete.
      */
     void sync(bool async);
 
     /**
-     * @brief Reload configuration from disk.
-     *
-     * Clears Temp layer and cache, reloads from QSettings.
+     * @brief Re-read all layers from disk, discarding in-memory changes.
      */
     void reload();
 
@@ -305,66 +259,33 @@ class ConfigStoreImpl {
     static bool match_pattern(const std::string& pattern, const std::string& key);
 
     /**
-     * @brief Convert dot-separated key to QSettings path.
-     *
-     * "app.theme.name" → "app/theme/name"
-     */
-    static QString to_qsettings_path(const std::string& key);
-
-    /**
-     * @brief Get QSettings for a layer.
+     * @brief Get backend for a layer.
      *
      * Returns nullptr for Temp layer (memory only).
      */
-    QSettings* get_settings(Layer layer);
+    IConfigBackend* get_backend(Layer layer);
 
     /**
      * @brief Mark a layer as dirty (needs syncing).
      */
     void mark_dirty(Layer layer);
 
-    /* ========== Internal lock-free implementations ========== */
     /**
-     * @brief Internal set implementation (caller must hold lock).
-     *
-     * This method does NOT acquire any locks. Caller must hold mutex_.
+     * @brief Convert std::any to QVariant for backend storage.
      */
+    static QVariant anyToQVariant(const std::any& value);
+
+    /* ========== Internal lock-free implementations ========== */
     bool set_impl(const std::string& key, const std::any& value, Layer layer,
                   NotifyPolicy notify_policy);
-
-    /**
-     * @brief Internal register_key implementation (caller must hold lock).
-     *
-     * This method does NOT acquire any locks. Caller must hold mutex_.
-     */
     RegisterResult register_key_impl(const Key& key, const std::any& init_value, Layer layer,
                                      NotifyPolicy notify_policy);
-
-    /**
-     * @brief Internal unregister_key implementation (caller must hold lock).
-     *
-     * This method does NOT acquire any locks. Caller must hold mutex_.
-     */
     UnRegisterResult unregister_key_impl(const Key& key, Layer layer, NotifyPolicy notify_policy);
-
-    /**
-     * @brief Internal clear_layer implementation (caller must hold lock).
-     *
-     * This method does NOT acquire any locks. Caller must hold mutex_.
-     */
     void clear_layer_impl(Layer layer);
-
-    /**
-     * @brief Internal clear implementation (caller must hold lock).
-     *
-     * This method does NOT acquire any locks. Caller must hold mutex_.
-     */
     void clear_impl();
 
     /**
      * @brief Trigger watchers for a key change (called with lock held).
-     *
-     * Collects watcher events but defers callback execution until after lock release.
      */
     void trigger_watchers(const Key& key, const std::any* old_value, const std::any* new_value,
                           Layer layer);
@@ -385,10 +306,10 @@ class ConfigStoreImpl {
     // Cache for all layers (Temp is cache-only)
     std::unordered_map<std::string, std::any> cache_;
 
-    // Layer storage
-    std::unique_ptr<QSettings> settings_system_;
-    std::unique_ptr<QSettings> settings_user_;
-    std::unique_ptr<QSettings> settings_app_;
+    // Layer storage (format-agnostic backends)
+    std::unique_ptr<IConfigBackend> settings_system_;
+    std::unique_ptr<IConfigBackend> settings_user_;
+    std::unique_ptr<IConfigBackend> settings_app_;
 
     // Dirty flags for each layer
     std::array<bool, 4> dirty_flags_{false, false, false, false};

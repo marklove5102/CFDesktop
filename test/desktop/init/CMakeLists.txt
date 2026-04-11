@@ -44,13 +44,22 @@ set_tests_properties(init_session_chain_test PROPERTIES
 
 log_info("desktop_init_tests" "  - init_session_chain_test")
 
-# Windows: copy CFDesktop_shared.dll to test output directory
+# Windows: copy shared libraries to test output directory
 if(WIN32)
     add_custom_command(TARGET init_session_chain_test POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:CFDesktop_shared>
             $<TARGET_FILE_DIR:init_session_chain_test>
-        COMMENT "Copying CFDesktop_shared.dll to test output directory"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:cflogger>
+            $<TARGET_FILE_DIR:init_session_chain_test>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:cfbase>
+            $<TARGET_FILE_DIR:init_session_chain_test>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:cfui>
+            $<TARGET_FILE_DIR:init_session_chain_test>
+        COMMENT "Copying shared libraries to test output directory"
     )
 endif()
 
